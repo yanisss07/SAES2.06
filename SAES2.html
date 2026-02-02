@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Métro Toulouse - Tracé Réaliste</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { margin: 0; padding: 0; background-color: #202124; }
+        #map { height: 100vh; width: 100%; }
+        
+        /* --- STYLE DES POPUPS --- */
+        .leaflet-popup-content-wrapper {
+            background-color: #282a2d;
+            color: #e8eaed;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            border: 1px solid #3c4043;
+            padding: 0;
+        }
+        .leaflet-popup-tip { background-color: #282a2d; border: 1px solid #3c4043; border-top: none; border-left: none; }
+        .leaflet-popup-content { margin: 12px 16px; font-family: 'Roboto', sans-serif; }
+        
+        .station-popup h3 {
+            margin: 0 0 5px 0; font-size: 16px; font-weight: 500; color: #fff;
+        }
+        .line-tag {
+            display: inline-block; padding: 2px 8px; border-radius: 4px;
+            font-size: 11px; font-weight: 700; margin-top: 4px; letter-spacing: 0.5px;
+        }
+
+        /* --- STYLE DU TRACÉ (DÉGRADÉ) --- */
+
+        /* Style par défaut du point */
+        .station-icon {
+            background: #fff; 
+            width: 50px; 
+            height: 80px; 
+            border-radius: 50%; 
+            box-shadow: 0 0 8px #fff;
+            transform-origin: center center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          
+        }
+
+        /* Style au survol (Hover) */
+        .station-icon:hover {
+            /* On utilise scale pour grossir sans perdre le centrage */
+                transform: scale(30);
+            
+            /* Effet Néon intense avec box-shadow (plus propre que filter pour un cercle) */
+             filter:
+
+                drop-shadow(0 0 4px rgba(255, 255, 255, 1))
+
+                drop-shadow(0 0 15px rgba(255, 165, 0, 1))
+
+                drop-shadow(0 0 40px rgba(255, 69, 0, 0.8));
+
+            z-index: 1000;
+            
+        }
+      /* --- STYLE DU TRACÉ (DÉGRADÉ NÉON) --- */
+        .ligne-neon {
+            stroke: url(#gradientToulouse) !important; /* Utilise le SVG défini en bas */
+            stroke-width: 6px;
+            stroke-opacity: 0.8; /* Opacité à 1 pour que la lumière soit vive */
+            stroke-linecap: round; /* Arrondit les bouts pour faire "tube" */
+            fill: none;
+            
+            /* L'EFFET NÉON : On empile 3 ombres portées */
+            filter: 
+                /* 1. Petit halo blanc intense (le coeur du néon) */
+                drop-shadow(0 0 2px rgba(255, 255, 255, 0.8))
+                /* 2. Halo moyen (Orange/Or pour réchauffer) */
+                drop-shadow(0 0 8px rgba(255, 165, 0, 0.8))
+                /* 3. Grand halo diffus (pour l'ambiance) */
+                drop-shadow(0 0 20px rgba(255, 69, 0, 0.5));
+            
+            transition: all 0.3s ease;
+        }
+
+        .ligne-neon:hover {
+            size: 200;
+            
+            /* Au survol, on intensifie la lumière */
+            filter: 
+                drop-shadow(0 0 4px rgba(255, 255, 255, 1))
+                drop-shadow(0 0 15px rgba(255, 165, 0, 1))
+                drop-shadow(0 0 40px rgba(255, 69, 0, 0.8));
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">
+        <defs>
+            <linearGradient id="gradientToulouse" x1="0%" y1="0%" x2="100%" y2="20%">
+                <stop offset="0%" style="stop-color:#a50e0e; stop-opacity:1" />
+                <stop offset="25%" style="stop-color:#e37400; stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#cfba3f; stop-opacity:1" />
+                <stop offset="75%" style="stop-color:#07b2ef; stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#174ea6; stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // 1. Initialisation de la carte (Mode sombre)
+        var map = L.map('map', { zoomControl: false }).setView([43.6045, 1.444], 13);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        // 2. DONNÉES EXACTES DES STATIONS (Ordonnées pour le tracé)
+        // Sources coordonnées : Open Data Toulouse / Wikipédia
+        
+        const lineA_Stations = [
+            { name: "Basso Cambo", lat: 43.5714, lng: 1.3936 },
+            { name: "Bellefontaine", lat: 43.5750, lng: 1.3990 },
+            { name: "Reynerie", lat: 43.5790, lng: 1.4050 },
+            { name: "Mirail-Université", lat: 43.5820, lng: 1.4090 },
+            { name: "Bagatelle", lat: 43.5850, lng: 1.4130 },
+            { name: "Mermoz", lat: 43.5880, lng: 1.4150 },
+            { name: "Fontaine Lestang", lat: 43.5910, lng: 1.4160 },
+            { name: "Arènes", lat: 43.5936, lng: 1.4173 },
+            { name: "Patte d'Oie", lat: 43.5960, lng: 1.4250 },
+            { name: "St Cyprien République", lat: 43.5968, lng: 1.4317 },
+            { name: "Esquirol", lat: 43.6006, lng: 1.4439 },
+            { name: "Capitole", lat: 43.6043, lng: 1.4448 },
+            { name: "Jean Jaurès", lat: 43.6060, lng: 1.4490 },
+            { name: "Marengo SNCF", lat: 43.6090, lng: 1.4550 },
+            { name: "Jolimont", lat: 43.6120, lng: 1.4600 },
+            { name: "Roseraie", lat: 43.6160, lng: 1.4660 },
+            { name: "Argoulets", lat: 43.6210, lng: 1.4720 },
+            { name: "Balma-Gramont", lat: 43.6260, lng: 1.4820 }
+        ];
+
+        const lineB_Stations = [
+            { name: "Borderouge", lat: 43.6366, lng: 1.4485 },
+            { name: "Trois Cocus", lat: 43.6300, lng: 1.4450 },
+            { name: "La Vache", lat: 43.6250, lng: 1.4420 },
+            { name: "Barrière de Paris", lat: 43.6200, lng: 1.4390 },
+            { name: "Minimes - Cl. Nougaro", lat: 43.6140, lng: 1.4360 },
+            { name: "Canal du Midi", lat: 43.6100, lng: 1.4340 },
+            { name: "Compans Caffarelli", lat: 43.6070, lng: 1.4350 },
+            { name: "Jeanne d'Arc", lat: 43.6086, lng: 1.4443 },
+            { name: "Jean Jaurès", lat: 43.6060, lng: 1.4490 },
+            { name: "François Verdier", lat: 43.6015, lng: 1.4516 },
+            { name: "Carmes", lat: 43.5979, lng: 1.4433 },
+            { name: "Palais de Justice", lat: 43.5940, lng: 1.4440 },
+            { name: "St Michel - M. Langer", lat: 43.5885, lng: 1.4455 },
+            { name: "Empalot", lat: 43.5835, lng: 1.4425 },
+            { name: "St Agne SNCF", lat: 43.5785, lng: 1.4475 },
+            { name: "Saouzelong", lat: 43.5745, lng: 1.4545 },
+            { name: "Rangueil", lat: 43.5695, lng: 1.4595 },
+            { name: "Faculté de Pharmacie", lat: 43.5645, lng: 1.4645 },
+            { name: "Université Paul Sabatier", lat: 43.5610, lng: 1.4680 },
+            { name: "Ramonville", lat: 43.5560, lng: 1.4750 }
+        ];
+
+        // 3. ALGORITHME DE LISSAGE (Catmull-Rom Spline)
+        // C'est cette fonction qui "rajoute les points" pour créer les courbes
+        function solveCatmullRom(data, k) {
+            if (k == null) k = 1;
+            
+            var size = data.length;
+            var last = size - 2;
+            var path = [];
+
+            for (var i = 0; i < size - 1; i++) {
+                var p0 = i == 0 ? data[0] : data[i - 1];
+                var p1 = data[i];
+                var p2 = data[i + 1];
+                var p3 = i == last ? p2 : data[i + 2];
+
+                for (var t = 0; t < 1; t += 0.05) { // 0.05 = 20 points par segment (Haute fidélité)
+                    var x = 0.5 * ((2 * p1.lat) + (-p0.lat + p2.lat) * t + (2 * p0.lat - 5 * p1.lat + 4 * p2.lat - p3.lat) * t * t + (-p0.lat + 3 * p1.lat - 3 * p2.lat + p3.lat) * t * t * t);
+                    var y = 0.5 * ((2 * p1.lng) + (-p0.lng + p2.lng) * t + (2 * p0.lng - 5 * p1.lng + 4 * p2.lng - p3.lng) * t * t + (-p0.lng + 3 * p1.lng - 3 * p2.lng + p3.lng) * t * t * t);
+                    path.push([x, y]);
+                }
+            }
+            path.push([data[size - 1].lat, data[size - 1].lng]); // Ajout du dernier point
+            return path;
+        }
+
+        // 4. GÉNÉRATION ET AFFICHAGE DES LIGNES
+        function drawMetroLine(stations, lineName) {
+            // A. Calculer les centaines de points intermédiaires
+            var smoothPath = solveCatmullRom(stations);
+
+            // B. Dessiner la ligne multicolore
+            L.polyline(smoothPath, {
+                className: 'ligne-neon', // Appelle le dégradé CSS
+                lineJoin: 'round',
+                lineCap: 'round'
+            }).addTo(map);
+
+            // C. Dessiner les stations par dessus
+            stations.forEach(s => {
+                let colorBadge = (lineName === "A") ? "#E61E37" : "#FFCD00";
+                let textColor = (lineName === "A") ? "#fff" : "#000";
+
+                L.marker([s.lat, s.lng], {
+                    icon: L.divIcon({
+                        className: 'station-icon',
+                        
+                        iconSize: [10, 10],
+                        iconAnchor: [5, 5]
+                    })
+                })
+                .addTo(map)
+                .bindPopup(`
+                    <div class="station-popup">
+                        <h3>${s.name}</h3>
+                        <span class="line-tag" style="background-color:${colorBadge}; color:${textColor}">LIGNE ${lineName}</span>
+                    </div>
+                `);
+            });
+        }
+
+        // Lancement du dessin
+        drawMetroLine(lineA_Stations, "A");
+        drawMetroLine(lineB_Stations, "B");
+
+    </script>
+</body>
+</html>
