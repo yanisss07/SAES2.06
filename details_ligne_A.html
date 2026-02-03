@@ -125,7 +125,7 @@
             <div class="card neon-border-top">
                 <h2>L'Œuvre</h2>
                 <div class="photo-frame">
-                    <div class="abstract-art-bg" id="photoPlaceholder">PHOTO</div>
+                    <div class="abstract-art-bg" id="photo1A.png">PHOTO</div>
                 </div>
                 <div class="artwork-title" id="titreOeuvre">Titre de l'œuvre</div>
                 <div id="descOeuvre">
@@ -154,229 +154,243 @@
     </footer>
 
     <script>
-        // --- BASE DE DONNÉES DE TOUTE LA LIGNE A ---
-        // Données extraites du fichier PDF fourni
-        const stationsLigneA = {
-            "basso_cambo": {
-                name: "Basso Cambo",
-                badge: "TERMINUS OUEST",
-                artist: "Beate Honsell-Weiss",
-                meta: "Constance (Allemagne), 1952",
-                title: "Sans titre",
-                desc: "<p>Installation de trois mâts surmontés de formes aux couleurs simples : un rectangle vert symbolisant l'azur, l'air, le souffle divin ; un triangle rouge qui marque l'amour spirituel et un ovale doré marquant le verbe.</p>",
-                bio: "<p>L'artiste utilise des formes géométriques pures pour créer un langage symbolique universel, invitant le voyageur à lever les yeux vers le ciel avant d'entrer dans le métro.</p>"
-            },
-            "bellefontaine": {
-                name: "Bellefontaine",
-                badge: "STATION",
-                artist: "Guy-Rachel Grataloup",
-                meta: "Nantua (Ain), 1935",
-                title: "Sans titre",
-                desc: "<p>Mise en résonance de trois éléments : une mosaïque murale aux tons chauds, un sablier en verre rappelant une fontaine, et dans la partie supérieure, un plan incliné parsemé de tessons dorés évoquant le ciel étoilé, traversé par un arc-en-ciel.</p>",
-                bio: "<p>Grataloup est un peintre et plasticien dont l'œuvre explore souvent les thèmes de la lumière, de la matière et du temps qui passe.</p>"
-            },
-            "reynerie": {
-                name: "Reynerie",
-                badge: "STATION",
-                artist: "Takis",
-                meta: "Athènes (Grèce), 1925",
-                title: "Signaux lumineux",
-                desc: "<p>À la verticale d'un puits de lumière, un mur d'eau descend jusqu'au niveau des quais. Ces fontaines constituent les fonds de scène des sculptures : des spirales colorées dont le mouvement s'anime au passage de l'eau.</p>",
-                bio: "<p>Takis (Panayiotis Vassilakis) est une figure majeure de l'art cinétique. Il intègre souvent des forces invisibles comme le magnétisme ou l'électricité dans ses sculptures.</p>"
-            },
-            "mirail_universite": {
-                name: "Mirail-Université",
-                badge: "UNIVERSITÉ",
-                artist: "Daniel Coulet",
-                meta: "Montpellier (Hérault), 1954",
-                title: "Arbre fleur & Fleur stalagmite",
-                desc: "<p>Deux sculptures monumentales sont présentes sur les quais, visibles depuis les rames. Une silhouette végétale dessinée annonce les œuvres dans chacun des deux puits de jour. Ces arbres sont l'un solaire et ouvert le matin, l'autre nocturne et fermé le soir.</p>",
-                bio: "<p>Daniel Coulet travaille la sculpture monumentale, interrogeant souvent le rapport entre la nature, le sacré et l'espace architectural.</p>"
-            },
-            "bagatelle": {
-                name: "Bagatelle",
-                badge: "STATION",
-                artist: "Dimitry Orlac",
-                meta: "Koper (Slovénie), 1956",
-                title: "Ce qui est en haut est comme ce qui est en bas",
-                desc: "<p>L'artiste investit le sol et le plafond de néons bleus et rouges au sein de la salle des billets. La lumière n'est plus ici simple élément éclairant, mais elle participe pleinement à l'identité de la station.</p>",
-                bio: "<p>Dimitry Orlac utilise la lumière artificielle comme matériau principal pour sculpter l'espace et modifier la perception sensorielle des lieux de passage.</p>"
-            },
-            "mermoz": {
-                name: "Mermoz",
-                badge: "STATION",
-                artist: "Jean-Paul Chambas",
-                meta: "Vic-Fezensac (Gers), 1947",
-                title: "Mermoz",
-                desc: "<p>L'artiste dépeint ici de multiples références à l'aéropostale et plus généralement à l'aérospatiale. Des calligraphies orientales et autres symboles du voyage et de l'ailleurs viennent compléter cette fresque composée de collages peints.</p>",
-                bio: "<p>Peintre figuratif et décorateur de théâtre, Chambas crée des œuvres narratives foisonnantes de détails historiques et littéraires.</p>"
-            },
-            "fontaine_lestang": {
-                name: "Fontaine Lestang",
-                badge: "STATION",
-                artist: "Hervé & Richard Di Rosa",
-                meta: "Sète (Hérault), 1959 et 1963",
-                title: "La Fontaine des enfants",
-                desc: "<p>L'ensemble des sculptures/jeux créé initialement sur la place devant la station a été réinventé et réinstallé à l'intérieur. À travers l'apparente naïveté des sculptures colorées, les différences et les identités des peuples du monde sont mises en valeur.</p>",
-                bio: "<p>Figures de la « Figuration Libre », les frères Di Rosa mélangent culture populaire, BD et art brut dans des créations joyeuses et accessibles.</p>"
-            },
-            "arenes": {
-                name: "Arènes",
-                badge: "PÔLE D'ÉCHANGE",
-                artist: "Olivier Debré",
-                meta: "Paris, 1920-1999",
-                title: "Traces de ferveur bleue",
-                desc: "<p>Olivier Debré utilise les murs de la station pour inscrire pleinement l'œuvre dans l'architecture. Un vaste geste pictural, allant d'une transparence légère au bleu-noir profond, accompagne le mouvement du voyageur.</p>",
-                bio: "<p>Maître de l'abstraction lyrique, Olivier Debré peint l'émotion de l'espace par de grands aplats de couleurs fluides.</p>"
-            },
-            "patte_d_oie": {
-                name: "Patte d'Oie",
-                badge: "STATION",
-                artist: "Noël Cuin",
-                meta: "Bordeaux (Gironde), 1949",
-                title: "Sans titre",
-                desc: "<p>Le volume en granit rappelant la forme d'un livre ouvert et la chasse en verre contenant des pigments (bleu outremer et fleur de soufre) sont les éléments centraux de cette œuvre qui évoque l'histoire de Toulouse.</p>",
-                bio: "<p>Noël Cuin travaille sur la mémoire des lieux et l'assemblage de matériaux symboliques pour créer des reliquaires contemporains.</p>"
-            },
-            "st_cyprien": {
-                name: "St Cyprien République",
-                badge: "RIVE GAUCHE",
-                artist: "François Morellet",
-                meta: "Cholet, 1926-2016",
-                title: "Naufrage de la géométrie",
-                desc: "<p>L'intervention artistique prend à l'extérieur la forme d'une fontaine, visible de l'intérieur à travers les verrières. La lumière filtrée par le mouvement de l'eau fait écho aux lignes géométriques déconstruites dans la station.</p>",
-                bio: "<p>Précurseur du minimalisme en France, Morellet joue avec la géométrie, le hasard et les systèmes mathématiques simples avec beaucoup d'humour.</p>"
-            },
-            "esquirol": {
-                name: "Esquirol",
-                badge: "CENTRE VILLE",
-                artist: "François Bouillon",
-                meta: "Limoges, 1944",
-                title: "Sans titre",
-                desc: "<p>Le mur de la rotonde devient un mur de caverne préhistorique au centre de laquelle une colonne conique en cuivre symbolise le feu. L'enjeu est d'ouvrir le voyageur aux problématiques de la prise de possession du lieu.</p>",
-                bio: "<p>François Bouillon s'inspire des cultures archaïques et des rituels pour créer des œuvres qui semblent intemporelles et magiques.</p>"
-            },
-            "capitole": {
-                name: "Capitole",
-                badge: "CENTRE HISTORIQUE",
-                artist: "Giulio Paolini",
-                meta: "Gênes (Italie), 1940",
-                title: "Sans titre",
-                desc: "<p>L'intervention occupe une alcôve dans la salle des billets. Des colonnes de granit s'élèvent, respectant une règle stricte : chaque cylindre a la dimension du précédent divisée par deux. L'enjeu est de créer un système où l'œuvre se projette à l'infini.</p>",
-                bio: "<p>Associé à l'Arte Povera, Paolini interroge la place du spectateur et la définition même de l'œuvre d'art à travers des mises en scène théâtrales.</p>"
-            },
-            "jean_jaures": {
-                name: "Jean Jaurès",
-                badge: "CORRESPONDANCE B",
-                artist: "Felice Varini",
-                meta: "Locarno (Suisse), 1952",
-                title: "Sans titre",
-                desc: "<p>Felice Varini travaille toujours in situ. Il crée dans l'espace des formes géométriques à une échelle monumentale qui ne sont visibles dans leur totalité que d'un seul point de vue précis, se déconstruisant dès que le voyageur bouge.</p>",
-                bio: "<p>Célèbre pour ses anamorphoses, Varini utilise l'architecture comme toile, obligeant le spectateur à chercher le point de vue idéal.</p>"
-            },
-            "marengo_sncf": {
-                name: "Marengo SNCF",
-                badge: "GARE MATABIAU",
-                artist: "Bernard Gerboud",
-                meta: "Nantua (Ain), 1949",
-                title: "Sans titre",
-                desc: "<p>L'artiste valorise ici les qualités formelles de la station. Des lignes diffuses de lumière épousent les formes du plafond. Ces segments lumineux dépassent leur fonction éclairante pour créer une tension entre le volume et le plan.</p>",
-                bio: "<p>Gerboud travaille la lumière comme un matériau de construction, soulignant l'architecture sans la décorer artificiellement.</p>"
-            },
-            "jolimont": {
-                name: "Jolimont",
-                badge: "AÉRIEN",
-                artist: "Jean-Louis Garnell",
-                meta: "Bretagne, 1954",
-                title: "Sans titre",
-                desc: "<p>L'artiste dépose dans l'espace des « doubles fenêtres », des surfaces en verre coloré portant des fragments d'images disparues, dont les formes s'approchent de celles des vitraux traditionnels.</p>",
-                bio: "<p>Photographe et plasticien, Garnell intègre l'image photographique dans des installations architecturales pérennes.</p>"
-            },
-            "roseraie": {
-                name: "Roseraie",
-                badge: "STATION",
-                artist: "Damien Cabanes",
-                meta: "Suresnes, 1959",
-                title: "Puits de couleur",
-                desc: "<p>Le voyageur peut expérimenter la perspective offerte par les « puits de couleur » installés sur les quais. Les sens sont perturbés lors du déplacement sur ces sculptures inversées : le rapport au vide et la perception des distances sont sollicités.</p>",
-                bio: "<p>Damien Cabanes est un sculpteur et peintre qui travaille la couleur comme une masse physique, jouant avec les échelles et la matière.</p>"
-            },
-            "argoulets": {
-                name: "Argoulets",
-                badge: "STATION",
-                artist: "Jacques Vieille",
-                meta: "Baden-Baden (Allemagne), 1948",
-                title: "Future Garden",
-                desc: "<p>À l'extérieur de la station, ce jardin semble flotter à 10 mètres du sol. Les essences plantées à son sommet ont été choisies pour leur croissance exubérante. C'est un lieu d'activités et d'expériences propres aux jardins : se reposer, se rafraîchir.</p>",
-                bio: "<p>Jacques Vieille intègre souvent des éléments naturels (plantes, treilles) dans des structures architecturales rigoureuses.</p>"
-            },
-            "balma_gramont": {
-                name: "Balma-Gramont",
-                badge: "TERMINUS EST",
-                artist: "Jean-Michel Othoniel",
-                meta: "Saint-Étienne, 1964",
-                title: "Le Mât des Utopistes",
-                desc: "<p>L'œuvre se veut un hommage aux utopistes en référence au Pays de Cocagne. La cocagne était la boule de feuilles de pastel écrasées. L'artiste réinterprète cette histoire locale à travers une esthétique féerique de verre et de perles.</p>",
-                bio: "<p>Connu pour son Kiosque des Noctambules à Paris, Othoniel enchante le réel avec des matériaux poétiques comme le verre de Murano.</p>"
-            }
-        };
-
-        // --- FONCTIONS DE LA PAGE ---
-
-        const select = document.getElementById('stationSelect');
-
-        // 1. Remplir le menu déroulant
-        for (const key in stationsLigneA) {
-            let option = document.createElement('option');
-            option.value = key;
-            option.textContent = stationsLigneA[key].name;
-            select.appendChild(option);
+    const stationsLigneA = {
+        "basso_cambo": {
+            name: "Basso Cambo",
+            badge: "TERMINUS OUEST",
+            image: "photo1A.png",
+            artist: "Beate Honsell-Weiss",
+            meta: "Constance (Allemagne), 1952",
+            title: "Sans titre",
+            desc: "<p>Installation de trois mâts surmontés de formes aux couleurs simples : un rectangle vert symbolisant l'azur, un triangle rouge marquant l'amour spirituel et un ovale doré marquant le verbe.</p>",
+            bio: "<p>L'artiste utilise des formes géométriques pures pour créer un langage symbolique universel.</p>"
+        },
+        "bellefontaine": {
+            name: "Bellefontaine",
+            badge: "STATION",
+            image: "photo2A.png",
+            artist: "Guy-Rachel Grataloup",
+            meta: "Nantua (Ain), 1935",
+            title: "Sans titre",
+            desc: "<p>Mise en résonance de trois éléments : une mosaïque murale aux tons chauds, un sablier en verre, et un plan incliné parsemé de tessons dorés évoquant le ciel étoilé.</p>",
+            bio: "<p>Grataloup explore souvent les thèmes de la lumière et du temps qui passe.</p>"
+        },
+        "reynerie": {
+            name: "Reynerie",
+            badge: "STATION",
+            image: "photo3A.png",
+            artist: "Takis",
+            meta: "Athènes (Grèce), 1925",
+            title: "Signaux lumineux",
+            desc: "<p>À la verticale d'un puits de lumière, un mur d'eau descend jusqu'aux quais. Ces fontaines animent des sculptures : des spirales colorées.</p>",
+            bio: "<p>Takis est une figure majeure de l'art cinétique, intégrant le magnétisme dans ses œuvres.</p>"
+        },
+        "mirail_universite": {
+            name: "Mirail-Université",
+            badge: "UNIVERSITÉ",
+            image: "photo4A.png",
+            artist: "Daniel Coulet",
+            meta: "Montpellier (Hérault), 1954",
+            title: "Arbre fleur & Fleur stalagmite",
+            desc: "<p>Deux sculptures monumentales végétales annoncent les œuvres dans les puits de jour. Ces arbres sont l'un solaire et ouvert le matin, l'autre nocturne et fermé le soir.</p>",
+            bio: "<p>Daniel Coulet interroge le rapport entre la nature, le sacré et l'espace architectural.</p>"
+        },
+        "bagatelle": {
+            name: "Bagatelle",
+            badge: "STATION",
+            image: "photo5A.png",
+            artist: "Dimitry Orlac",
+            meta: "Koper (Slovénie), 1956",
+            title: "Ce qui est en haut est comme ce qui est en bas",
+            desc: "<p>L'artiste investit le sol et le plafond de néons bleus et rouges. La lumière participe pleinement à l'identité de la station et au parcours initiatique du voyageur.</p>",
+            bio: "<p>Orlac sculpte l'espace avec la lumière artificielle pour modifier la perception sensorielle.</p>"
+        },
+        "mermoz": {
+            name: "Mermoz",
+            badge: "STATION",
+            image: "photo6A.png",
+            artist: "Jean-Paul Chambas",
+            meta: "Vic-Fezensac (Gers), 1947",
+            title: "Mermoz",
+            desc: "<p>L'artiste dépeint des références à l'aéropostale. Des calligraphies orientales et symboles du voyage complètent cette fresque composée de collages peints.</p>",
+            bio: "<p>Peintre figuratif, Chambas crée des œuvres narratives foisonnantes de détails.</p>"
+        },
+        "fontaine_lestang": {
+            name: "Fontaine Lestang",
+            badge: "STATION",
+            image: "photo7A.png",
+            artist: "Hervé & Richard Di Rosa",
+            meta: "Sète (Hérault), 1959 et 1963",
+            title: "La Fontaine des enfants",
+            desc: "<p>Des sculptures colorées, initialement jeux d'enfants, réinstallées dans la station. À travers leur apparente naïveté, les différences et identités des peuples sont mises en valeur.</p>",
+            bio: "<p>Figures de la « Figuration Libre », les frères Di Rosa mélangent culture populaire et art brut.</p>"
+        },
+        "arenes": {
+            name: "Arènes",
+            badge: "PÔLE D'ÉCHANGE",
+            image: "photo8A.png",
+            artist: "Olivier Debré",
+            meta: "Paris, 1920-1999",
+            title: "Traces de ferveur bleue",
+            desc: "<p>Un vaste geste pictural allant d'une transparence légère au bleu-noir profond accompagne le mouvement du voyageur, inscrit directement dans l'architecture.</p>",
+            bio: "<p>Maître de l'abstraction lyrique, Olivier Debré peint l'émotion de l'espace.</p>"
+        },
+        "patte_d_oie": {
+            name: "Patte d'Oie",
+            badge: "STATION",
+            image: "photo9A.png",
+            artist: "Noël Cuin",
+            meta: "Bordeaux (Gironde), 1949",
+            title: "Sans titre",
+            desc: "<p>Un volume en granit rappelant un livre ouvert et une chasse en verre contenant des pigments évoquent l'histoire de Toulouse à travers le nom de la station.</p>",
+            bio: "<p>Noël Cuin travaille sur la mémoire des lieux et l'assemblage de matériaux symboliques.</p>"
+        },
+        "st_cyprien": {
+            name: "St Cyprien République",
+            badge: "RIVE GAUCHE",
+            image: "photo10A.png",
+            artist: "François Morellet",
+            meta: "Cholet, 1926-2016",
+            title: "Naufrage de la géométrie",
+            desc: "<p>Une fontaine extérieure est visible de l'intérieur à travers des verrières. La lumière filtrée par l'eau fait écho à la géométrie de l'œuvre.</p>",
+            bio: "<p>Précurseur du minimalisme, Morellet joue avec la géométrie et les systèmes mathématiques.</p>"
+        },
+        "esquirol": {
+            name: "Esquirol",
+            badge: "CENTRE VILLE",
+            image: "photo11A.png",
+            artist: "François Bouillon",
+            meta: "Limoges, 1944",
+            title: "Sans titre",
+            desc: "<p>Le mur de la rotonde devient une caverne préhistorique avec une colonne conique en cuivre symbolisant le feu.</p>",
+            bio: "<p>François Bouillon s'inspire des cultures archaïques pour créer des œuvres intemporelles.</p>"
+        },
+        "capitole": {
+            name: "Capitole",
+            badge: "CENTRE HISTORIQUE",
+            image: "photo12A.png",
+            artist: "Giulio Paolini",
+            meta: "Gênes (Italie), 1940",
+            title: "Sans titre",
+            desc: "<p>Des colonnes de granit s'élèvent selon une règle stricte : chaque cylindre a la dimension du précédent divisée par deux, projetant l'œuvre à l'infini.</p>",
+            bio: "<p>Paolini interroge la place du spectateur et la définition de l'œuvre d'art.</p>"
+        },
+        "jean_jaures": {
+            name: "Jean Jaurès",
+            badge: "CORRESPONDANCE B",
+            image: "photo13A.png",
+            artist: "Felice Varini",
+            meta: "Locarno (Suisse), 1952",
+            title: "Sans titre",
+            desc: "<p>L'artiste crée des formes géométriques monumentales qui ne sont visibles dans leur totalité que d'un seul point de vue unique.</p>",
+            bio: "<p>Célèbre pour ses anamorphoses, Varini utilise l'architecture comme toile.</p>"
+        },
+        "marengo_sncf": {
+            name: "Marengo SNCF",
+            badge: "GARE MATABIAU",
+            image: "photo14A.png",
+            artist: "Bernard Gerboud",
+            meta: "Nantua (Ain), 1949",
+            title: "Sans titre",
+            desc: "<p>Des lignes diffuses de lumière épousent les formes du plafond, créant une tension entre le volume et le plan.</p>",
+            bio: "<p>Gerboud travaille la lumière comme un matériau de construction.</p>"
+        },
+        "jolimont": {
+            name: "Jolimont",
+            badge: "AÉRIEN",
+            image: "photo15A.png",
+            artist: "Jean-Louis Garnell",
+            meta: "Bretagne, 1954",
+            title: "Sans titre",
+            desc: "<p>L'artiste dépose des « doubles fenêtres » en verre coloré portant des fragments d'images disparues, rappelant des vitraux.</p>",
+            bio: "<p>Photographe et plasticien, Garnell intègre l'image dans des installations pérennes.</p>"
+        },
+        "roseraie": {
+            name: "Roseraie",
+            badge: "STATION",
+            image: "photo16A.png",
+            artist: "Damien Cabanes",
+            meta: "Suresnes, 1959",
+            title: "Puits de couleur",
+            desc: "<p>Le voyageur expérimente la perspective avec des « puits de couleur ». Ces sculptures inversées perturbent la perception du vide et des distances.</p>",
+            bio: "<p>Damien Cabanes travaille la couleur comme une masse physique.</p>"
+        },
+        "argoulets": {
+            name: "Argoulets",
+            badge: "STATION",
+            image: "photo17A.png",
+            artist: "Jacques Vieille",
+            meta: "Baden-Baden (Allemagne), 1948",
+            title: "Future Garden",
+            desc: "<p>À l'extérieur, un jardin semble flotter à 10 mètres du sol, avec des essences à croissance exubérante.</p>",
+            bio: "<p>Jacques Vieille intègre la nature dans des structures architecturales.</p>"
+        },
+        "balma_gramont": {
+            name: "Balma-Gramont",
+            badge: "TERMINUS EST",
+            image: "photo18A.png",
+            artist: "Jean-Michel Othoniel",
+            meta: "Saint-Étienne, 1964",
+            title: "Le Mât des Utopistes",
+            desc: "<p>Hommage aux utopistes et au Pays de Cocagne (référence au pastel). L'œuvre marque une entrée symbolique dans la ville.</p>",
+            bio: "<p>Othoniel enchante le réel avec des matériaux poétiques comme le verre.</p>"
         }
+    };
 
-        // 2. Fonction pour charger une station
-        function loadStation(key) {
-            const data = stationsLigneA[key];
-            
-            // Mise à jour des textes
-            document.getElementById('titreStation').textContent = data.name;
-            document.getElementById('positionBadge').textContent = data.badge;
-            document.getElementById('titreOeuvre').textContent = data.title;
-            document.getElementById('descOeuvre').innerHTML = data.desc;
-            
-            document.getElementById('nomArtiste').textContent = data.artist;
-            document.getElementById('metaArtiste').textContent = data.meta;
-            document.getElementById('bioArtiste').innerHTML = data.bio;
-            
-            // Mise à jour du placeholder photo
-            document.getElementById('photoPlaceholder').textContent = "ŒUVRE DE " + data.artist.toUpperCase();
+    const select = document.getElementById('stationSelect');
 
-            // Animation simple pour montrer le changement
-            const main = document.getElementById('mainContent');
-            main.style.opacity = 0;
-            main.style.transform = "translateY(10px)";
-            
-            setTimeout(() => {
-                main.style.transition = "opacity 0.5s ease, transform 0.5s ease";
-                main.style.opacity = 1;
-                main.style.transform = "translateY(0)";
-            }, 50);
-        }
+    // Remplir le menu
+    for (const key in stationsLigneA) {
+        let option = document.createElement('option');
+        option.value = key;
+        option.textContent = stationsLigneA[key].name;
+        select.appendChild(option);
+    }
 
-        // 3. Charger la première station au démarrage (Balma ou Basso Cambo)
-        // On essaye de lire l'URL pour voir si on a demandé une station précise (?station=capitole)
-        const urlParams = new URLSearchParams(window.location.search);
-        const stationParam = urlParams.get('station');
+    // Fonction de chargement
+    function loadStation(key) {
+        const data = stationsLigneA[key];
+        
+        document.getElementById('titreStation').textContent = data.name;
+        document.getElementById('positionBadge').textContent = data.badge;
+        document.getElementById('titreOeuvre').textContent = data.title;
+        document.getElementById('descOeuvre').innerHTML = data.desc;
+        
+        document.getElementById('nomArtiste').textContent = data.artist;
+        document.getElementById('metaArtiste').textContent = data.meta;
+        document.getElementById('bioArtiste').innerHTML = data.bio;
+        
+        const frame = document.querySelector('.photo-frame');
+        frame.innerHTML = `<img src="${data.image}" alt="${data.title}" 
+                             style="width:100%; height:100%; object-fit:cover;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                           <div class="abstract-art-bg" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
+                             Image non disponible<br>(${data.image})
+                           </div>`;
 
-        if(stationParam && stationsLigneA[stationParam]) {
-            select.value = stationParam;
-            loadStation(stationParam);
-        } else {
-            // Par défaut : Balma-Gramont
-            select.value = "balma_gramont";
-            loadStation("balma_gramont");
-        }
+        const main = document.getElementById('mainContent');
+        main.style.opacity = 0;
+        main.style.transform = "translateY(10px)";
+        
+        setTimeout(() => {
+            main.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+            main.style.opacity = 1;
+            main.style.transform = "translateY(0)";
+        }, 50);
+    }
 
-    </script>
+    // Init
+    const urlParams = new URLSearchParams(window.location.search);
+    const stationParam = urlParams.get('station');
+
+    if(stationParam && stationsLigneA[stationParam]) {
+        select.value = stationParam;
+        loadStation(stationParam);
+    } else {
+        select.value = "balma_gramont";
+        loadStation("balma_gramont");
+    }
+</script>
 
 </body>
 </html>
