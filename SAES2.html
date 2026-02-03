@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Métro Toulouse - Tracé Réaliste</title>
+    <title>Métro Toulouse - Carte Interactive</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -12,86 +12,68 @@
         body { margin: 0; padding: 0; background-color: #202124; }
         #map { height: 100vh; width: 100%; }
         
-        /* --- STYLE DES POPUPS --- */
-        .leaflet-popup-content-wrapper {
-            background-color: #282a2d;
+        /* --- STYLE DES INFOS-BULLES (TOOLTIPS) --- */
+        .leaflet-tooltip.custom-art-tooltip {
+            background-color: rgba(40, 42, 45, 0.95);
             color: #e8eaed;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
             border: 1px solid #3c4043;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+            font-family: 'Roboto', sans-serif;
             padding: 0;
+            white-space: normal;
+            width: 280px;
         }
-        .leaflet-popup-tip { background-color: #282a2d; border: 1px solid #3c4043; border-top: none; border-left: none; }
-        .leaflet-popup-content { margin: 12px 16px; font-family: 'Roboto', sans-serif; }
         
-        .station-popup h3 {
-            margin: 0 0 5px 0; font-size: 16px; font-weight: 500; color: #fff;
+        .leaflet-tooltip-top:before { border-top-color: rgba(40, 42, 45, 0.95); }
+
+        .art-content { padding: 15px; }
+        
+        .station-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #5f6368; padding-bottom: 8px; margin-bottom: 8px;
         }
+
+        .station-header h3 {
+            margin: 0; font-size: 16px; font-weight: 700; color: #fff; text-transform: uppercase;
+        }
+
         .line-tag {
-            display: inline-block; padding: 2px 8px; border-radius: 4px;
-            font-size: 11px; font-weight: 700; margin-top: 4px; letter-spacing: 0.5px;
+            display: inline-block; padding: 2px 6px; border-radius: 4px;
+            font-size: 10px; font-weight: 900; color: #000;
         }
 
-        /* --- STYLE DU TRACÉ (DÉGRADÉ) --- */
+        .art-info h4 { margin: 0 0 4px 0; color: #8ab4f8; font-size: 14px; font-weight: 500; }
+        .art-info em { display: block; font-size: 12px; color: #bdc1c6; margin-bottom: 6px; font-style: italic; }
+        .art-desc { font-size: 12px; line-height: 1.4; color: #e8eaed; margin: 0; }
+        
+        /* Indication de clic */
+        .click-hint {
+            display: block; margin-top: 10px; font-size: 11px; color: #e37400; 
+            font-weight: bold; text-align: right; letter-spacing: 0.5px;
+        }
 
-        /* Style par défaut du point */
+        /* --- STYLE DES ICONS --- */
         .station-icon {
-            background: #fff; 
-            width: 50px; 
-            height: 80px; 
-            border-radius: 50%; 
-            box-shadow: 0 0 8px #fff;
-            transform-origin: center center;
+            background: #fff; width: 50px; height: 80px; border-radius: 50%; 
+            box-shadow: 0 0 8px #fff; transform-origin: center center;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-          
+            cursor: pointer;
         }
 
-        /* Style au survol (Hover) */
         .station-icon:hover {
-            /* On utilise scale pour grossir sans perdre le centrage */
-                transform: scale(30);
-            
-            /* Effet Néon intense avec box-shadow (plus propre que filter pour un cercle) */
-             filter:
-
-                drop-shadow(0 0 4px rgba(255, 255, 255, 1))
-
-                drop-shadow(0 0 15px rgba(255, 165, 0, 1))
-
-                drop-shadow(0 0 40px rgba(255, 69, 0, 0.8));
-
-            z-index: 1000;
-            
+            transform: scale(1.6);
+            background: radial-gradient(circle, #fff 20%, #ffeb3b 100%);
+            box-shadow: 0 0 25px #ffeb3b;
+            z-index: 1000 !important;
         }
-      /* --- STYLE DU TRACÉ (DÉGRADÉ NÉON) --- */
+
+        /* --- STYLE LIGNE NÉON --- */
         .ligne-neon {
-            stroke: url(#gradientToulouse) !important; /* Utilise le SVG défini en bas */
-            stroke-width: 6px;
-            stroke-opacity: 0.8; /* Opacité à 1 pour que la lumière soit vive */
-            stroke-linecap: round; /* Arrondit les bouts pour faire "tube" */
-            fill: none;
-            
-            /* L'EFFET NÉON : On empile 3 ombres portées */
-            filter: 
-                /* 1. Petit halo blanc intense (le coeur du néon) */
-                drop-shadow(0 0 2px rgba(255, 255, 255, 0.8))
-                /* 2. Halo moyen (Orange/Or pour réchauffer) */
-                drop-shadow(0 0 8px rgba(255, 165, 0, 0.8))
-                /* 3. Grand halo diffus (pour l'ambiance) */
-                drop-shadow(0 0 20px rgba(255, 69, 0, 0.5));
-            
+            stroke: url(#gradientToulouse) !important;
+            stroke-width: 6px; stroke-opacity: 0.8; stroke-linecap: round; fill: none;
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 8px rgba(255, 165, 0, 0.8)) drop-shadow(0 0 20px rgba(255, 69, 0, 0.5));
             transition: all 0.3s ease;
-        }
-
-        .ligne-neon:hover {
-            size: 200;
-            
-            /* Au survol, on intensifie la lumière */
-            filter: 
-                drop-shadow(0 0 4px rgba(255, 255, 255, 1))
-                drop-shadow(0 0 15px rgba(255, 165, 0, 1))
-                drop-shadow(0 0 40px rgba(255, 69, 0, 0.8));
-            z-index: 1000;
         }
     </style>
 </head>
@@ -114,125 +96,192 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // 1. Initialisation de la carte (Mode sombre)
-        var map = L.map('map', { zoomControl: false }).setView([43.6045, 1.444], 13);
+        // 1. Initialisation de la carte
+        var map = L.map('map', { zoomControl: false }).setView([43.6000, 1.444], 13);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap &copy; CARTO',
-            subdomains: 'abcd',
-            maxZoom: 20
+            subdomains: 'abcd', maxZoom: 20
         }).addTo(map);
 
-        // 2. DONNÉES EXACTES DES STATIONS (Ordonnées pour le tracé)
-        // Sources coordonnées : Open Data Toulouse / Wikipédia
+        // --- 2. DONNÉES DE L'ART (RESUMÉS POUR TOOLTIPS) ---
+        // Utilisées pour l'aperçu au survol. [cite_start]Données issues du document PDF source [cite: 1-456]
+        const artData = {
+            // LIGNE A
+            "Basso Cambo": { artist: "Beate Honsell-Weiss", title: "Sans titre", desc: "Trois mâts symbolisant l'azur, l'air et le verbe." },
+            "Bellefontaine": { artist: "Guy-Rachel Grataloup", title: "Sans titre", desc: "Mosaïque murale et sablier évoquant le ciel étoilé." },
+            "Reynerie": { artist: "Takis", title: "Signaux lumineux", desc: "Sculptures et spirales colorées animées par l'eau." },
+            "Mirail-Université": { artist: "Daniel Coulet", title: "Arbre fleur", desc: "Sculptures végétales monumentales dans les puits de jour." },
+            "Bagatelle": { artist: "Dimitry Orlac", title: "Lumière et espace", desc: "Jeu de néons bleus et rouges au plafond." },
+            "Mermoz": { artist: "Jean-Paul Chambas", title: "Mermoz", desc: "Fresque évoquant l'aéropostale." },
+            "Fontaine Lestang": { artist: "Hervé & Richard Di Rosa", title: "La fontaine des enfants", desc: "Sculptures colorées et ludiques." },
+            "Arènes": { artist: "Olivier Debré", title: "Traces de ferveur bleue", desc: "Vaste geste pictural bleu-noir inscrit dans l'architecture." },
+            "Patte d'Oie": { artist: "Noël Cuin", title: "Sans titre", desc: "Volume en granit et chasse en verre." },
+            "St Cyprien République": { artist: "François Morellet", title: "Naufrage de la géométrie", desc: "Jeu de lumière et d'eau." },
+            "Esquirol": { artist: "François Bouillon", title: "Sans titre", desc: "Pilier conique évoquant un feu primitif." },
+            "Capitole": { artist: "Giulio Paolini", title: "Sans titre", desc: "Colonnes de granit en superposition mathématique." },
+            "Jean Jaurès": { artist: "Felice Varini", title: "Anamorphose", desc: "Formes géométriques visibles d'un point unique." },
+            "Marengo SNCF": { artist: "Bernard Gerboud", title: "Sans titre", desc: "Lignes diffuses de lumière au plafond." },
+            "Jolimont": { artist: "Jean-Louis Garnell", title: "Sans titre", desc: "Fragments d'images sur verre coloré." },
+            "Roseraie": { artist: "Damien Cabanes", title: "Puits de couleur", desc: "Sculptures inversées jouant avec la perspective." },
+            "Argoulets": { artist: "Jacques Vieille", title: "Future Garden", desc: "Un jardin suspendu flottant." },
+            "Balma-Gramont": { artist: "Jean-Michel Othoniel", title: "Le mât des utopistes", desc: "Hommage au pastel et à l'histoire locale." },
+
+            // LIGNE B
+            "Borderouge": { artist: "Alain Josseau", title: "Espace-Temps", desc: "Représentation graphique et lumineuse du son." },
+            "Trois Cocus": { artist: "Pierrick Sorin", title: "Portraits", desc: "Installation vidéo interactive avec les voyageurs." },
+            "La Vache": { artist: "Corinne Sentou", title: "Sans titre", desc: "Miroir arrondi scintillant de lumière colorée." },
+            "Barrière de Paris": { artist: "Bernar Venet", title: "Arcs majeurs", desc: "Arcs monumentaux en acier Corten." },
+            "Minimes - Cl. Nougaro": { artist: "O. Mosset & D. Aspe", title: "Monochrome", desc: "Jeu de couleurs inversées murs/plafond." },
+            "Canal du Midi": { artist: "Daniel Pommereulle", title: "Le Bronze et l'Eau", desc: "Sculptures mêlant verre, cuivre et marbre." },
+            "Compans Caffarelli": { artist: "Ange Leccia", title: "Sans titre", desc: "Panneaux de lumière dynamique." },
+            "Jeanne d'Arc": { artist: "Sophie Calle", title: "Transport Amoureux", desc: "Écrans diffusant des messages personnels." },
+            "François Verdier": { artist: "Patrick Corillon", title: "Le Mallandier", desc: "Arbre imaginaire gravé et raconté." },
+            "Carmes": { artist: "Jean-Paul Marcheschi", title: "La Voie Lactée", desc: "Écriture de lumière au plafond." },
+            "Palais de Justice": { artist: "Le Groupe Irwin", title: "Liberté, Égalité...", desc: "Tapis volants et enseignes lumineuses." },
+            "St Michel - M. Langer": { artist: "Michel Verjux", title: "Lumière projetée", desc: "Faisceaux lumineux jouant avec l'architecture." },
+            "Empalot": { artist: "Daniel Dezeuze", title: "Échelle ADN", desc: "Échelles de fibres optiques colorées." },
+            "St Agne SNCF": { artist: "Nicolas Hérubel", title: "Un seul ticket...", desc: "Objets d'élévation comme un cerf-volant." },
+            "Saouzelong": { artist: "Monique Frydman", title: "Sans titre", desc: "Vitrail rétroéclairé évoquant des saules." },
+            "Rangueil": { artist: "Caillol & Bartolani", title: "Vent capricieux", desc: "Sacs plastiques colorés figés par le vent." },
+            "Faculté de Pharmacie": { artist: "Didier Mencoboni", title: "Sans titre", desc: "Boules de verre colorées sur paroi." },
+            "Université Paul Sabatier": { artist: "Roman Opalka", title: "1-Infinite", desc: "Pyramide de nombres et suite infinie." },
+            "Ramonville": { artist: "Jean-Pierre Bertrand", title: "Code couleur", desc: "Correspondance cabalistique lettres/couleurs." }
+        };
+
+        // --- 3. DONNÉES GÉOGRAPHIQUES (AVEC IDs POUR LA NAVIGATION) ---
+        // L'attribut 'id' permet de faire le lien avec les pages HTML de détail.
         
         const lineA_Stations = [
-            { name: "Basso Cambo", lat: 43.5714, lng: 1.3936 },
-            { name: "Bellefontaine", lat: 43.5750, lng: 1.3990 },
-            { name: "Reynerie", lat: 43.5790, lng: 1.4050 },
-            { name: "Mirail-Université", lat: 43.5820, lng: 1.4090 },
-            { name: "Bagatelle", lat: 43.5850, lng: 1.4130 },
-            { name: "Mermoz", lat: 43.5880, lng: 1.4150 },
-            { name: "Fontaine Lestang", lat: 43.5910, lng: 1.4160 },
-            { name: "Arènes", lat: 43.5936, lng: 1.4173 },
-            { name: "Patte d'Oie", lat: 43.5960, lng: 1.4250 },
-            { name: "St Cyprien République", lat: 43.5968, lng: 1.4317 },
-            { name: "Esquirol", lat: 43.6006, lng: 1.4439 },
-            { name: "Capitole", lat: 43.6043, lng: 1.4448 },
-            { name: "Jean Jaurès", lat: 43.6060, lng: 1.4490 },
-            { name: "Marengo SNCF", lat: 43.6090, lng: 1.4550 },
-            { name: "Jolimont", lat: 43.6120, lng: 1.4600 },
-            { name: "Roseraie", lat: 43.6160, lng: 1.4660 },
-            { name: "Argoulets", lat: 43.6210, lng: 1.4720 },
-            { name: "Balma-Gramont", lat: 43.6260, lng: 1.4820 }
+            { name: "Basso Cambo", id: "basso_cambo", lat: 43.5714, lng: 1.3936 },
+            { name: "Bellefontaine", id: "bellefontaine", lat: 43.5750, lng: 1.3990 },
+            { name: "Reynerie", id: "reynerie", lat: 43.5790, lng: 1.4050 },
+            { name: "Mirail-Université", id: "mirail_universite", lat: 43.5820, lng: 1.4090 },
+            { name: "Bagatelle", id: "bagatelle", lat: 43.5850, lng: 1.4130 },
+            { name: "Mermoz", id: "mermoz", lat: 43.5880, lng: 1.4150 },
+            { name: "Fontaine Lestang", id: "fontaine_lestang", lat: 43.5910, lng: 1.4160 },
+            { name: "Arènes", id: "arenes", lat: 43.5936, lng: 1.4173 },
+            { name: "Patte d'Oie", id: "patte_d_oie", lat: 43.5960, lng: 1.4250 },
+            { name: "St Cyprien République", id: "st_cyprien", lat: 43.5968, lng: 1.4317 },
+            { name: "Esquirol", id: "esquirol", lat: 43.6006, lng: 1.4439 },
+            { name: "Capitole", id: "capitole", lat: 43.6043, lng: 1.4448 },
+            { name: "Jean Jaurès", id: "jean_jaures", lat: 43.6060, lng: 1.4490 }, // Correspondance
+            { name: "Marengo SNCF", id: "marengo_sncf", lat: 43.6090, lng: 1.4550 },
+            { name: "Jolimont", id: "jolimont", lat: 43.6120, lng: 1.4600 },
+            { name: "Roseraie", id: "roseraie", lat: 43.6160, lng: 1.4660 },
+            { name: "Argoulets", id: "argoulets", lat: 43.6210, lng: 1.4720 },
+            { name: "Balma-Gramont", id: "balma_gramont", lat: 43.6260, lng: 1.4820 }
         ];
 
         const lineB_Stations = [
-            { name: "Borderouge", lat: 43.6366, lng: 1.4485 },
-            { name: "Trois Cocus", lat: 43.6300, lng: 1.4450 },
-            { name: "La Vache", lat: 43.6250, lng: 1.4420 },
-            { name: "Barrière de Paris", lat: 43.6200, lng: 1.4390 },
-            { name: "Minimes - Cl. Nougaro", lat: 43.6140, lng: 1.4360 },
-            { name: "Canal du Midi", lat: 43.6100, lng: 1.4340 },
-            { name: "Compans Caffarelli", lat: 43.6070, lng: 1.4350 },
-            { name: "Jeanne d'Arc", lat: 43.6086, lng: 1.4443 },
-            { name: "Jean Jaurès", lat: 43.6060, lng: 1.4490 },
-            { name: "François Verdier", lat: 43.6015, lng: 1.4516 },
-            { name: "Carmes", lat: 43.5979, lng: 1.4433 },
-            { name: "Palais de Justice", lat: 43.5940, lng: 1.4440 },
-            { name: "St Michel - M. Langer", lat: 43.5885, lng: 1.4455 },
-            { name: "Empalot", lat: 43.5835, lng: 1.4425 },
-            { name: "St Agne SNCF", lat: 43.5785, lng: 1.4475 },
-            { name: "Saouzelong", lat: 43.5745, lng: 1.4545 },
-            { name: "Rangueil", lat: 43.5695, lng: 1.4595 },
-            { name: "Faculté de Pharmacie", lat: 43.5645, lng: 1.4645 },
-            { name: "Université Paul Sabatier", lat: 43.5610, lng: 1.4680 },
-            { name: "Ramonville", lat: 43.5560, lng: 1.4750 }
+            { name: "Borderouge", id: "borderouge", lat: 43.6366, lng: 1.4485 },
+            { name: "Trois Cocus", id: "trois_cocus", lat: 43.6300, lng: 1.4450 },
+            { name: "La Vache", id: "la_vache", lat: 43.6250, lng: 1.4420 },
+            { name: "Barrière de Paris", id: "barriere_de_paris", lat: 43.6200, lng: 1.4390 },
+            { name: "Minimes - Cl. Nougaro", id: "minimes", lat: 43.6140, lng: 1.4360 },
+            { name: "Canal du Midi", id: "canal_du_midi", lat: 43.6100, lng: 1.4340 },
+            { name: "Compans Caffarelli", id: "compans_caffarelli", lat: 43.6070, lng: 1.4350 },
+            { name: "Jeanne d'Arc", id: "jeanne_d_arc", lat: 43.6086, lng: 1.4443 },
+            { name: "Jean Jaurès", id: "jean_jaures", lat: 43.6060, lng: 1.4490 }, // Correspondance
+            { name: "François Verdier", id: "francois_verdier", lat: 43.6015, lng: 1.4516 },
+            { name: "Carmes", id: "carmes", lat: 43.5979, lng: 1.4433 },
+            { name: "Palais de Justice", id: "palais_de_justice", lat: 43.5940, lng: 1.4440 },
+            { name: "St Michel - M. Langer", id: "st_michel", lat: 43.5885, lng: 1.4455 },
+            { name: "Empalot", id: "empalot", lat: 43.5835, lng: 1.4425 },
+            { name: "St Agne SNCF", id: "st_agne", lat: 43.5785, lng: 1.4475 },
+            { name: "Saouzelong", id: "saouzelong", lat: 43.5745, lng: 1.4545 },
+            { name: "Rangueil", id: "rangueil", lat: 43.5695, lng: 1.4595 },
+            { name: "Faculté de Pharmacie", id: "fac_pharmacie", lat: 43.5645, lng: 1.4645 },
+            { name: "Université Paul Sabatier", id: "universite_paul_sabatier", lat: 43.5610, lng: 1.4680 },
+            { name: "Ramonville", id: "ramonville", lat: 43.5560, lng: 1.4750 }
         ];
 
-        // 3. ALGORITHME DE LISSAGE (Catmull-Rom Spline)
-        // C'est cette fonction qui "rajoute les points" pour créer les courbes
+        // 4. LISSAGE DES LIGNES (Spline)
         function solveCatmullRom(data, k) {
             if (k == null) k = 1;
-            
             var size = data.length;
             var last = size - 2;
             var path = [];
-
             for (var i = 0; i < size - 1; i++) {
                 var p0 = i == 0 ? data[0] : data[i - 1];
                 var p1 = data[i];
                 var p2 = data[i + 1];
                 var p3 = i == last ? p2 : data[i + 2];
-
-                for (var t = 0; t < 1; t += 0.05) { // 0.05 = 20 points par segment (Haute fidélité)
+                for (var t = 0; t < 1; t += 0.05) {
                     var x = 0.5 * ((2 * p1.lat) + (-p0.lat + p2.lat) * t + (2 * p0.lat - 5 * p1.lat + 4 * p2.lat - p3.lat) * t * t + (-p0.lat + 3 * p1.lat - 3 * p2.lat + p3.lat) * t * t * t);
                     var y = 0.5 * ((2 * p1.lng) + (-p0.lng + p2.lng) * t + (2 * p0.lng - 5 * p1.lng + 4 * p2.lng - p3.lng) * t * t + (-p0.lng + 3 * p1.lng - 3 * p2.lng + p3.lng) * t * t * t);
                     path.push([x, y]);
                 }
             }
-            path.push([data[size - 1].lat, data[size - 1].lng]); // Ajout du dernier point
+            path.push([data[size - 1].lat, data[size - 1].lng]);
             return path;
         }
 
-        // 4. GÉNÉRATION ET AFFICHAGE DES LIGNES
-        function drawMetroLine(stations, lineName) {
-            // A. Calculer les centaines de points intermédiaires
+        // 5. AFFICHAGE ET INTERACTION
+        // targetFile = Nom du fichier HTML vers lequel rediriger (ex: 'details_ligne_A.html')
+        function drawMetroLine(stations, lineName, targetFile) {
             var smoothPath = solveCatmullRom(stations);
 
-            // B. Dessiner la ligne multicolore
             L.polyline(smoothPath, {
-                className: 'ligne-neon', // Appelle le dégradé CSS
-                lineJoin: 'round',
-                lineCap: 'round'
+                className: 'ligne-neon',
+                lineJoin: 'round', lineCap: 'round'
             }).addTo(map);
 
-            // C. Dessiner les stations par dessus
             stations.forEach(s => {
                 let colorBadge = (lineName === "A") ? "#E61E37" : "#FFCD00";
-                let textColor = (lineName === "A") ? "#fff" : "#000";
+                
+                // Récupération des données pour le tooltip
+                let art = artData[s.name];
+                let artContent = "";
+                let clickHint = `<span class="click-hint">CLIQUEZ POUR VOIR PLUS &rarr;</span>`;
 
-                L.marker([s.lat, s.lng], {
+                if (art) {
+                    artContent = `
+                        <div class="art-info">
+                            <h4>${art.artist}</h4>
+                            <em>${art.title}</em>
+                            <p class="art-desc">${art.desc}</p>
+                        </div>
+                    `;
+                }
+
+                let tooltipContent = `
+                    <div class="art-content">
+                        <div class="station-header">
+                            <h3>${s.name}</h3>
+                            <span class="line-tag" style="background-color:${colorBadge};">LIGNE ${lineName}</span>
+                        </div>
+                        ${artContent}
+                        ${clickHint}
+                    </div>
+                `;
+
+                let marker = L.marker([s.lat, s.lng], {
                     icon: L.divIcon({
                         className: 'station-icon',
-                        
-                        iconSize: [10, 10],
-                        iconAnchor: [5, 5]
+                        iconSize: [12, 12],
+                        iconAnchor: [6, 6]
                     })
-                })
-                .addTo(map)
-                .bindPopup(`
-                    <div class="station-popup">
-                        <h3>${s.name}</h3>
-                        <span class="line-tag" style="background-color:${colorBadge}; color:${textColor}">LIGNE ${lineName}</span>
-                    </div>
-                `);
+                }).addTo(map);
+
+                marker.bindTooltip(tooltipContent, {
+                    direction: 'top', offset: [0, -10], opacity: 1,
+                    className: 'custom-art-tooltip', sticky: true
+                });
+
+                // INTERACTION : CLIC
+                marker.on('click', function() {
+                    // Redirection vers le fichier spécifique avec le paramètre de station
+                    if (s.id) {
+                        window.location.href = `${targetFile}?station=${s.id}`;
+                    }
+                });
             });
         }
 
-        // Lancement du dessin
-        drawMetroLine(lineA_Stations, "A");
-        drawMetroLine(lineB_Stations, "B");
+        // --- DESSIN DES LIGNES AVEC LEUR DESTINATION ---
+        drawMetroLine(lineA_Stations, "A", "details_ligne_A.html");
+        drawMetroLine(lineB_Stations, "B", "details_ligne_B.html");
 
     </script>
 </body>
