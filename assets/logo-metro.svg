@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title>Emblem Metro Toulouse</title>
+  <defs>
+    <linearGradient id="bg" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#ff4466"/>
+      <stop offset="100%" stop-color="#ff9d3f"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="60" fill="url(#bg)"/>
+  <path d="M38 88V40h18.4L64 56l7.6-16H90v48h-12V54h-0.3L64 88 50.3 54H50v34z" fill="#0c0f24"/>
+</svg>

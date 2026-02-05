@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas Métro Art Toulouse</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.3.2/dist/maplibre-gl.css">
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+    <div id="loader" class="loader">
+        <div class="loader__logos">
+            <img src="./assets/logo-metro.svg" alt="Logo Métro" draggable="false">
+            <img src="./assets/logo-project.svg" alt="Logo Atlas" draggable="false">
+        </div>
+        <p class="loader__status" data-status>Initialisation...</p>
+        <div class="loader__progress">
+            <span data-progress></span>
+        </div>
+    </div>
+
+    <main class="experience">
+        <section id="globe-stage" class="globe-stage" aria-label="Transition 3D Terre vers Toulouse">
+            <canvas id="globe-canvas"></canvas>
+            <div class="globe-stage__caption">
+                <h1>Atlas Métro Art Toulouse</h1>
+                <p>Un voyage immersif vers les œuvres des stations A et B.</p>
+            </div>
+        </section>
+
+        <section id="map-stage" class="map-stage" aria-label="Carte interactive des lignes A et B">
+            <div id="map" class="map-stage__map" role="application" aria-live="polite"></div>
+
+            <aside id="station-panel" class="station-panel" aria-live="assertive">
+                <div class="station-panel__header">
+                    <span class="station-panel__line" data-station-line></span>
+                    <h2 class="station-panel__title" data-station-name>Station</h2>
+                </div>
+                <div class="station-panel__body">
+                    <p class="station-panel__artwork" data-station-artwork>Titre de l'œuvre</p>
+                    <p class="station-panel__artist" data-station-artist>Artiste</p>
+                    <p class="station-panel__description" data-station-description>Description de l'œuvre.</p>
+                </div>
+                <div class="station-panel__footer">
+                    <button type="button" class="station-panel__cta" data-open-station disabled>
+                        Bientôt : explorer la station
+                    </button>
+                </div>
+            </aside>
+
+            <div id="map-hint" class="map-hint" data-hint>
+                <div class="map-hint__cursor"></div>
+                <p>Cliquez sur une station pour continuer</p>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>

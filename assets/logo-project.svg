@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title>Atlas Metro Art</title>
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#5aa4ff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#101430" stop-opacity="0.4"/>
+    </radialGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="28" fill="url(#halo)" stroke="#6b81ff" stroke-width="3"/>
+  <path d="M64 32a32 32 0 1 1-32 32" fill="none" stroke="#f4f6ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 14"/>
+  <circle cx="64" cy="64" r="18" fill="#0d1228" stroke="#8fd0ff" stroke-width="4"/>
+  <path d="M64 50l10 14-10 14-10-14z" fill="#8fd0ff"/>
+</svg>
