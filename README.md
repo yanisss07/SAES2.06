@@ -5,17 +5,18 @@ Plateforme web immersive consacrée aux œuvres d'art présentes sur les lignes 
 ## Vision de l'expérience
 - **Chargement scénarisé** : écran de loading plein écran avec les logos du projet (dépôt d'actifs dans `./assets/`) et une barre de progression prête à être branchée sur un futur préchargement de médias.
 - **Transition orbitale** : scène canvas personnalisée qui simule une planète en rotation, halo lumineux et survol du point toulousain avant de basculer sur la carte.
-- **Carte vivante** : carte vectorielle gérée maison via SVG, stylée en sombre, tracés des lignes A et B colorés, cercles cliquables pour chaque station.
+- **Carte vivante** : carte Leaflet sombre avec tracés néon des lignes A et B, stations cliquables renvoyant vers les pages de détail.
 - **Guidage utilisateur** : après 5 s sans interaction sur la carte, un hint animé « Cliquez sur une station » apparaît côté bas-gauche. Toute interaction ou sélection le masque.
 - **Fiches stations (phase suivante)** : un panneau latéral affiche déjà titre, artiste et description succincte de l'œuvre ; le bouton « Explorer la station » est présent mais désactivé en attendant la production des pages détaillées (vidéos, crédits étendus, etc.).
 
 ## Structure du dépôt
 - `index.html` : point d'entrée unique orchestrant loader, scène 3D et carte.
 - `styles/main.css` : feuille de style principale (loader, transitions, panneau station, hint).
+- `details_ligne_A.html`, `details_ligne_B.html` : fiches station existantes (WIP) ouvertes depuis la carte.
 - `src/` :
   - `main.js` : coordination de l'expérience (chargement, enchaînement des étapes, gestion des hints).
   - `globe.js` : scène Three.js locale (globe texturé, halo, zoom progressif vers Toulouse).
-  - `map.js` : moteur SVG pour dessiner lignes/stations à partir des coordonnées.
+  - `map.js` : intégration Leaflet (polylignes Catmull-Rom, tooltips riches, navigation vers les fiches stations).
   - `data/stations.js` : métadonnées des stations (coordonnées, artistes, descriptions).
   - `ui.js` : composants interface (hint animé, panneau station).
   - `loader.js` : gestionnaire de l'overlay de chargement.
@@ -26,8 +27,8 @@ Plateforme web immersive consacrée aux œuvres d'art présentes sur les lignes 
 ## Fondations techniques
 - **JavaScript natif** (`type="module"`) pour orchestrer loader, globe et carte sans bundler.
 - **Three.js** (copie locale en `vendor/three.module.js`) pour la scène 3D orbitale.
+- **Leaflet 1.9.4** (fichiers locaux dans `vendor/`) pour la carte interactive et les tooltips stations.
 - **Texturing** : image nocturne de la Terre (`assets/earth-night.jpg`), halo atmosphérique et points stars générés à la volée.
-- **SVG dynamique** pour la carte stylisée, calcul des tracés et points interactifs.
 - **Stylisme** : approche glassmorphique légère + animations CSS, palette sombre inspirée des tunnels et néons.
 
 ## Lancer l'expérience en local

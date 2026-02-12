@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail de l'Œuvre - Ligne B</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { 
+            margin: 0; padding: 0; background-color: #202124; color: #e8eaed; 
+            font-family: 'Roboto', sans-serif; min-height: 100vh; display: flex; flex-direction: column;
+        }
+
+        .neon-gradient-text {
+            background: linear-gradient(90deg, #a50e0e, #e37400, #cfba3f, #07b2ef, #174ea6);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 5px rgba(227, 116, 0, 0.5));
+        }
+
+        .neon-border-top { position: relative; }
+        .neon-border-top::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #a50e0e, #e37400, #cfba3f, #07b2ef, #174ea6);
+            box-shadow: 0 0 15px rgba(255, 165, 0, 0.6); border-radius: 4px 4px 0 0;
+        }
+
+        header {
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #3c4043; background-color: rgba(32, 33, 36, 0.95);
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(5px);
+        }
+
+        .back-btn {
+            text-decoration: none; color: #9aa0a6; font-weight: 500; font-size: 14px;
+            display: flex; align-items: center; transition: color 0.3s;
+        }
+        .back-btn:hover { color: #fff; text-shadow: 0 0 8px #fff; }
+        .back-btn svg { margin-right: 8px; fill: currentColor; }
+
+        .station-selector {
+            background: #303134; color: #fff; border: 1px solid #5f6368;
+            padding: 8px 15px; border-radius: 8px; font-family: 'Roboto', sans-serif;
+            font-size: 14px; cursor: pointer; margin-left: 20px;
+        }
+
+        main {
+            flex: 1; max-width: 1000px; margin: 40px auto; padding: 0 20px; width: 100%;
+            box-sizing: border-box; animation: fadeIn 0.8s ease-out;
+        }
+
+        .header-oeuvre { text-align: center; margin-bottom: 50px; }
+        h1.station-name { font-size: 48px; font-weight: 900; margin: 0; letter-spacing: 1px; text-transform: uppercase; }
+        
+        .badges { margin-top: 15px; display: flex; justify-content: center; gap: 15px; }
+        
+        .line-badge {
+            padding: 6px 16px; border-radius: 50px; font-weight: 900; font-size: 14px;
+            text-transform: uppercase; 
+            background-color: #FFCD00; color: #000; box-shadow: 0 0 15px rgba(255, 205, 0, 0.4);
+        }
+
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+
+        .card {
+            background-color: #282a2d; border: 1px solid #3c4043; border-radius: 16px;
+            padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: transform 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); }
+
+        h2 {
+            font-size: 24px; margin-top: 0; margin-bottom: 20px; font-weight: 300; color: #fff;
+            border-left: 4px solid #8ab4f8; padding-left: 15px;
+        }
+
+        .artwork-title { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .artist-name { font-size: 28px; font-weight: 500; color: #8ab4f8; margin-bottom: 5px; }
+        .artist-meta { font-style: italic; color: #9aa0a6; font-size: 14px; margin-bottom: 20px; display: block; }
+        
+        p { line-height: 1.8; color: #bdc1c6; font-size: 16px; margin-bottom: 20px; text-align: justify; }
+
+        .photo-frame {
+            width: 100%; height: 300px; background-color: #000; border-radius: 12px;
+            overflow: hidden; position: relative; margin-bottom: 25px; border: 1px solid #3c4043;
+        }
+        .abstract-art-bg {
+            width: 100%; height: 100%; background: radial-gradient(circle at 70% 30%, #444, #202124);
+            display: flex; align-items: center; justify-content: center; color: #5f6368; font-weight: 700; letter-spacing: 2px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .content-grid { grid-template-columns: 1fr; } h1.station-name { font-size: 32px; } }
+        footer { text-align: center; padding: 30px; color: #5f6368; font-size: 12px; margin-top: auto; border-top: 1px solid #3c4043; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="display:flex; align-items:center;">
+            <a href="SAES2.html" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
+                CARTE
+            </a>
+            <select id="stationSelect" class="station-selector" onchange="loadStation(this.value)"></select>
+        </div>
+        <div style="font-weight: 900; letter-spacing: 1px;">LIGNE B - ART & MÉTRO</div>
+    </header>
+
+    <main id="mainContent">
+        <div class="header-oeuvre">
+            <h1 class="station-name neon-gradient-text" id="titreStation">STATION</h1>
+            <div class="badges">
+                <span class="line-badge">Ligne B</span>
+                <span class="line-badge" style="background: #3c4043; color: #fff; box-shadow:none;" id="positionBadge">MÉTRO</span>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card neon-border-top">
+                <h2>L'Œuvre</h2>
+                <div class="photo-frame">
+                    <div class="abstract-art-bg" id="photoPlaceholder">PHOTO</div>
+                </div>
+                <div class="artwork-title" id="titreOeuvre">Titre de l'œuvre</div>
+                <div id="descOeuvre"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="artist-title">L'Artiste</h2>
+                <div class="artist-name" id="nomArtiste">Nom de l'artiste</div>
+                <span class="artist-meta" id="metaArtiste">Origine et date</span>
+                <div id="bioArtiste"></div>
+                
+                <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #3c4043;">
+                    <h3 style="color: #fff; font-size: 16px; margin-bottom: 10px;">Le saviez-vous ?</h3>
+                    <p style="font-size: 14px; color: #9aa0a6;">
+                        La Ligne B a été inaugurée en 2007. Les œuvres d'art y sont intégrées dès la conception architecturale des stations, créant une symbiose unique entre l'art et le transport.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Tisséo Collectivités - Parcours Culturel | Données extraites du dépliant officiel
+    </footer>
+
+    <script>
+        const stationsLigneB = {
+            "borderouge": {
+                name: "Borderouge",
+                badge: "TERMINUS NORD",
+                artist: "Alain Josseau",
+                meta: "Nantes (Loire-Atlantique), 1968",
+                title: "Espace-Temps",
+                desc: "<p>L'œuvre se compose de deux parties. À l'intérieur, la représentation graphique et tridimensionnelle du son lorsque sont prononcés « ici » et « là » élabore une forme lumineuse. À l'extérieur, un pipe-line signale l'accès au métro, parcouru par un faisceau lumineux rythmé par la suite de Fibonacci.</p>",
+                bio: "<p>Alain Josseau travaille sur l'image et sa perception, mêlant souvent des technologies de surveillance ou de mesure à une esthétique visuelle forte.</p>"
+            },
+            "trois_cocus": {
+                name: "Trois Cocus",
+                badge: "STATION",
+                artist: "Pierrick Sorin",
+                meta: "Nantes (Loire-Atlantique), 1960",
+                title: "Sans titre (Portraits)",
+                desc: "<p>Ce tableau animé est une œuvre interactive dans laquelle le voyageur est aussi acteur. Les usagers sont invités à présenter leur visage aux bornes. Une fois numérisés, ces portraits viennent se mêler à l'animation ludique qui défile sur les écrans.</p>",
+                bio: "<p>Pierrick Sorin est un vidéaste connu pour ses « auto-filmages » burlesques et ses dispositifs optiques holographiques, les « théâtres optiques ».</p>"
+            },
+            "la_vache": {
+                name: "La Vache",
+                badge: "STATION",
+                artist: "Corinne Sentou",
+                meta: "Toulouse (Haute-Garonne), 1964",
+                title: "Sans titre",
+                desc: "<p>Cette œuvre rétroéclairée forme un miroir arrondi scintillant de lumière colorée. La notion de mur s'efface au profit d'une vision panoramique miroitante qui invite les usagers à vivre leur relation à l'espace comme un instant de lumière magique.</p>",
+                bio: "<p>Corinne Sentou travaille sur la perception de l'espace par des installations minimales et colorées qui jouent avec l'architecture.</p>"
+            },
+            "barriere_de_paris": {
+                name: "Barrière de Paris",
+                badge: "STATION",
+                artist: "Bernar Venet",
+                meta: "Saint-Auban (Alpes Maritimes), 1941",
+                title: "Arcs majeurs",
+                desc: "<p>La sculpture se compose de deux arcs verticaux de 25 mètres de hauteur en acier Corten, se croisant dans leur partie supérieure. L'œuvre constitue un repère visuel monumental à l'entrée nord de la ville, mêlant rationalité mathématique et recherche artistique.</p>",
+                bio: "<p>Artiste conceptuel majeur, Bernar Venet est mondialement connu pour ses sculptures monumentales en acier aux lignes indéterminées.</p>"
+            },
+            "minimes": {
+                name: "Minimes - Cl. Nougaro",
+                badge: "STATION",
+                artist: "Olivier Mosset & Damien Aspe",
+                meta: "Suisse (1944) & Toulouse (1973)",
+                title: "Monochrome et Inversion",
+                desc: "<p>Un mur est investi d'un monochrome orange, en relation avec les briques de la ville, tandis que le plafond est peint en bleu. Au niveau inférieur, les couleurs sont inversées. Cette œuvre s'inscrit dans la recherche d'une expression minimale.</p>",
+                bio: "<p>Une collaboration entre un maître du minimalisme radical (Mosset) et un artiste questionnant les technologies et le son (Aspe).</p>"
+            },
+            "canal_du_midi": {
+                name: "Canal du Midi",
+                badge: "STATION",
+                artist: "Daniel Pommereulle",
+                meta: "Sceaux (1937-2003)",
+                title: "Le Bronze et l'Eau",
+                desc: "<p>Cette œuvre est constituée de quatre sculptures monumentales composées de matériaux nobles tels que le verre, le cuivre, la porcelaine, l'ardoise et le bronze. Elle marque l'opposition, parfois brutale, des matériaux.</p>",
+                bio: "<p>Peintre, sculpteur et cinéaste, Pommereulle a traversé le mouvement surréaliste en gardant une fascination pour les objets tranchants et la transparence.</p>"
+            },
+            "compans_caffarelli": {
+                name: "Compans Caffarelli",
+                badge: "JARDIN JAPONAIS",
+                artist: "Ange Leccia",
+                meta: "Minervio (Corse), 1952",
+                title: "Sans titre",
+                desc: "<p>La station est investie par deux imposants panneaux de lumière artificielle dynamique en fibres optiques tissées. Les couleurs changeantes rappellent la lumière naturelle des couchers et levers de soleil, contrastant avec l'univers souterrain.</p>",
+                bio: "<p>Ange Leccia travaille l'image en mouvement et la lumière pour créer des arrangements visuels hypnotiques et contemplatifs.</p>"
+            },
+            "jeanne_d_arc": {
+                name: "Jeanne d'Arc",
+                badge: "CENTRE VILLE",
+                artist: "Sophie Calle",
+                meta: "Paris, 1953",
+                title: "Transport Amoureux",
+                desc: "<p>Sophie Calle a installé des écrans diffusant des messages laissés par les voyageurs. Chacun peut ainsi engager un lien ou agrémenter les trajets avec un peu de poésie.</p>",
+                bio: "<p>Sophie Calle est célèbre pour son art narratif où elle mêle sa vie intime à celle des autres, jouant sur la frontière entre voyeurisme et poésie.</p>"
+            },
+            "jean_jaures": {
+                name: "Jean Jaurès",
+                badge: "CORRESPONDANCE A",
+                artist: "Felice Varini",
+                meta: "Locarno (Suisse), 1952",
+                title: "Anamorphose",
+                desc: "<p>Œuvre commune aux deux lignes : des formes géométriques monumentales peintes sur l'architecture ne forment une figure cohérente que depuis un point de vue précis dans le couloir de correspondance.</p>",
+                bio: "<p>L'artiste utilise l'architecture comme toile pour ses anamorphoses qui défient la perception de l'espace.</p>"
+            },
+            "francois_verdier": {
+                name: "François Verdier",
+                badge: "PRÉFECTURE",
+                artist: "Patrick Corillon",
+                meta: "Knokke (Belgique), 1959",
+                title: "Le Mallandier",
+                desc: "<p>L'œuvre représente un arbre, le « Mallandier », dont l'histoire imaginaire est gravée sur le tronc. Dans les branchages apparaissent des fragments d'arbres et des noms de champs de bataille.</p>",
+                bio: "<p>Patrick Corillon est un conteur plasticien qui crée des univers fictionnels s'insérant dans la réalité des espaces publics.</p>"
+            },
+            "carmes": {
+                name: "Carmes",
+                badge: "CENTRE HISTORIQUE",
+                artist: "Jean-Paul Marcheschi",
+                meta: "Bastia (Corse), 1951",
+                title: "La Voie Lactée",
+                desc: "<p>Un canal sombre au plafond évoque un fleuve, une carte marine ou un ciel nocturne. C'est littéralement une « Voie Lactée », une écriture de lumière inspirée par le poème « La nuit obscure » de Jean de la Croix.</p>",
+                bio: "<p>Marcheschi peint avec le feu, la suie et la cire, créant des œuvres sombres et mystiques.</p>"
+            },
+            "palais_de_justice": {
+                name: "Palais de Justice",
+                badge: "TRAMWAY",
+                artist: "Le Groupe Irwin",
+                meta: "Collectif slovène (1983)",
+                title: "Liberté, Égalité, Fraternité",
+                desc: "<p>L'œuvre est formée de quatre tapis où sont disposées des enseignes lumineuses associant les principes de la République au nom de la station. Les tapis issus de quatre cultures différentes suggèrent le sol, le domicile et le mouvement.</p>",
+                bio: "<p>Le groupe Irwin (NSK) est un collectif d'avant-garde connu pour son utilisation ironique des symboles politiques et totalitaires.</p>"
+            },
+            "st_michel": {
+                name: "St Michel - M. Langer",
+                badge: "STATION",
+                artist: "Michel Verjux",
+                meta: "Chalon-sur-Saône, 1956",
+                title: "Lumière projetée",
+                desc: "<p>Quatre demi-cônes de lumière sont projetés dans un cône de matière construite. Trois faisceaux frappent les puits de lumière, le quatrième trace un cercle parfait au sol.</p>",
+                bio: "<p>Michel Verjux ne sculpte pas la matière mais l'espace, en utilisant uniquement des projecteurs de théâtre ou de diapositives.</p>"
+            },
+            "empalot": {
+                name: "Empalot",
+                badge: "STATION",
+                artist: "Daniel Dezeuze",
+                meta: "Alès (Gard), 1942",
+                title: "Échelle ADN",
+                desc: "<p>Dans le vide central de la station sont installées six échelles de fibres optiques aux couleurs changeantes. Le titre fait allusion au code génétique, évoquant l'identité unique du genre humain dans une atmosphère de gaieté.</p>",
+                bio: "<p>Membre fondateur du groupe Supports/Surfaces, Dezeuze déconstruit la peinture pour en révéler l'armature et le vide.</p>"
+            },
+            "st_agne": {
+                name: "St Agne SNCF",
+                badge: "GARE",
+                artist: "Nicolas Hérubel",
+                meta: "Rouen (Seine-Maritime), 1959",
+                title: "Un seul ticket pour un même manège",
+                desc: "<p>Un immense cerf-volant semble flotter dans l'espace de dilatation de la station, proposant une échappée imaginaire aux voyageurs.</p>",
+                bio: "<p>Nicolas Hérubel crée des sculptures qui détournent des objets familiers pour leur donner une dimension poétique ou absurde.</p>"
+            },
+            "saouzelong": {
+                name: "Saouzelong",
+                badge: "STATION",
+                artist: "Monique Frydman",
+                meta: "Nages (Tarn), 1943",
+                title: "Sans titre",
+                desc: "<p>Sur un vitrail rétroéclairé, l'artiste joue sur la transparence. Des empreintes de cordes traitées au jaune d'argent forment des entrelacs évoquant des saules, rappelant l'étymologie du nom de la station.</p>",
+                bio: "<p>Monique Frydman est une peintre abstraite qui travaille la couleur par imprégnation et frottage sur de grandes toiles ou papiers.</p>"
+            },
+            "rangueil": {
+                name: "Rangueil",
+                badge: "STATION",
+                artist: "C. Caillol & J. Bartolani",
+                meta: "Marseille / Haïfa",
+                title: "Vent capricieux",
+                desc: "<p>Des images de sacs en plastique aux couleurs vives sont comme transportés et plaqués sur la façade par un vent capricieux. Deux sculptures de jardiniers habitent le jardin de bambous en contrebas.</p>",
+                bio: "<p>Duo d'artistes utilisant des matériaux pauvres et colorés pour créer des installations dynamiques pleines d'humour.</p>"
+            },
+            "fac_pharmacie": {
+                name: "Faculté de Pharmacie",
+                badge: "UNIVERSITÉ",
+                artist: "Didier Mencoboni",
+                meta: "Guingamp, 1959",
+                title: "Sans titre",
+                desc: "<p>L'artiste investit la verticalité d'une paroi pour y installer un jeu de boules de verre colorées et de perforations. Bousculant les repères, il laisse à penser que le sol est devenu mur.</p>",
+                bio: "<p>Didier Mencoboni explore la couleur et la série à travers des dispositifs picturaux qui envahissent l'espace.</p>"
+            },
+            "universite_paul_sabatier": {
+                name: "Université Paul Sabatier",
+                badge: "UNIVERSITÉ",
+                artist: "Roman Opalka",
+                meta: "Abbeville (1931-2011)",
+                title: "1965 / 1 - ∞",
+                desc: "<p>Dans cette œuvre lumineuse, l'artiste réunit la pyramide des nombres et la ligne énigmatique d'une existence. C'est une réflexion vertigineuse sur le temps qui passe et l'infini.</p>",
+                bio: "<p>Roman Opalka a consacré sa vie entière à peindre la suite des nombres de 1 à l'infini, une œuvre conceptuelle radicale sur le temps.</p>"
+            },
+            "ramonville": {
+                name: "Ramonville",
+                badge: "TERMINUS SUD",
+                artist: "Jean-Pierre Bertrand",
+                meta: "Paris (1937-2015)",
+                title: "Code couleur",
+                desc: "<p>Par un jeu consistant à associer chaque lettre du nom de la station à une valeur numérique, les baies du fronton colorées accueillent différents espaces dont les dimensions correspondent à cette transcription.</p>",
+                bio: "<p>Jean-Pierre Bertrand travaillait sur les systèmes de correspondance entre nombres, couleurs et matériaux organiques.</p>"
+            }
+        };
+
+        const select = document.getElementById('stationSelect');
+
+        for (const key in stationsLigneB) {
+            let option = document.createElement('option');
+            option.value = key;
+            option.textContent = stationsLigneB[key].name;
+            select.appendChild(option);
+        }
+
+        function loadStation(key) {
+            const data = stationsLigneB[key];
+            document.getElementById('titreStation').textContent = data.name;
+            document.getElementById('positionBadge').textContent = data.badge;
+            document.getElementById('titreOeuvre').textContent = data.title;
+            document.getElementById('descOeuvre').innerHTML = data.desc;
+            document.getElementById('nomArtiste').textContent = data.artist;
+            document.getElementById('metaArtiste').textContent = data.meta;
+            document.getElementById('bioArtiste').innerHTML = data.bio;
+            document.getElementById('photoPlaceholder').textContent = "ŒUVRE DE " + data.artist.toUpperCase();
+
+            const main = document.getElementById('mainContent');
+            main.style.opacity = 0;
+            main.style.transform = "translateY(10px)";
+            
+            setTimeout(() => {
+                main.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+                main.style.opacity = 1;
+                main.style.transform = "translateY(0)";
+            }, 50);
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const stationParam = urlParams.get('station');
+
+        if(stationParam && stationsLigneB[stationParam]) {
+            select.value = stationParam;
+            loadStation(stationParam);
+        } else {
+            select.value = "borderouge";
+            loadStation("borderouge");
+        }
+    </script>
+</body>
+</html>
