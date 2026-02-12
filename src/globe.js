@@ -28,7 +28,9 @@ export class GlobeExperience {
 
         this.sequencePlaying = false;
 
-        this.cameraStart = new THREE.Vector3(0, 0, 10);
+        const startDistance = 10;
+        // Position the starting camera above Western Europe so the intro begins over that region
+        this.cameraStart = this.latLngToVector3(48, 2, startDistance);
         this.cameraEnd = null;
         this.lookAtStart = new THREE.Vector3(0, 0, 0);
         this.lookAtEnd = null;
@@ -109,15 +111,7 @@ export class GlobeExperience {
         this.lookAtEnd = targetVector.clone().multiplyScalar(0.68);
         this.cameraEnd = targetVector.clone().setLength(2.3);
 
-        const markerGeometry = new THREE.SphereGeometry(0.06, 24, 24);
-        const markerMaterial = new THREE.MeshBasicMaterial({
-            color: 0xff4d67,
-            transparent: true,
-            opacity: 0.9
-        });
-        this.marker = new THREE.Mesh(markerGeometry, markerMaterial);
-        this.marker.position.copy(targetVector);
-        this.scene.add(this.marker);
+        this.marker = null;
 
         this.animationFrame = requestAnimationFrame(this.animate);
         window.addEventListener("resize", this.handleResize);
