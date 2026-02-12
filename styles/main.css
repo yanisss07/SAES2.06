@@ -246,8 +246,8 @@ body {
 }
 
 .loader__logos img {
-    width: 96px;
-    height: 96px;
+    width: 140px;
+    height: 140px;
     object-fit: contain;
     filter: drop-shadow(0 0 12px rgba(80, 112, 255, 0.4));
 }
