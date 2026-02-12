@@ -66,9 +66,9 @@ export class StationPanel {
         }
         if (this.lineEl) {
             this.lineEl.textContent = `Ligne ${station.line}`;
-            this.lineEl.style.background = station.line === "A"
-                ? "linear-gradient(135deg, rgba(255,59,106,0.95), rgba(255,121,63,0.7))"
-                : "linear-gradient(135deg, rgba(255,208,86,0.95), rgba(255,255,164,0.7))";
+            const accent = station.lineColor ?? "#ffffff";
+            this.lineEl.style.background = `linear-gradient(135deg, ${accent}, rgba(255, 255, 255, 0.5))`;
+            this.lineEl.style.color = "#12143a";
         }
         if (this.artworkEl) {
             this.artworkEl.textContent = station?.art?.title ?? "Oeuvre a venir";

@@ -1,12 +1,16 @@
 export const mapConfig = {
-    initialCenter: [1.4437, 43.6045],
-    initialZoom: 12.6,
-    pitch: 45,
-    bearing: -32,
     globeTarget: {
         lat: 43.6045,
         lng: 1.4440
     }
+};
+
+export const mapView = {
+    west: 1.38,
+    east: 1.49,
+    south: 43.55,
+    north: 43.64,
+    padding: 80
 };
 
 export const lines = [

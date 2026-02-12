@@ -100,6 +100,47 @@ body {
 .map-stage__map {
     position: absolute;
     inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.metro-map {
+    width: 90%;
+    max-width: 1200px;
+    height: auto;
+    aspect-ratio: 1000 / 620;
+    filter: drop-shadow(0 32px 80px rgba(6, 9, 24, 0.55));
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.metro-line {
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.28));
+    opacity: 0.92;
+}
+
+.metro-station {
+    cursor: pointer;
+    transition: transform 0.25s ease;
+}
+
+.metro-station:hover {
+    transform: scale(1.18);
+}
+
+.metro-station__pulse {
+    animation: station-pulse 2s ease-in-out infinite;
+}
+
+.metro-station--active .metro-station__pulse {
+    animation-duration: 0.9s;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.65));
+}
+
+@keyframes station-pulse {
+    0%, 100% { r: 5; opacity: 1; }
+    50% { r: 7; opacity: 0.7; }
 }
 
 .loader {

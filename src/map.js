@@ -1,196 +1,135 @@
-import { lines, mapConfig, buildStationIndex } from "./data/stations.js";
+import { lines, mapView } from "./data/stations.js";
 
 export class MapExperience {
     constructor(containerId) {
-        this.containerId = containerId;
-        this.map = null;
-        this.maplibregl = null;
-        this.stationIndex = buildStationIndex();
+        this.container = document.getElementById(containerId);
         this.stationListeners = new Set();
         this.interactionListeners = new Set();
-        this.isLoaded = false;
+        this.svg = null;
     }
 
     async init() {
-        if (this.map) {
-            return;
+        if (!this.container) {
+            throw new Error("Element map introuvable");
         }
-
-        const module = await import("https://cdn.jsdelivr.net/npm/maplibre-gl@4.3.2/dist/maplibre-gl.esm.js");
-        this.maplibregl = module.default ?? module;
-
-        this.map = new this.maplibregl.Map({
-            container: this.containerId,
-            style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-            center: mapConfig.initialCenter,
-            zoom: mapConfig.initialZoom,
-            pitch: mapConfig.pitch,
-            bearing: mapConfig.bearing,
-            attributionControl: false,
-            hash: false
-        });
-
-        this.map.addControl(new this.maplibregl.NavigationControl({ showCompass: false }), "top-right");
-
-        await new Promise((resolve) => {
-            this.map.on("load", () => {
-                this.addSources();
-                this.addLayers();
-                this.bindInteractions();
-                this.isLoaded = true;
-                resolve();
-            });
-        });
+        this.container.innerHTML = "";
+        this.svg = this.createSvg();
+        this.container.appendChild(this.svg);
+        this.drawLines();
+        this.drawStations();
     }
 
-    addSources() {
-        const lineFeatures = [];
-        const stationFeatures = [];
+    createSvg() {
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("viewBox", "0 0 1000 620");
+        svg.setAttribute("class", "metro-map");
 
+        const defs = document.createElementNS(svg.namespaceURI, "defs");
+
+        const gradient = document.createElementNS(svg.namespaceURI, "linearGradient");
+        gradient.setAttribute("id", "map-bg");
+        gradient.setAttribute("x1", "50%");
+        gradient.setAttribute("y1", "0%");
+        gradient.setAttribute("x2", "50%");
+        gradient.setAttribute("y2", "100%");
+
+        const stopTop = document.createElementNS(svg.namespaceURI, "stop");
+        stopTop.setAttribute("offset", "0%");
+        stopTop.setAttribute("stop-color", "#090d1f");
+        const stopBottom = document.createElementNS(svg.namespaceURI, "stop");
+        stopBottom.setAttribute("offset", "100%");
+        stopBottom.setAttribute("stop-color", "#0e1733");
+
+        gradient.appendChild(stopTop);
+        gradient.appendChild(stopBottom);
+        defs.appendChild(gradient);
+
+        svg.appendChild(defs);
+
+        const background = document.createElementNS(svg.namespaceURI, "rect");
+        background.setAttribute("x", "0");
+        background.setAttribute("y", "0");
+        background.setAttribute("width", "1000");
+        background.setAttribute("height", "620");
+        background.setAttribute("fill", "url(#map-bg)");
+        svg.appendChild(background);
+
+        return svg;
+    }
+
+    project([lng, lat]) {
+        const { west, east, south, north, padding } = mapView;
+        const width = 1000 - padding * 2;
+        const height = 620 - padding * 2;
+
+        const x = ((lng - west) / (east - west)) * width + padding;
+        const y = ((north - lat) / (north - south)) * height + padding;
+        return [x, y];
+    }
+
+    drawLines() {
         for (const line of lines) {
-            const coordinates = line.stations.map((station) => station.coordinates);
+            const path = document.createElementNS(this.svg.namespaceURI, "path");
+            const coords = line.stations.map((station) => this.project(station.coordinates));
 
-            lineFeatures.push({
-                type: "Feature",
-                geometry: {
-                    type: "LineString",
-                    coordinates
-                },
-                properties: {
-                    id: line.id,
-                    name: line.name,
-                    color: line.color
+            const d = coords.reduce((acc, [x, y], index) => {
+                if (index === 0) {
+                    return `M ${x.toFixed(2)} ${y.toFixed(2)}`;
                 }
-            });
+                return `${acc} L ${x.toFixed(2)} ${y.toFixed(2)}`;
+            }, "");
 
+            path.setAttribute("d", d);
+            path.setAttribute("fill", "none");
+            path.setAttribute("stroke", line.color);
+            path.setAttribute("stroke-width", "5");
+            path.setAttribute("stroke-linecap", "round");
+            path.setAttribute("stroke-linejoin", "round");
+            path.setAttribute("class", `metro-line metro-line-${line.id}`);
+
+            this.svg.appendChild(path);
+        }
+    }
+
+    drawStations() {
+        for (const line of lines) {
             for (const station of line.stations) {
-                stationFeatures.push({
-                    type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: station.coordinates
-                    },
-                    properties: {
-                        id: station.id,
-                        name: station.name,
-                        lineId: line.id,
-                        lineName: line.name,
-                        color: line.color
-                    }
+                const [x, y] = this.project(station.coordinates);
+
+                const group = document.createElementNS(this.svg.namespaceURI, "g");
+                group.setAttribute("class", "metro-station");
+                group.setAttribute("data-station-id", station.id);
+
+                const outer = document.createElementNS(this.svg.namespaceURI, "circle");
+                outer.setAttribute("cx", x.toFixed(2));
+                outer.setAttribute("cy", y.toFixed(2));
+                outer.setAttribute("r", "8");
+                outer.setAttribute("fill", "#060713");
+                outer.setAttribute("stroke", "#131b33");
+                outer.setAttribute("stroke-width", "2");
+
+                const inner = document.createElementNS(this.svg.namespaceURI, "circle");
+                inner.setAttribute("cx", x.toFixed(2));
+                inner.setAttribute("cy", y.toFixed(2));
+                inner.setAttribute("r", "5");
+                inner.setAttribute("fill", line.color);
+                inner.setAttribute("class", "metro-station__pulse");
+
+                group.appendChild(outer);
+                group.appendChild(inner);
+
+                group.addEventListener("click", () => {
+                    this.notifyInteraction();
+                    this.stationListeners.forEach((listener) => listener({ ...station, line: line.id, lineName: line.name, lineColor: line.color }));
                 });
+
+                group.addEventListener("mouseenter", () => {
+                    this.notifyInteraction();
+                });
+
+                this.svg.appendChild(group);
             }
         }
-
-        this.map.addSource("metro-lines", {
-            type: "geojson",
-            data: {
-                type: "FeatureCollection",
-                features: lineFeatures
-            }
-        });
-
-        this.map.addSource("metro-stations", {
-            type: "geojson",
-            data: {
-                type: "FeatureCollection",
-                features: stationFeatures
-            }
-        });
-    }
-
-    addLayers() {
-        this.map.addLayer({
-            id: "metro-lines-outer",
-            type: "line",
-            source: "metro-lines",
-            paint: {
-                "line-color": ["get", "color"],
-                "line-width": 8,
-                "line-opacity": 0.15
-            }
-        });
-
-        this.map.addLayer({
-            id: "metro-lines",
-            type: "line",
-            source: "metro-lines",
-            paint: {
-                "line-color": ["get", "color"],
-                "line-width": 4.8,
-                "line-opacity": 0.9
-            }
-        });
-
-        this.map.addLayer({
-            id: "metro-stations",
-            type: "circle",
-            source: "metro-stations",
-            paint: {
-                "circle-color": ["get", "color"],
-                "circle-radius": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    10,
-                    4,
-                    13.5,
-                    7,
-                    16,
-                    10
-                ],
-                "circle-opacity": 0.95,
-                "circle-stroke-width": 2,
-                "circle-stroke-color": "#111322"
-            }
-        });
-    }
-
-    bindInteractions() {
-        this.map.on("mouseenter", "metro-stations", () => {
-            this.map.getCanvas().style.cursor = "pointer";
-        });
-
-        this.map.on("mouseleave", "metro-stations", () => {
-            this.map.getCanvas().style.cursor = "";
-        });
-
-        this.map.on("click", "metro-stations", (event) => {
-            if (!event.features?.length) {
-                return;
-            }
-            const feature = event.features[0];
-            const stationId = feature.properties.id;
-            const station = this.stationIndex.get(stationId);
-            if (!station) {
-                return;
-            }
-
-            this.notifyInteraction();
-            this.focusOnStation(station);
-            this.stationListeners.forEach((listener) => listener(station));
-        });
-
-        const interactionEvents = ["dragstart", "zoomstart", "pitchstart", "rotatestart"];
-        interactionEvents.forEach((eventName) => {
-            this.map.on(eventName, () => this.notifyInteraction());
-        });
-    }
-
-    focusOnStation(station) {
-        if (!this.map) {
-            return;
-        }
-
-        const currentZoom = this.map.getZoom();
-        const targetZoom = Math.max(currentZoom, 14);
-
-        this.map.easeTo({
-            center: station.coordinates,
-            zoom: targetZoom,
-            pitch: 60,
-            duration: 1400,
-            bearing: mapConfig.bearing
-        });
     }
 
     onStationSelected(listener) {
@@ -207,10 +146,23 @@ export class MapExperience {
         this.interactionListeners.forEach((listener) => listener());
     }
 
-    activate() {
-        if (!this.map) {
+    focusOnStation(station) {
+        if (!this.svg) {
             return;
         }
-        this.map.resize();
+
+        const highlight = this.svg.querySelector(".metro-station--active");
+        if (highlight) {
+            highlight.classList.remove("metro-station--active");
+        }
+
+        const node = this.svg.querySelector(`[data-station-id="${station.id}"]`);
+        if (node) {
+            node.classList.add("metro-station--active");
+        }
+    }
+
+    activate() {
+        // No additional work required for the static map at this stage.
     }
 }

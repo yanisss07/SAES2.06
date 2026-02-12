@@ -55,6 +55,7 @@ async function bootstrap() {
     map.onStationSelected((station) => {
         hintOverlay.hide();
         stationPanel.update(station);
+        map.focusOnStation(station);
     });
 
     map.onInteraction(() => {
