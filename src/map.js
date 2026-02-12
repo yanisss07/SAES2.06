@@ -67,7 +67,6 @@ export class MapExperience {
 
     drawLines() {
         for (const line of lines) {
-            const coordinates = line.stations.map((station) => [station.lat ?? station.coordinates[1], station.lng ?? station.coordinates[0]]);
             const smoothPath = this.solveCatmullRom(line.stations.map((station) => ({
                 lat: station.coordinates[1],
                 lng: station.coordinates[0]
@@ -75,9 +74,9 @@ export class MapExperience {
 
             window.L.polyline(smoothPath, {
                 className: "ligne-neon",
-                color: line.color,
-                weight: 5,
-                opacity: 0.8,
+                color: "#ffffff",
+                weight: 6,
+                opacity: 0.85,
                 lineCap: "round",
                 lineJoin: "round"
             }).addTo(this.map);
@@ -108,15 +107,16 @@ export class MapExperience {
                 const marker = window.L.marker(position, {
                     icon: window.L.divIcon({
                         className: "station-icon",
-                        iconSize: [16, 16],
-                        iconAnchor: [8, 8],
-                        popupAnchor: [0, -8]
-                    })
+                        iconSize: [40, 40],
+                        iconAnchor: [20, 20],
+                        popupAnchor: [0, -20]
+                    }),
+                    riseOnHover: true
                 }).addTo(this.map);
 
                 marker.bindTooltip(tooltipContent, {
                     direction: "top",
-                    offset: [0, -12],
+                    offset: [0, -18],
                     opacity: 1,
                     className: "custom-art-tooltip",
                     sticky: true
