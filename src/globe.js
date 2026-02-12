@@ -28,7 +28,7 @@ export class GlobeExperience {
 
         this.sequencePlaying = false;
 
-        this.cameraStart = new THREE.Vector3(0, 0, 6.5);
+        this.cameraStart = new THREE.Vector3(0, 0, 10);
         this.cameraEnd = null;
         this.lookAtStart = new THREE.Vector3(0, 0, 0);
         this.lookAtEnd = null;
