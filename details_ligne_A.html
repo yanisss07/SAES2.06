@@ -102,7 +102,7 @@
 
     <header>
         <div style="display:flex; align-items:center;">
-            <a href="SAES2.html" class="back-btn">
+            <a href="index.html" class="back-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
                 CARTE
             </a>
@@ -347,9 +347,26 @@
         select.appendChild(option);
     }
 
+    function updateBackLink(stationKey) {
+        const backLink = document.querySelector('.back-btn');
+        if (!backLink) {
+            return;
+        }
+        const params = new URLSearchParams();
+        params.set('view', 'map');
+        if (stationKey) {
+            params.set('station', stationKey);
+        }
+        backLink.href = `index.html?${params.toString()}`;
+    }
+
     // Fonction de chargement
     function loadStation(key) {
         const data = stationsLigneA[key];
+        if (!data) {
+            return;
+        }
+        updateBackLink(key);
         
         document.getElementById('titreStation').textContent = data.name;
         document.getElementById('positionBadge').textContent = data.badge;
@@ -383,13 +400,10 @@
     const urlParams = new URLSearchParams(window.location.search);
     const stationParam = urlParams.get('station');
 
-    if(stationParam && stationsLigneA[stationParam]) {
-        select.value = stationParam;
-        loadStation(stationParam);
-    } else {
-        select.value = "balma_gramont";
-        loadStation("balma_gramont");
-    }
+    const defaultStation = "balma_gramont";
+    const initialStation = stationParam && stationsLigneA[stationParam] ? stationParam : defaultStation;
+    select.value = initialStation;
+    loadStation(initialStation);
 </script>
 
 </body>
