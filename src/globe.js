@@ -12,7 +12,7 @@ export class GlobeExperience {
     constructor(options) {
         this.canvas = options.canvas;
         this.onReady = options.onReady ?? (() => {});
-        this.targetLatLng = options.targetLatLng ?? { lat: 0, lng: 0 };
+        this.targetLatLng = options.targetLatLng ?? { lat: 43.638306, lng: 1.444087 };
 
         this.scene = null;
         this.renderer = null;
