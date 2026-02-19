@@ -18,6 +18,7 @@ async function bootstrap() {
     let globe = null;
 
     if (shouldPlayIntro) {
+        loader.hide();
         globe = new GlobeExperience({
             canvas: document.getElementById("globe-canvas"),
             container: globeStage,
