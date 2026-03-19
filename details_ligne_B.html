@@ -98,7 +98,7 @@
 
     <header>
         <div style="display:flex; align-items:center;">
-            <a href="SAES2.html" class="back-btn">
+            <a href="index.html" class="back-btn" id="backButtonB">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
                 CARTE
             </a>
@@ -339,8 +339,19 @@
             select.appendChild(option);
         }
 
+        const backButton = document.getElementById('backButtonB');
+        backButton.addEventListener('click', (event) => {
+            if (window.history.length > 1) {
+                event.preventDefault();
+                window.history.back();
+            }
+        });
+
         function loadStation(key) {
             const data = stationsLigneB[key];
+            if (!data) {
+                return;
+            }
             document.getElementById('titreStation').textContent = data.name;
             document.getElementById('positionBadge').textContent = data.badge;
             document.getElementById('titreOeuvre').textContent = data.title;
@@ -364,13 +375,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         const stationParam = urlParams.get('station');
 
-        if(stationParam && stationsLigneB[stationParam]) {
-            select.value = stationParam;
-            loadStation(stationParam);
-        } else {
-            select.value = "borderouge";
-            loadStation("borderouge");
-        }
+        const defaultStation = "borderouge";
+        const initialStation = stationParam && stationsLigneB[stationParam] ? stationParam : defaultStation;
+        select.value = initialStation;
+        loadStation(initialStation);
     </script>
 </body>
 </html>

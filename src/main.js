@@ -9,54 +9,58 @@ const globeStage = document.getElementById("globe-stage");
 const mapStage = document.getElementById("map-stage");
 const hintOverlay = new HintOverlay(document.querySelector("[data-hint]"));
 const stationPanel = new StationPanel(document.getElementById("station-panel"));
+const hasVisitedBefore = sessionStorage.getItem("atlasVisited") === "1";
 
 const delay = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
 async function bootstrap() {
-    loader.show();
-    loader.setStatus("Chargement de la scene 3D");
-    loader.setProgress(10);
+    const shouldPlayIntro = !hasVisitedBefore;
+    let globe = null;
 
-    const globe = new GlobeExperience({
-        canvas: document.getElementById("globe-canvas"),
-        container: globeStage,
-        targetLatLng: mapConfig.globeTarget,
-        onReady: () => {
-            loader.setProgress(35);
-            loader.setStatus("Preparation de la carte interactive");
-        }
-    });
-
-    await globe.init();
+    if (shouldPlayIntro) {
+        loader.hide();
+        globe = new GlobeExperience({
+            canvas: document.getElementById("globe-canvas"),
+            container: globeStage,
+            targetLatLng: mapConfig.globeTarget,
+            onReady: () => {}
+        });
+        await globe.init();
+        requestAnimationFrame(() => {
+            globeStage.classList.add("is-visible");
+        });
+        await globe.playIntroSequence();
+        loader.show();
+        loader.setStatus("Preparation de la carte interactive");
+        loader.setProgress(45);
+    } else {
+        globeStage.remove();
+        loader.show();
+        loader.setStatus("Chargement de la carte interactive");
+        loader.setProgress(10);
+    }
 
     const map = new MapExperience("map");
-    loader.setProgress(45);
     loader.setStatus("Preparation de la carte interactive");
+    loader.setProgress(shouldPlayIntro ? 65 : 70);
     await map.init();
 
-    loader.setProgress(90);
-    loader.setStatus("Synchronisation de l'experience");
-    await delay(400);
+    if (shouldPlayIntro) {
+        loader.setProgress(90);
+        loader.setStatus("Synchronisation de l'experience");
+        await delay(400);
+    }
+
     loader.setProgress(100);
     loader.hide();
 
-    requestAnimationFrame(() => {
-        globeStage.classList.add("is-visible");
-    });
-
-    await globe.playIntroSequence();
-    mapStage.classList.add("is-visible");
-    map.activate();
-    await delay(300);
-    globeStage.classList.remove("is-visible");
-
-    hintOverlay.schedule(5000);
-
-    map.onStationSelected((station) => {
+    const handleStationSelected = (station) => {
         hintOverlay.hide();
         stationPanel.update(station);
         map.focusOnStation(station);
-    });
+    };
+
+    map.onStationSelected(handleStationSelected);
 
     map.onInteraction(() => {
         hintOverlay.hide();
@@ -67,6 +71,22 @@ async function bootstrap() {
             stationPanel.hide();
         }
     });
+
+    if (shouldPlayIntro) {
+        mapStage.classList.add("is-visible");
+        map.activate();
+        hintOverlay.schedule(5000);
+        await delay(300);
+        globeStage.classList.remove("is-visible");
+        await delay(500);
+        globe?.destroy();
+        globeStage.remove();
+        sessionStorage.setItem("atlasVisited", "1");
+    } else {
+        mapStage.classList.add("is-visible");
+        map.activate();
+        hintOverlay.schedule(2000);
+    }
 }
 
 bootstrap().catch((error) => {

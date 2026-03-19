@@ -49,7 +49,7 @@ export class GlobeExperience {
             alpha: true
         });
         this.renderer.autoClear = true;
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
@@ -64,7 +64,7 @@ export class GlobeExperience {
         rimLight.position.set(4, -3, -4);
         this.scene.add(ambientLight, keyLight, rimLight);
 
-        const earthGeometry = new THREE.SphereGeometry(1.35, 96, 96);
+        const earthGeometry = new THREE.SphereGeometry(1.35, 64, 64);
         const earthTextureUrl = new URL("../assets/earth-night.jpg", import.meta.url).href;
         const earthTexture = await loadTexture(earthTextureUrl);
 
@@ -76,7 +76,7 @@ export class GlobeExperience {
         this.earth = new THREE.Mesh(earthGeometry, earthMaterial);
         this.scene.add(this.earth);
 
-        const atmosphereGeometry = new THREE.SphereGeometry(1.42, 96, 96);
+        const atmosphereGeometry = new THREE.SphereGeometry(1.42, 64, 64);
         const atmosphereMaterial = new THREE.MeshPhongMaterial({
             color: 0x5aa0ff,
             transparent: true,
@@ -88,7 +88,7 @@ export class GlobeExperience {
 
         const starsGeometry = new THREE.BufferGeometry();
         const starVertices = [];
-        for (let i = 0; i < 1500; i += 1) {
+        for (let i = 0; i < 900; i += 1) {
             const distance = THREE.MathUtils.randFloat(9, 20);
             const theta = THREE.MathUtils.randFloatSpread(360);
             const phi = THREE.MathUtils.randFloatSpread(360);
@@ -100,7 +100,7 @@ export class GlobeExperience {
         starsGeometry.setAttribute("position", new THREE.Float32BufferAttribute(starVertices, 3));
         const starsMaterial = new THREE.PointsMaterial({
             color: 0xffffff,
-            size: 0.055,
+            size: 0.045,
             transparent: true,
             opacity: 0.75
         });
@@ -179,7 +179,7 @@ export class GlobeExperience {
         const height = window.innerHeight;
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         this.renderer.setSize(width, height);
     }
 
@@ -195,7 +195,9 @@ export class GlobeExperience {
     destroy() {
         cancelAnimationFrame(this.animationFrame);
         window.removeEventListener("resize", this.handleResize);
+        this.renderer?.setAnimationLoop?.(null);
         this.renderer?.dispose();
+        this.renderer?.forceContextLoss?.();
         this.scene?.traverse((object) => {
             if (!object.isMesh) {
                 return;
@@ -207,6 +209,14 @@ export class GlobeExperience {
                 object.material.forEach((material) => this.disposeMaterial(material));
             }
         });
+        this.scene = null;
+        this.renderer = null;
+        this.camera = null;
+        this.earth = null;
+        this.atmosphere = null;
+        this.marker = null;
+        this.stars = null;
+        this.animationFrame = null;
     }
 
     disposeMaterial(material) {

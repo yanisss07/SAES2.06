@@ -107,16 +107,16 @@ export class MapExperience {
                 const marker = window.L.marker(position, {
                     icon: window.L.divIcon({
                         className: "station-icon",
-                        iconSize: [40, 40],
-                        iconAnchor: [20, 20],
-                        popupAnchor: [0, -20]
+                        iconSize: [10, 10],
+                        iconAnchor: [5, 5],
+                        popupAnchor: [0, -8]
                     }),
                     riseOnHover: true
                 }).addTo(this.map);
 
                 marker.bindTooltip(tooltipContent, {
                     direction: "top",
-                    offset: [0, -18],
+                    offset: [0, -12],
                     opacity: 1,
                     className: "custom-art-tooltip",
                     sticky: true

@@ -142,7 +142,7 @@ export const lines = [
             {
                 id: "jean_jaures",
                 name: "Jean Jaurès",
-                coordinates: [1.4490, 43.6060],
+                coordinates: [1.448711, 43.605745],
                 art: {
                     title: "Anamorphose",
                     artist: "Felice Varini",
@@ -209,7 +209,7 @@ export const lines = [
             {
                 id: "borderouge",
                 name: "Borderouge",
-                coordinates: [1.4485, 43.6366],
+                coordinates: [1.452383, 43.640934],
                 art: {
                     title: "Espace-Temps",
                     artist: "Alain Josseau",
@@ -219,7 +219,7 @@ export const lines = [
             {
                 id: "trois_cocus",
                 name: "Trois Cocus",
-                coordinates: [1.4450, 43.6300],
+                coordinates: [1.444087, 43.638306],
                 art: {
                     title: "Portraits",
                     artist: "Pierrick Sorin",
@@ -229,7 +229,7 @@ export const lines = [
             {
                 id: "la_vache",
                 name: "La Vache",
-                coordinates: [1.4420, 43.6250],
+                coordinates: [1.434950, 43.633735],
                 art: {
                     title: "Sans titre",
                     artist: "Corinne Sentou",
@@ -239,7 +239,7 @@ export const lines = [
             {
                 id: "barriere_de_paris",
                 name: "Barrière de Paris",
-                coordinates: [1.4390, 43.6200],
+                coordinates: [1.433822, 43.626868],
                 art: {
                     title: "Arcs majeurs",
                     artist: "Bernar Venet",
@@ -249,7 +249,7 @@ export const lines = [
             {
                 id: "minimes",
                 name: "Minimes - Cl. Nougaro",
-                coordinates: [1.4360, 43.6140],
+                coordinates: [1.435863, 43.620521],
                 art: {
                     title: "Monochrome",
                     artist: "Olivier Mosset & Dominique Aspe",
@@ -259,7 +259,7 @@ export const lines = [
             {
                 id: "canal_du_midi",
                 name: "Canal du Midi",
-                coordinates: [1.4340, 43.6100],
+                coordinates: [1.433723, 43.615346],
                 art: {
                     title: "Le Bronze et l'Eau",
                     artist: "Daniel Pommereulle",
@@ -269,7 +269,7 @@ export const lines = [
             {
                 id: "compans_caffarelli",
                 name: "Compans Caffarelli",
-                coordinates: [1.4350, 43.6070],
+                coordinates: [1.435632, 43.610664],
                 art: {
                     title: "Sans titre",
                     artist: "Ange Leccia",
@@ -279,7 +279,7 @@ export const lines = [
             {
                 id: "jeanne_d_arc",
                 name: "Jeanne d'Arc",
-                coordinates: [1.4443, 43.6086],
+                coordinates: [1.445751, 43.608565],
                 art: {
                     title: "Transport Amoureux",
                     artist: "Sophie Calle",
@@ -289,7 +289,7 @@ export const lines = [
             {
                 id: "jean_jaures",
                 name: "Jean Jaurès",
-                coordinates: [1.4490, 43.6060],
+                coordinates: [1.448711, 43.605745],
                 art: {
                     title: "Anamorphose",
                     artist: "Felice Varini",
@@ -299,7 +299,7 @@ export const lines = [
             {
                 id: "francois_verdier",
                 name: "François Verdier",
-                coordinates: [1.4516, 43.6015],
+                coordinates: [1.452062, 43.600440],
                 art: {
                     title: "Le Mallandier",
                     artist: "Patrick Corillon",
@@ -309,7 +309,7 @@ export const lines = [
             {
                 id: "carmes",
                 name: "Carmes",
-                coordinates: [1.4433, 43.5979],
+                coordinates: [1.445409, 43.597868],
                 art: {
                     title: "La Voie Lactée",
                     artist: "Jean-Paul Marcheschi",
@@ -319,7 +319,7 @@ export const lines = [
             {
                 id: "palais_de_justice",
                 name: "Palais de Justice",
-                coordinates: [1.4440, 43.5940],
+                coordinates: [1.444510, 43.592195],
                 art: {
                     title: "Liberté, Égalité...",
                     artist: "Groupe Irwin",
@@ -329,7 +329,7 @@ export const lines = [
             {
                 id: "st_michel",
                 name: "St Michel - M. Langer",
-                coordinates: [1.4455, 43.5885],
+                coordinates: [1.447232, 43.586047],
                 art: {
                     title: "Lumière projetée",
                     artist: "Michel Verjux",
@@ -339,7 +339,7 @@ export const lines = [
             {
                 id: "empalot",
                 name: "Empalot",
-                coordinates: [1.4425, 43.5835],
+                coordinates: [1.442117, 43.579925],
                 art: {
                     title: "Échelle ADN",
                     artist: "Daniel Dezeuze",
@@ -349,7 +349,7 @@ export const lines = [
             {
                 id: "st_agne",
                 name: "St Agne SNCF",
-                coordinates: [1.4475, 43.5785],
+                coordinates: [1.449813, 43.580290],
                 art: {
                     title: "Un seul ticket...",
                     artist: "Nicolas Hérubel",
@@ -359,7 +359,7 @@ export const lines = [
             {
                 id: "saouzelong",
                 name: "Saouzelong",
-                coordinates: [1.4545, 43.5745],
+                coordinates: [1.459411, 43.579531],
                 art: {
                     title: "Sans titre",
                     artist: "Monique Frydman",
@@ -369,7 +369,7 @@ export const lines = [
             {
                 id: "rangueil",
                 name: "Rangueil",
-                coordinates: [1.4595, 43.5695],
+                coordinates: [1.461992, 43.574824],
                 art: {
                     title: "Vent capricieux",
                     artist: "Claude Caillol & Patrick Bartolani",
@@ -379,7 +379,7 @@ export const lines = [
             {
                 id: "fac_pharmacie",
                 name: "Faculté de Pharmacie",
-                coordinates: [1.4645, 43.5645],
+                coordinates: [1.464502, 43.568046],
                 art: {
                     title: "Sans titre",
                     artist: "Didier Mencoboni",
@@ -389,7 +389,7 @@ export const lines = [
             {
                 id: "universite_paul_sabatier",
                 name: "Université Paul Sabatier",
-                coordinates: [1.4680, 43.5610],
+                coordinates: [1.462723, 43.560814],
                 art: {
                     title: "1-Infinite",
                     artist: "Roman Opalka",
@@ -399,7 +399,7 @@ export const lines = [
             {
                 id: "ramonville",
                 name: "Ramonville",
-                coordinates: [1.4750, 43.5560],
+                coordinates: [1.475800, 43.555659],
                 art: {
                     title: "Code couleur",
                     artist: "Jean-Pierre Bertrand",
