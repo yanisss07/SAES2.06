@@ -8,9 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        body { 
-            margin: 0; padding: 0; background-color: #202124; color: #e8eaed; 
+        body {
+            margin: 0; padding: 0; background-color: #202124; color: #e8eaed;
             font-family: 'Roboto', sans-serif; min-height: 100vh; display: flex; flex-direction: column;
+            background-size: cover; background-position: center; background-attachment: fixed;
         }
 
         .neon-gradient-text {
@@ -360,13 +361,10 @@
             document.getElementById('metaArtiste').textContent = data.meta;
             document.getElementById('bioArtiste').innerHTML = data.bio;
 
+            document.body.style.backgroundImage = `linear-gradient(rgba(20,20,20,0.72), rgba(20,20,20,0.72)), url('video/${key}/background.png')`;
+
             const frame = document.querySelector('.photo-frame');
-            frame.innerHTML = `<img src="video/${key}/background.png" alt="${data.title}"
-                                 style="width:100%; height:100%; object-fit:cover;"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                               <div class="abstract-art-bg" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
-                                 ŒUVRE DE ${data.artist.toUpperCase()}
-                               </div>`;
+            frame.innerHTML = `<div class="abstract-art-bg">ŒUVRE DE ${data.artist.toUpperCase()}</div>`;
 
             const main = document.getElementById('mainContent');
             main.style.opacity = 0;
