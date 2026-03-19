@@ -359,7 +359,14 @@
             document.getElementById('nomArtiste').textContent = data.artist;
             document.getElementById('metaArtiste').textContent = data.meta;
             document.getElementById('bioArtiste').innerHTML = data.bio;
-            document.getElementById('photoPlaceholder').textContent = "ŒUVRE DE " + data.artist.toUpperCase();
+
+            const frame = document.querySelector('.photo-frame');
+            frame.innerHTML = `<img src="video/${key}/background.png" alt="${data.title}"
+                                 style="width:100%; height:100%; object-fit:cover;"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                               <div class="abstract-art-bg" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
+                                 ŒUVRE DE ${data.artist.toUpperCase()}
+                               </div>`;
 
             const main = document.getElementById('mainContent');
             main.style.opacity = 0;
