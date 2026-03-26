@@ -472,7 +472,7 @@ body {
     bottom: 24px;
     left: 24px;
     z-index: 500;
-    max-width: 320px;
+    width: 460px;
     background: linear-gradient(135deg, rgba(4, 7, 20, 0.72), rgba(14, 18, 42, 0.55));
     border: 1px solid rgba(108, 124, 201, 0.2);
     border-radius: 14px;
@@ -481,8 +481,15 @@ body {
     pointer-events: none;
 }
 
+.map-credits__context {
+    margin: 0 0 10px;
+    font-size: 0.7rem;
+    color: var(--color-muted);
+    line-height: 1.4;
+}
+
 .map-credits__title {
-    margin: 0 0 6px;
+    margin: 0 0 10px;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.05em;
