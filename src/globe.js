@@ -49,7 +49,7 @@ export class GlobeExperience {
             alpha: true
         });
         this.renderer.autoClear = true;
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
@@ -57,21 +57,24 @@ export class GlobeExperience {
 
         this.clock = new THREE.Clock();
 
-        const ambientLight = new THREE.AmbientLight(0x5c6aff, 0.6);
-        const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
+        const keyLight = new THREE.DirectionalLight(0xffffff, 0.6);
         keyLight.position.set(-5, 3, 5);
-        const rimLight = new THREE.DirectionalLight(0x6c9cff, 0.45);
+        const rimLight = new THREE.DirectionalLight(0xffffff, 0.15);
         rimLight.position.set(4, -3, -4);
         this.scene.add(ambientLight, keyLight, rimLight);
 
-        const earthGeometry = new THREE.SphereGeometry(1.35, 64, 64);
+        const earthGeometry = new THREE.SphereGeometry(1.35, 96, 96);
         const earthTextureUrl = new URL("../assets/earth-night.jpg", import.meta.url).href;
         const earthTexture = await loadTexture(earthTextureUrl);
 
         const earthMaterial = new THREE.MeshPhongMaterial({
             map: earthTexture,
-            shininess: 18,
-            specular: new THREE.Color(0x1c284f)
+            emissiveMap: earthTexture,
+            emissive: new THREE.Color(0xffffff),
+            emissiveIntensity: 0.55,
+            shininess: 12,
+            specular: new THREE.Color(0x112233)
         });
         this.earth = new THREE.Mesh(earthGeometry, earthMaterial);
         this.scene.add(this.earth);
@@ -179,7 +182,7 @@ export class GlobeExperience {
         const height = window.innerHeight;
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.setSize(width, height);
     }
 
