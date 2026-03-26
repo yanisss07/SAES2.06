@@ -41,7 +41,7 @@ export class GlobeExperience {
 
     async init() {
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x040714);
+        this.scene.background = new THREE.Color(0x000005);
 
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
@@ -57,11 +57,11 @@ export class GlobeExperience {
 
         this.clock = new THREE.Clock();
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
-        const keyLight = new THREE.DirectionalLight(0xffffff, 0.6);
-        keyLight.position.set(-5, 3, 5);
-        const rimLight = new THREE.DirectionalLight(0xffffff, 0.15);
-        rimLight.position.set(4, -3, -4);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.04);
+        const keyLight = new THREE.DirectionalLight(0xfff8f0, 1.2);
+        keyLight.position.set(6, 2, 3);
+        const rimLight = new THREE.DirectionalLight(0x3366cc, 0.25);
+        rimLight.position.set(-4, 1, -3);
         this.scene.add(ambientLight, keyLight, rimLight);
 
         const earthGeometry = new THREE.SphereGeometry(1.35, 96, 96);
@@ -72,22 +72,32 @@ export class GlobeExperience {
             map: earthTexture,
             emissiveMap: earthTexture,
             emissive: new THREE.Color(0xffffff),
-            emissiveIntensity: 0.55,
+            emissiveIntensity: 0.32,
             shininess: 12,
             specular: new THREE.Color(0x112233)
         });
         this.earth = new THREE.Mesh(earthGeometry, earthMaterial);
         this.scene.add(this.earth);
 
-        const atmosphereGeometry = new THREE.SphereGeometry(1.48, 96, 96);
+        const atmosphereGeometry = new THREE.SphereGeometry(1.38, 96, 96);
         const atmosphereMaterial = new THREE.MeshPhongMaterial({
-            color: 0x2266cc,
+            color: 0x4488ff,
             transparent: true,
-            opacity: 0.5,
+            opacity: 0.75,
             side: THREE.BackSide
         });
         this.atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
         this.scene.add(this.atmosphere);
+
+        const glowGeometry = new THREE.SphereGeometry(1.58, 96, 96);
+        const glowMaterial = new THREE.MeshPhongMaterial({
+            color: 0x1133aa,
+            transparent: true,
+            opacity: 0.18,
+            side: THREE.BackSide
+        });
+        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+        this.scene.add(glow);
 
         const starsGeometry = new THREE.BufferGeometry();
         const starVertices = [];
