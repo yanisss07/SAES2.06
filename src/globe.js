@@ -79,12 +79,12 @@ export class GlobeExperience {
         this.earth = new THREE.Mesh(earthGeometry, earthMaterial);
         this.scene.add(this.earth);
 
-        const atmosphereGeometry = new THREE.SphereGeometry(1.42, 64, 64);
+        const atmosphereGeometry = new THREE.SphereGeometry(1.48, 96, 96);
         const atmosphereMaterial = new THREE.MeshPhongMaterial({
-            color: 0x5aa0ff,
+            color: 0x2266cc,
             transparent: true,
-            opacity: 0.15,
-            side: THREE.DoubleSide
+            opacity: 0.5,
+            side: THREE.BackSide
         });
         this.atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
         this.scene.add(this.atmosphere);
