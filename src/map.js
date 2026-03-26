@@ -73,7 +73,7 @@ export class MapExperience {
             })));
 
             window.L.polyline(smoothPath, {
-                className: "ligne-neon",
+                className: `ligne-neon ligne-neon--${line.id.toLowerCase()}`,
                 color: "#ffffff",
                 weight: 6,
                 opacity: 0.85,
