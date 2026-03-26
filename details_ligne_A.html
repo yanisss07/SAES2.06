@@ -278,7 +278,7 @@
         },
         "jean_jaures": {
             name: "Jean Jaurès",
-            badge: "CORRESPONDANCE B",
+            badge: "LIGNE B",
             image: "video/jean_jaures/background.png",
             artist: "Felice Varini",
             meta: "Locarno (Suisse), 1952",
@@ -364,7 +364,10 @@
         }
         
         document.getElementById('titreStation').textContent = data.name;
-        document.getElementById('positionBadge').textContent = data.badge;
+        const badgeEl = document.getElementById('positionBadge');
+        badgeEl.textContent = data.badge;
+        badgeEl.style.background = data.badge === "LIGNE B" ? "#ffd056" : "#3c4043";
+        badgeEl.style.color = data.badge === "LIGNE B" ? "#000" : "#fff";
         document.getElementById('titreOeuvre').textContent = data.title;
         document.getElementById('descOeuvre').innerHTML = data.desc;
         

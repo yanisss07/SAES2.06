@@ -166,6 +166,22 @@ body {
     z-index: 2;
 }
 
+.station-icon--transfer {
+    background: linear-gradient(to right, #ff3b6a 50%, #ffd056 50%);
+    box-shadow: 0 0 5px rgba(255, 59, 106, 0.6), 0 0 5px rgba(255, 208, 86, 0.6), 0 0 12px rgba(255, 130, 100, 0.4);
+    outline: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.station-icon--transfer:hover {
+    background: linear-gradient(to right, #ff3b6a 50%, #ffd056 50%);
+    box-shadow: 0 0 10px rgba(255, 59, 106, 0.9), 0 0 10px rgba(255, 208, 86, 0.9), 0 0 24px rgba(255, 130, 100, 0.6);
+}
+
+.line-tags {
+    display: flex;
+    gap: 4px;
+}
+
 .leaflet-tooltip.custom-art-tooltip {
     background-color: rgba(40, 42, 45, 0.95);
     color: #e8eaed;

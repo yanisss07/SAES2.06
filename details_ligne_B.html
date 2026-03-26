@@ -223,7 +223,7 @@
             },
             "jean_jaures": {
                 name: "Jean Jaurès",
-                badge: "CORRESPONDANCE A",
+                badge: "LIGNE A",
                 artist: "Felice Varini",
                 meta: "Locarno (Suisse), 1952",
                 title: "Anamorphose",
@@ -354,7 +354,10 @@
                 return;
             }
             document.getElementById('titreStation').textContent = data.name;
-            document.getElementById('positionBadge').textContent = data.badge;
+            const badgeEl = document.getElementById('positionBadge');
+            badgeEl.textContent = data.badge;
+            badgeEl.style.background = data.badge === "LIGNE A" ? "#ff3b6a" : "#3c4043";
+            badgeEl.style.color = "#fff";
             document.getElementById('titreOeuvre').textContent = data.title;
             document.getElementById('descOeuvre').innerHTML = data.desc;
             document.getElementById('nomArtiste').textContent = data.artist;

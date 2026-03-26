@@ -84,16 +84,36 @@ export class MapExperience {
     }
 
     drawStations() {
+        // Build a map of stationId → all lines it belongs to
+        const stationLines = new Map();
         for (const line of lines) {
             for (const station of line.stations) {
+                if (!stationLines.has(station.id)) stationLines.set(station.id, []);
+                stationLines.get(station.id).push({ line, station });
+            }
+        }
+
+        const rendered = new Set();
+
+        for (const line of lines) {
+            for (const station of line.stations) {
+                if (rendered.has(station.id)) continue;
+                rendered.add(station.id);
+
                 const position = [station.coordinates[1], station.coordinates[0]];
+                const allLines = stationLines.get(station.id);
+                const isTransfer = allLines.length > 1;
+
+                const lineTags = allLines.map(({ line: l }) =>
+                    `<span class="line-tag" style="background: ${l.color};">LIGNE ${l.id}</span>`
+                ).join("");
 
                 const art = station.art ?? {};
                 const tooltipContent = `
                     <div class="art-content">
                         <div class="station-header">
                             <h3>${station.name}</h3>
-                            <span class="line-tag" style="background: ${line.color};">LIGNE ${line.id}</span>
+                            <div class="line-tags">${lineTags}</div>
                         </div>
                         <div class="art-info">
                             <h4>${art.artist ?? "Artiste à confirmer"}</h4>
@@ -104,11 +124,15 @@ export class MapExperience {
                     </div>
                 `;
 
+                const iconClass = isTransfer ? "station-icon station-icon--transfer" : "station-icon";
+                const iconSize = isTransfer ? [14, 14] : [10, 10];
+                const iconAnchor = isTransfer ? [7, 7] : [5, 5];
+
                 const marker = window.L.marker(position, {
                     icon: window.L.divIcon({
-                        className: "station-icon",
-                        iconSize: [10, 10],
-                        iconAnchor: [5, 5],
+                        className: iconClass,
+                        iconSize,
+                        iconAnchor,
                         popupAnchor: [0, -8]
                     }),
                     riseOnHover: true
@@ -130,7 +154,6 @@ export class MapExperience {
                 });
 
                 marker.on("mouseover", () => this.notifyInteraction());
-
                 this.markerIndex.set(station.id, marker);
             }
         }
