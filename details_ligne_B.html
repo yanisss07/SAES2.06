@@ -364,7 +364,7 @@
             document.getElementById('metaArtiste').textContent = data.meta;
             document.getElementById('bioArtiste').innerHTML = data.bio;
 
-            document.body.style.backgroundImage = `linear-gradient(rgba(20,20,20,0.72), rgba(20,20,20,0.72)), url('video/${key}/background.png')`;
+            document.body.style.backgroundImage = `linear-gradient(rgba(20,20,20,0.72), rgba(20,20,20,0.72)), url('media/${key}/background.png')`;
 
             const frame = document.querySelector('.photo-frame');
             frame.innerHTML = `<div class="abstract-art-bg">ŒUVRE DE ${data.artist.toUpperCase()}</div>`;
