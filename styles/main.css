@@ -211,6 +211,19 @@ body {
     margin-bottom: 8px;
 }
 
+.station-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.station-logo {
+    height: 32px;
+    width: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
 .station-header h3 {
     margin: 0;
     font-size: 16px;

@@ -4,401 +4,458 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détail de l'Œuvre - Ligne A</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-
     <style>
-        /* --- STYLE IDENTIQUE A VOTRE PAGE MODELE --- */
-        body {
-            margin: 0; padding: 0; background-color: #202124; color: #e8eaed;
-            font-family: 'Roboto', sans-serif; min-height: 100vh; display: flex; flex-direction: column;
-            background-size: cover; background-position: center; background-attachment: fixed;
-        }
+        * { box-sizing: border-box; }
 
-        /* Effets Néon */
-        .neon-gradient-text {
-            background: linear-gradient(90deg, #a50e0e, #e37400, #cfba3f, #07b2ef, #174ea6);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 5px rgba(227, 116, 0, 0.5));
+        body {
+            margin: 0; padding: 0;
+            background-color: #202124; color: #e8eaed;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
         .neon-border-top { position: relative; }
         .neon-border-top::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
             background: linear-gradient(90deg, #a50e0e, #e37400, #cfba3f, #07b2ef, #174ea6);
-            box-shadow: 0 0 15px rgba(255, 165, 0, 0.6); border-radius: 4px 4px 0 0;
+            box-shadow: 0 0 15px rgba(255, 165, 0, 0.6);
+            border-radius: 4px 4px 0 0;
         }
 
-        /* Header & Navigation */
+        /* ── Floating header ── */
         header {
-            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #3c4043; background-color: rgba(32, 33, 36, 0.95);
-            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(5px);
+            position: fixed;
+            top: 16px; left: 16px; right: 16px;
+            padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: rgba(32, 33, 36, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 100;
         }
+
+        .header-left { display: flex; align-items: center; gap: 10px; }
 
         .back-btn {
-            text-decoration: none; color: #9aa0a6; font-weight: 500; font-size: 14px;
-            display: flex; align-items: center; transition: color 0.3s;
+            text-decoration: none; color: #9aa0a6;
+            display: flex; align-items: center;
+            padding: 6px; border-radius: 8px;
+            transition: color 0.2s;
         }
-        .back-btn:hover { color: #fff; text-shadow: 0 0 8px #fff; }
-        .back-btn svg { margin-right: 8px; fill: currentColor; }
+        .back-btn:hover { color: #fff; }
+        .back-btn svg { fill: currentColor; display: block; }
 
-        /* Selecteur de station */
+        .header-logo {
+            height: 36px; width: 36px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
         .station-selector {
-            background: #303134; color: #fff; border: 1px solid #5f6368;
-            padding: 8px 15px; border-radius: 8px; font-family: 'Roboto', sans-serif;
-            font-size: 14px; cursor: pointer; margin-left: 20px;
+            background: transparent; color: #fff;
+            border: none; outline: none;
+            font-family: 'Roboto', sans-serif;
+            font-size: 15px; font-weight: 700;
+            cursor: pointer;
+        }
+        .station-selector option { background: #303134; }
+
+        .header-right {
+            font-weight: 900; letter-spacing: 1px;
+            font-size: 13px; color: #9aa0a6;
         }
 
+        /* ── Main layout ── */
         main {
-            flex: 1; max-width: 1000px; margin: 40px auto; padding: 0 20px; width: 100%;
-            box-sizing: border-box; animation: fadeIn 0.8s ease-out;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+            animation: fadeIn 0.7s ease-out;
         }
 
-        .header-oeuvre { text-align: center; margin-bottom: 50px; }
-        h1.station-name { font-size: 48px; font-weight: 900; margin: 0; letter-spacing: 1px; text-transform: uppercase; }
-        
-        .badges { margin-top: 15px; display: flex; justify-content: center; gap: 15px; }
+        /* ── Cards ── */
+        .section-card {
+            background-color: rgba(40, 42, 45, 0.82);
+            border: 1px solid #3c4043;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        /* ── Media frames ── */
+        .media-frame {
+            border-radius: 12px;
+            overflow: hidden;
+            background: #111;
+            border: 1px solid #3c4043;
+            position: relative;
+        }
+        .media-frame img,
+        .media-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .main-frame  { aspect-ratio: 4/3; }
+        .side-frame  { min-height: 200px; height: 100%; }
+        .full-frame  { aspect-ratio: 16/9; }
+
+        .placeholder {
+            width: 100%; height: 100%; min-height: 200px;
+            display: flex; align-items: center; justify-content: center;
+            color: #5f6368; font-weight: 700; letter-spacing: 2px; font-size: 11px;
+            background: radial-gradient(circle at 30% 70%, #333, #202124);
+        }
+
+        /* ── Text styles ── */
+        .section-label {
+            font-size: 11px; font-weight: 500; color: #9aa0a6;
+            text-transform: uppercase; letter-spacing: 2px;
+            margin: 0 0 14px 0;
+        }
+
         .line-badge {
-            padding: 6px 16px; border-radius: 50px; font-weight: 900; font-size: 14px;
-            text-transform: uppercase; box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            background-color: #E61E37; color: #fff; box-shadow: 0 0 15px rgba(230, 30, 55, 0.4);
+            display: inline-block;
+            padding: 4px 12px; border-radius: 50px;
+            font-weight: 900; font-size: 12px; text-transform: uppercase;
+            background-color: #E61E37; color: #fff;
+            box-shadow: 0 0 12px rgba(230, 30, 55, 0.4);
+            margin-bottom: 10px;
         }
 
-        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .artwork-title { font-size: 24px; font-weight: 700; color: #fff; margin: 0 0 10px 0; }
+        .artist-name   { font-size: 22px; font-weight: 500; color: #8ab4f8; margin: 0 0 4px 0; }
+        .artist-meta   { font-style: italic; color: #9aa0a6; font-size: 13px; margin: 0 0 14px 0; display: block; }
 
-        .card {
-            background-color: #282a2d; border: 1px solid #3c4043; border-radius: 16px;
-            padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: transform 0.3s ease;
-        }
-        .card:hover { transform: translateY(-5px); }
+        p { line-height: 1.8; color: #bdc1c6; font-size: 15px; margin: 0 0 10px 0; }
 
-        h2 {
-            font-size: 24px; margin-top: 0; margin-bottom: 20px; font-weight: 300; color: #fff;
-            border-left: 4px solid #8ab4f8; padding-left: 15px;
-        }
-        h2.artist-title { border-left: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
-        .artwork-title { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 10px; }
-        .artist-name { font-size: 28px; font-weight: 500; color: #8ab4f8; margin-bottom: 5px; }
-        .artist-meta { font-style: italic; color: #9aa0a6; font-size: 14px; margin-bottom: 20px; display: block; }
-        
-        p { line-height: 1.8; color: #bdc1c6; font-size: 16px; margin-bottom: 20px; text-align: justify; }
-
-        .photo-frame {
-            width: 100%; height: 300px; background-color: #000; border-radius: 12px;
-            overflow: hidden; position: relative; margin-bottom: 25px; border: 1px solid #3c4043;
-        }
-        .abstract-art-bg {
-            width: 100%; height: 100%; background: radial-gradient(circle at 30% 70%, #444, #202124);
-            display: flex; align-items: center; justify-content: center; color: #5f6368; font-weight: 700; letter-spacing: 2px;
+        @media (max-width: 700px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            header { top: 8px; left: 8px; right: 8px; }
+            main { padding-top: 90px; }
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .content-grid { grid-template-columns: 1fr; } h1.station-name { font-size: 32px; } }
-        footer { text-align: center; padding: 30px; color: #5f6368; font-size: 12px; margin-top: auto; border-top: 1px solid #3c4043; }
+        footer {
+            text-align: center; padding: 30px;
+            color: #5f6368; font-size: 12px;
+            border-top: 1px solid #3c4043;
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="display:flex; align-items:center;">
-            <a href="index.html" class="back-btn" id="backButtonA">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
-                CARTE
-            </a>
-            <select id="stationSelect" class="station-selector" onchange="loadStation(this.value)">
-                </select>
-        </div>
-        <div style="font-weight: 900; letter-spacing: 1px;">LIGNE A - ART & MÉTRO</div>
-    </header>
+<header>
+    <div class="header-left">
+        <a href="index.html" class="back-btn" id="backButtonA">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/>
+            </svg>
+        </a>
+        <img id="headerLogo" class="header-logo" src="" alt="">
+        <select id="stationSelect" class="station-selector" onchange="loadStation(this.value)"></select>
+    </div>
+    <div class="header-right">LIGNE A — ART & MÉTRO</div>
+</header>
 
-    <main id="mainContent">
-        <div class="header-oeuvre">
-            <h1 class="station-name neon-gradient-text" id="titreStation">STATION</h1>
-            <div class="badges">
-                <span class="line-badge ligne-a">Ligne A</span>
-                <span class="line-badge" style="background: #3c4043; color: #fff;" id="positionBadge">MÉTRO</span>
+<main id="mainContent">
+
+    <!-- Card 1 : Œuvre -->
+    <div class="section-card neon-border-top">
+        <div class="grid-2">
+            <div class="media-frame main-frame">
+                <img id="mainImage" src="" alt="œuvre principale">
+            </div>
+            <div>
+                <p class="section-label">L'Œuvre</p>
+                <span id="positionBadge" class="line-badge">MÉTRO</span>
+                <div class="artwork-title" id="titreOeuvre"></div>
+                <div id="descOeuvre"></div>
             </div>
         </div>
+    </div>
 
-        <div class="content-grid">
-            <div class="card neon-border-top">
-                <h2>L'Œuvre</h2>
-                <div class="photo-frame">
-                    <div class="abstract-art-bg" id="photo1A.png">PHOTO</div>
-                </div>
-                <div class="artwork-title" id="titreOeuvre">Titre de l'œuvre</div>
-                <div id="descOeuvre">
-                    </div>
+    <!-- Card 2 : Artiste + 1er média extra -->
+    <div class="section-card">
+        <p class="section-label">L'Artiste</p>
+        <div id="artisteInner" class="grid-2">
+            <div>
+                <div class="artist-name" id="nomArtiste"></div>
+                <span class="artist-meta" id="metaArtiste"></span>
+                <div id="bioArtiste"></div>
             </div>
-
-            <div class="card">
-                <h2 class="artist-title">L'Artiste</h2>
-                <div class="artist-name" id="nomArtiste">Nom de l'artiste</div>
-                <span class="artist-meta" id="metaArtiste">Origine et date</span>
-                <div id="bioArtiste">
-                   </div>
-                
-                <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #3c4043;">
-                    <h3 style="color: #fff; font-size: 16px; margin-bottom: 10px;">Le saviez-vous ?</h3>
-                    <p style="font-size: 14px; color: #9aa0a6;">
-                        Cette œuvre fait partie des 48 commandes publiques réalisées lors de la construction du métro, transformant le réseau en la plus grande galerie d'art souterraine de la région.
-                    </p>
-                </div>
+            <div id="firstMediaWrapper" class="media-frame side-frame" style="display:none;">
+                <div id="firstMedia" style="width:100%;height:100%;"></div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <footer>
-        Tisséo Collectivités - Parcours Culturel | Données extraites du dépliant officiel
-    </footer>
+    <!-- Médias extra 2, 3 … n (injectés dynamiquement) -->
+    <div id="extraMedia"></div>
 
-    <script>
-    const stationsLigneA = {
-        "basso_cambo": {
-            name: "Basso Cambo",
-            badge: "TERMINUS OUEST",
-            image: "media/basso_cambo/background.png",
-            artist: "Beate Honsell-Weiss",
-            meta: "Constance (Allemagne), 1952",
-            title: "Sans titre",
-            desc: "<p>Installation de trois mâts surmontés de formes aux couleurs simples : un rectangle vert symbolisant l'azur, un triangle rouge marquant l'amour spirituel et un ovale doré marquant le verbe.</p>",
-            bio: "<p>L'artiste utilise des formes géométriques pures pour créer un langage symbolique universel.</p>"
-        },
-        "bellefontaine": {
-            name: "Bellefontaine",
-            badge: "STATION",
-            image: "media/bellefontaine/background.png",
-            artist: "Guy-Rachel Grataloup",
-            meta: "Nantua (Ain), 1935",
-            title: "Sans titre",
-            desc: "<p>Mise en résonance de trois éléments : une mosaïque murale aux tons chauds, un sablier en verre, et un plan incliné parsemé de tessons dorés évoquant le ciel étoilé.</p>",
-            bio: "<p>Grataloup explore souvent les thèmes de la lumière et du temps qui passe.</p>"
-        },
-        "reynerie": {
-            name: "Reynerie",
-            badge: "STATION",
-            image: "media/reynerie/background.png",
-            artist: "Takis",
-            meta: "Athènes (Grèce), 1925",
-            title: "Signaux lumineux",
-            desc: "<p>À la verticale d'un puits de lumière, un mur d'eau descend jusqu'aux quais. Ces fontaines animent des sculptures : des spirales colorées.</p>",
-            bio: "<p>Takis est une figure majeure de l'art cinétique, intégrant le magnétisme dans ses œuvres.</p>"
-        },
-        "mirail_universite": {
-            name: "Mirail-Université",
-            badge: "UNIVERSITÉ",
-            image: "media/mirail_universite/background.png",
-            artist: "Daniel Coulet",
-            meta: "Montpellier (Hérault), 1954",
-            title: "Arbre fleur & Fleur stalagmite",
-            desc: "<p>Deux sculptures monumentales végétales annoncent les œuvres dans les puits de jour. Ces arbres sont l'un solaire et ouvert le matin, l'autre nocturne et fermé le soir.</p>",
-            bio: "<p>Daniel Coulet interroge le rapport entre la nature, le sacré et l'espace architectural.</p>"
-        },
-        "bagatelle": {
-            name: "Bagatelle",
-            badge: "STATION",
-            image: "media/bagatelle/background.png",
-            artist: "Dimitry Orlac",
-            meta: "Koper (Slovénie), 1956",
-            title: "Ce qui est en haut est comme ce qui est en bas",
-            desc: "<p>L'artiste investit le sol et le plafond de néons bleus et rouges. La lumière participe pleinement à l'identité de la station et au parcours initiatique du voyageur.</p>",
-            bio: "<p>Orlac sculpte l'espace avec la lumière artificielle pour modifier la perception sensorielle.</p>"
-        },
-        "mermoz": {
-            name: "Mermoz",
-            badge: "STATION",
-            image: "media/mermoz/background.png",
-            artist: "Jean-Paul Chambas",
-            meta: "Vic-Fezensac (Gers), 1947",
-            title: "Mermoz",
-            desc: "<p>L'artiste dépeint des références à l'aéropostale. Des calligraphies orientales et symboles du voyage complètent cette fresque composée de collages peints.</p>",
-            bio: "<p>Peintre figuratif, Chambas crée des œuvres narratives foisonnantes de détails.</p>"
-        },
-        "fontaine_lestang": {
-            name: "Fontaine Lestang",
-            badge: "STATION",
-            image: "media/fontaine_lestang/background.png",
-            artist: "Hervé & Richard Di Rosa",
-            meta: "Sète (Hérault), 1959 et 1963",
-            title: "La Fontaine des enfants",
-            desc: "<p>Des sculptures colorées, initialement jeux d'enfants, réinstallées dans la station. À travers leur apparente naïveté, les différences et identités des peuples sont mises en valeur.</p>",
-            bio: "<p>Figures de la « Figuration Libre », les frères Di Rosa mélangent culture populaire et art brut.</p>"
-        },
-        "arenes": {
-            name: "Arènes",
-            badge: "PÔLE D'ÉCHANGE",
-            image: "media/arenes/background.png",
-            artist: "Olivier Debré",
-            meta: "Paris, 1920-1999",
-            title: "Traces de ferveur bleue",
-            desc: "<p>Un vaste geste pictural allant d'une transparence légère au bleu-noir profond accompagne le mouvement du voyageur, inscrit directement dans l'architecture.</p>",
-            bio: "<p>Maître de l'abstraction lyrique, Olivier Debré peint l'émotion de l'espace.</p>"
-        },
-        "patte_d_oie": {
-            name: "Patte d'Oie",
-            badge: "STATION",
-            image: "media/patte_d_oie/background.png",
-            artist: "Noël Cuin",
-            meta: "Bordeaux (Gironde), 1949",
-            title: "Sans titre",
-            desc: "<p>Un volume en granit rappelant un livre ouvert et une chasse en verre contenant des pigments évoquent l'histoire de Toulouse à travers le nom de la station.</p>",
-            bio: "<p>Noël Cuin travaille sur la mémoire des lieux et l'assemblage de matériaux symboliques.</p>"
-        },
-        "st_cyprien": {
-            name: "St Cyprien République",
-            badge: "RIVE GAUCHE",
-            image: "media/st_cyprien/background.png",
-            artist: "François Morellet",
-            meta: "Cholet, 1926-2016",
-            title: "Naufrage de la géométrie",
-            desc: "<p>Une fontaine extérieure est visible de l'intérieur à travers des verrières. La lumière filtrée par l'eau fait écho à la géométrie de l'œuvre.</p>",
-            bio: "<p>Précurseur du minimalisme, Morellet joue avec la géométrie et les systèmes mathématiques.</p>"
-        },
-        "esquirol": {
-            name: "Esquirol",
-            badge: "CENTRE VILLE",
-            image: "media/esquirol/background.png",
-            artist: "François Bouillon",
-            meta: "Limoges, 1944",
-            title: "Sans titre",
-            desc: "<p>Le mur de la rotonde devient une caverne préhistorique avec une colonne conique en cuivre symbolisant le feu.</p>",
-            bio: "<p>François Bouillon s'inspire des cultures archaïques pour créer des œuvres intemporelles.</p>"
-        },
-        "capitole": {
-            name: "Capitole",
-            badge: "CENTRE HISTORIQUE",
-            image: "media/capitole/background.png",
-            artist: "Giulio Paolini",
-            meta: "Gênes (Italie), 1940",
-            title: "Sans titre",
-            desc: "<p>Des colonnes de granit s'élèvent selon une règle stricte : chaque cylindre a la dimension du précédent divisée par deux, projetant l'œuvre à l'infini.</p>",
-            bio: "<p>Paolini interroge la place du spectateur et la définition de l'œuvre d'art.</p>"
-        },
-        "jean_jaures": {
-            name: "Jean Jaurès",
-            badge: "LIGNE B",
-            image: "media/jean_jaures/background.png",
-            artist: "Felice Varini",
-            meta: "Locarno (Suisse), 1952",
-            title: "Sans titre",
-            desc: "<p>L'artiste crée des formes géométriques monumentales qui ne sont visibles dans leur totalité que d'un seul point de vue unique.</p>",
-            bio: "<p>Célèbre pour ses anamorphoses, Varini utilise l'architecture comme toile.</p>"
-        },
-        "marengo_sncf": {
-            name: "Marengo SNCF",
-            badge: "GARE MATABIAU",
-            image: "media/marengo_sncf/background.png",
-            artist: "Bernard Gerboud",
-            meta: "Nantua (Ain), 1949",
-            title: "Sans titre",
-            desc: "<p>Des lignes diffuses de lumière épousent les formes du plafond, créant une tension entre le volume et le plan.</p>",
-            bio: "<p>Gerboud travaille la lumière comme un matériau de construction.</p>"
-        },
-        "jolimont": {
-            name: "Jolimont",
-            badge: "AÉRIEN",
-            image: "media/jolimont/background.png",
-            artist: "Jean-Louis Garnell",
-            meta: "Bretagne, 1954",
-            title: "Sans titre",
-            desc: "<p>L'artiste dépose des « doubles fenêtres » en verre coloré portant des fragments d'images disparues, rappelant des vitraux.</p>",
-            bio: "<p>Photographe et plasticien, Garnell intègre l'image dans des installations pérennes.</p>"
-        },
-        "roseraie": {
-            name: "Roseraie",
-            badge: "STATION",
-            image: "media/roseraie/background.png",
-            artist: "Damien Cabanes",
-            meta: "Suresnes, 1959",
-            title: "Puits de couleur",
-            desc: "<p>Le voyageur expérimente la perspective avec des « puits de couleur ». Ces sculptures inversées perturbent la perception du vide et des distances.</p>",
-            bio: "<p>Damien Cabanes travaille la couleur comme une masse physique.</p>"
-        },
-        "argoulets": {
-            name: "Argoulets",
-            badge: "STATION",
-            image: "media/argoulets/background.png",
-            artist: "Jacques Vieille",
-            meta: "Baden-Baden (Allemagne), 1948",
-            title: "Future Garden",
-            desc: "<p>À l'extérieur, un jardin semble flotter à 10 mètres du sol, avec des essences à croissance exubérante.</p>",
-            bio: "<p>Jacques Vieille intègre la nature dans des structures architecturales.</p>"
-        },
-        "balma_gramont": {
-            name: "Balma-Gramont",
-            badge: "TERMINUS EST",
-            image: "media/balma_gramont/background.png",
-            artist: "Jean-Michel Othoniel",
-            meta: "Saint-Étienne, 1964",
-            title: "Le Mât des Utopistes",
-            desc: "<p>Hommage aux utopistes et au Pays de Cocagne (référence au pastel). L'œuvre marque une entrée symbolique dans la ville.</p>",
-            bio: "<p>Othoniel enchante le réel avec des matériaux poétiques comme le verre.</p>"
-        }
+</main>
+
+<footer>
+    Tisséo Collectivités — Parcours Culturel | Données extraites du dépliant officiel
+</footer>
+
+<script>
+const stationsLigneA = {
+    "basso_cambo": {
+        name: "Basso Cambo", badge: "TERMINUS OUEST",
+        artist: "Beate Honsell-Weiss", meta: "Constance (Allemagne), 1952",
+        title: "Sans titre",
+        desc: "<p>Installation de trois mâts surmontés de formes aux couleurs simples : un rectangle vert symbolisant l'azur, un triangle rouge marquant l'amour spirituel et un ovale doré marquant le verbe.</p>",
+        bio: "<p>L'artiste utilise des formes géométriques pures pour créer un langage symbolique universel.</p>"
+    },
+    "bellefontaine": {
+        name: "Bellefontaine", badge: "STATION",
+        artist: "Guy-Rachel Grataloup", meta: "Nantua (Ain), 1935",
+        title: "Sans titre",
+        desc: "<p>Mise en résonance de trois éléments : une mosaïque murale aux tons chauds, un sablier en verre, et un plan incliné parsemé de tessons dorés évoquant le ciel étoilé.</p>",
+        bio: "<p>Grataloup explore souvent les thèmes de la lumière et du temps qui passe.</p>"
+    },
+    "reynerie": {
+        name: "Reynerie", badge: "STATION",
+        artist: "Takis", meta: "Athènes (Grèce), 1925",
+        title: "Signaux lumineux",
+        desc: "<p>À la verticale d'un puits de lumière, un mur d'eau descend jusqu'aux quais. Ces fontaines animent des sculptures : des spirales colorées.</p>",
+        bio: "<p>Takis est une figure majeure de l'art cinétique, intégrant le magnétisme dans ses œuvres.</p>"
+    },
+    "mirail_universite": {
+        name: "Mirail-Université", badge: "UNIVERSITÉ",
+        artist: "Daniel Coulet", meta: "Montpellier (Hérault), 1954",
+        title: "Arbre fleur & Fleur stalagmite",
+        desc: "<p>Deux sculptures monumentales végétales annoncent les œuvres dans les puits de jour. Ces arbres sont l'un solaire et ouvert le matin, l'autre nocturne et fermé le soir.</p>",
+        bio: "<p>Daniel Coulet interroge le rapport entre la nature, le sacré et l'espace architectural.</p>"
+    },
+    "bagatelle": {
+        name: "Bagatelle", badge: "STATION",
+        artist: "Dimitry Orlac", meta: "Koper (Slovénie), 1956",
+        title: "Ce qui est en haut est comme ce qui est en bas",
+        desc: "<p>L'artiste investit le sol et le plafond de néons bleus et rouges. La lumière participe pleinement à l'identité de la station et au parcours initiatique du voyageur.</p>",
+        bio: "<p>Orlac sculpte l'espace avec la lumière artificielle pour modifier la perception sensorielle.</p>"
+    },
+    "mermoz": {
+        name: "Mermoz", badge: "STATION",
+        artist: "Jean-Paul Chambas", meta: "Vic-Fezensac (Gers), 1947",
+        title: "Mermoz",
+        desc: "<p>L'artiste dépeint des références à l'aéropostale. Des calligraphies orientales et symboles du voyage complètent cette fresque composée de collages peints.</p>",
+        bio: "<p>Peintre figuratif, Chambas crée des œuvres narratives foisonnantes de détails.</p>"
+    },
+    "fontaine_lestang": {
+        name: "Fontaine Lestang", badge: "STATION",
+        artist: "Hervé & Richard Di Rosa", meta: "Sète (Hérault), 1959 et 1963",
+        title: "La Fontaine des enfants",
+        desc: "<p>Des sculptures colorées, initialement jeux d'enfants, réinstallées dans la station. À travers leur apparente naïveté, les différences et identités des peuples sont mises en valeur.</p>",
+        bio: "<p>Figures de la « Figuration Libre », les frères Di Rosa mélangent culture populaire et art brut.</p>"
+    },
+    "arenes": {
+        name: "Arènes", badge: "PÔLE D'ÉCHANGE",
+        artist: "Olivier Debré", meta: "Paris, 1920-1999",
+        title: "Traces de ferveur bleue",
+        desc: "<p>Un vaste geste pictural allant d'une transparence légère au bleu-noir profond accompagne le mouvement du voyageur, inscrit directement dans l'architecture.</p>",
+        bio: "<p>Maître de l'abstraction lyrique, Olivier Debré peint l'émotion de l'espace.</p>"
+    },
+    "patte_d_oie": {
+        name: "Patte d'Oie", badge: "STATION",
+        artist: "Noël Cuin", meta: "Bordeaux (Gironde), 1949",
+        title: "Sans titre",
+        desc: "<p>Un volume en granit rappelant un livre ouvert et une chasse en verre contenant des pigments évoquent l'histoire de Toulouse à travers le nom de la station.</p>",
+        bio: "<p>Noël Cuin travaille sur la mémoire des lieux et l'assemblage de matériaux symboliques.</p>"
+    },
+    "st_cyprien": {
+        name: "St Cyprien République", badge: "RIVE GAUCHE",
+        artist: "François Morellet", meta: "Cholet, 1926-2016",
+        title: "Naufrage de la géométrie",
+        desc: "<p>Une fontaine extérieure est visible de l'intérieur à travers des verrières. La lumière filtrée par l'eau fait écho à la géométrie de l'œuvre.</p>",
+        bio: "<p>Précurseur du minimalisme, Morellet joue avec la géométrie et les systèmes mathématiques.</p>"
+    },
+    "esquirol": {
+        name: "Esquirol", badge: "CENTRE VILLE",
+        artist: "François Bouillon", meta: "Limoges, 1944",
+        title: "Sans titre",
+        desc: "<p>Le mur de la rotonde devient une caverne préhistorique avec une colonne conique en cuivre symbolisant le feu.</p>",
+        bio: "<p>François Bouillon s'inspire des cultures archaïques pour créer des œuvres intemporelles.</p>"
+    },
+    "capitole": {
+        name: "Capitole", badge: "CENTRE HISTORIQUE",
+        artist: "Giulio Paolini", meta: "Gênes (Italie), 1940",
+        title: "Sans titre",
+        desc: "<p>Des colonnes de granit s'élèvent selon une règle stricte : chaque cylindre a la dimension du précédent divisée par deux, projetant l'œuvre à l'infini.</p>",
+        bio: "<p>Paolini interroge la place du spectateur et la définition de l'œuvre d'art.</p>"
+    },
+    "jean_jaures": {
+        name: "Jean Jaurès", badge: "CORRESPONDANCE B",
+        artist: "Felice Varini", meta: "Locarno (Suisse), 1952",
+        title: "Anamorphose",
+        desc: "<p>L'artiste crée des formes géométriques monumentales qui ne sont visibles dans leur totalité que d'un seul point de vue unique.</p>",
+        bio: "<p>Célèbre pour ses anamorphoses, Varini utilise l'architecture comme toile.</p>"
+    },
+    "marengo_sncf": {
+        name: "Marengo SNCF", badge: "GARE MATABIAU",
+        artist: "Bernard Gerboud", meta: "Nantua (Ain), 1949",
+        title: "Sans titre",
+        desc: "<p>Des lignes diffuses de lumière épousent les formes du plafond, créant une tension entre le volume et le plan.</p>",
+        bio: "<p>Gerboud travaille la lumière comme un matériau de construction.</p>"
+    },
+    "jolimont": {
+        name: "Jolimont", badge: "AÉRIEN",
+        artist: "Jean-Louis Garnell", meta: "Bretagne, 1954",
+        title: "Sans titre",
+        desc: "<p>L'artiste dépose des « doubles fenêtres » en verre coloré portant des fragments d'images disparues, rappelant des vitraux.</p>",
+        bio: "<p>Photographe et plasticien, Garnell intègre l'image dans des installations pérennes.</p>"
+    },
+    "roseraie": {
+        name: "Roseraie", badge: "STATION",
+        artist: "Damien Cabanes", meta: "Suresnes, 1959",
+        title: "Puits de couleur",
+        desc: "<p>Le voyageur expérimente la perspective avec des « puits de couleur ». Ces sculptures inversées perturbent la perception du vide et des distances.</p>",
+        bio: "<p>Damien Cabanes travaille la couleur comme une masse physique.</p>"
+    },
+    "argoulets": {
+        name: "Argoulets", badge: "STATION",
+        artist: "Jacques Vieille", meta: "Baden-Baden (Allemagne), 1948",
+        title: "Future Garden",
+        desc: "<p>À l'extérieur, un jardin semble flotter à 10 mètres du sol, avec des essences à croissance exubérante.</p>",
+        bio: "<p>Jacques Vieille intègre la nature dans des structures architecturales.</p>"
+    },
+    "balma_gramont": {
+        name: "Balma-Gramont", badge: "TERMINUS EST",
+        artist: "Jean-Michel Othoniel", meta: "Saint-Étienne, 1964",
+        title: "Le Mât des Utopistes",
+        desc: "<p>Hommage aux utopistes et au Pays de Cocagne (référence au pastel). L'œuvre marque une entrée symbolique dans la ville.</p>",
+        bio: "<p>Othoniel enchante le réel avec des matériaux poétiques comme le verre.</p>"
+    }
+};
+
+// ── Init select ──
+const select = document.getElementById('stationSelect');
+for (const key in stationsLigneA) {
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = stationsLigneA[key].name;
+    select.appendChild(opt);
+}
+
+document.getElementById('backButtonA').addEventListener('click', e => {
+    if (window.history.length > 1) { e.preventDefault(); window.history.back(); }
+});
+
+// ── Load station ──
+async function loadStation(key) {
+    const data = stationsLigneA[key];
+    if (!data) return;
+
+    // Background
+    document.body.style.backgroundImage =
+        `linear-gradient(rgba(20,20,20,0.72), rgba(20,20,20,0.72)), url('media/${key}/background.png')`;
+
+    // Header logo
+    const logo = document.getElementById('headerLogo');
+    logo.src = `media/${key}/logo.svg`;
+    logo.onerror = () => { logo.style.display = 'none'; };
+    logo.onload  = () => { logo.style.display = ''; };
+
+    // Card 1
+    const mainImg = document.getElementById('mainImage');
+    mainImg.src = `media/${key}/main.png`;
+    mainImg.onerror = () => {
+        mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>';
     };
+    document.getElementById('positionBadge').textContent = data.badge;
+    document.getElementById('titreOeuvre').textContent   = data.title;
+    document.getElementById('descOeuvre').innerHTML      = data.desc;
 
-    const select = document.getElementById('stationSelect');
+    // Card 2
+    document.getElementById('nomArtiste').textContent  = data.artist;
+    document.getElementById('metaArtiste').textContent = data.meta;
+    document.getElementById('bioArtiste').innerHTML    = data.bio;
 
-    // Remplir le menu
-    for (const key in stationsLigneA) {
-        let option = document.createElement('option');
-        option.value = key;
-        option.textContent = stationsLigneA[key].name;
-        select.appendChild(option);
-    }
+    // Extra media
+    await buildExtras(key);
 
-    const backButton = document.getElementById('backButtonA');
-    backButton.addEventListener('click', (event) => {
-        if (window.history.length > 1) {
-            event.preventDefault();
-            window.history.back();
-        }
+    // Animate
+    const main = document.getElementById('mainContent');
+    main.style.opacity = '0';
+    main.style.transform = 'translateY(12px)';
+    requestAnimationFrame(() => {
+        main.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+        main.style.opacity = '1';
+        main.style.transform = 'translateY(0)';
     });
+}
 
-    // Fonction de chargement
-    function loadStation(key) {
-        const data = stationsLigneA[key];
-        if (!data) {
-            return;
+async function checkFile(path) {
+    try { const r = await fetch(path, { method: 'HEAD' }); return r.ok; }
+    catch { return false; }
+}
+
+function makeMediaEl(path) {
+    const isVideo = /\.(mp4|webm|ogg)$/i.test(path);
+    if (isVideo) {
+        return `<video src="${path}" controls style="width:100%;height:100%;object-fit:cover;display:block;"></video>`;
+    }
+    return `<img src="${path}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+}
+
+async function buildExtras(stationId) {
+    const extras = [];
+    for (let i = 1; i <= 8; i++) {
+        let found = null;
+        for (const ext of ['png', 'jpg', 'jpeg', 'mp4', 'webm']) {
+            const p = `media/${stationId}/${i}.${ext}`;
+            if (await checkFile(p)) { found = p; break; }
         }
-        
-        document.getElementById('titreStation').textContent = data.name;
-        const badgeEl = document.getElementById('positionBadge');
-        badgeEl.textContent = data.badge;
-        badgeEl.style.background = data.badge === "LIGNE B" ? "#ffd056" : "#3c4043";
-        badgeEl.style.color = data.badge === "LIGNE B" ? "#000" : "#fff";
-        document.getElementById('titreOeuvre').textContent = data.title;
-        document.getElementById('descOeuvre').innerHTML = data.desc;
-        
-        document.getElementById('nomArtiste').textContent = data.artist;
-        document.getElementById('metaArtiste').textContent = data.meta;
-        document.getElementById('bioArtiste').innerHTML = data.bio;
-        
-        document.body.style.backgroundImage = `linear-gradient(rgba(20,20,20,0.72), rgba(20,20,20,0.72)), url('${data.image}')`;
-
-        const frame = document.querySelector('.photo-frame');
-        frame.innerHTML = `<div class="abstract-art-bg">PHOTO</div>`;
-
-        const main = document.getElementById('mainContent');
-        main.style.opacity = 0;
-        main.style.transform = "translateY(10px)";
-        
-        setTimeout(() => {
-            main.style.transition = "opacity 0.5s ease, transform 0.5s ease";
-            main.style.opacity = 1;
-            main.style.transform = "translateY(0)";
-        }, 50);
+        if (!found) break;
+        extras.push(found);
     }
 
-    // Init
-    const urlParams = new URLSearchParams(window.location.search);
-    const stationParam = urlParams.get('station');
+    const wrapper  = document.getElementById('firstMediaWrapper');
+    const firstEl  = document.getElementById('firstMedia');
+    const inner    = document.getElementById('artisteInner');
+    const extraDiv = document.getElementById('extraMedia');
 
-    const defaultStation = "balma_gramont";
-    const initialStation = stationParam && stationsLigneA[stationParam] ? stationParam : defaultStation;
-    select.value = initialStation;
-    loadStation(initialStation);
+    if (extras.length > 0) {
+        firstEl.innerHTML = makeMediaEl(extras[0]);
+        wrapper.style.display = '';
+        inner.className = 'grid-2';
+    } else {
+        wrapper.style.display = 'none';
+        inner.className = 'grid-1';
+    }
+
+    extraDiv.innerHTML = '';
+    for (let i = 1; i < extras.length; i++) {
+        const card = document.createElement('div');
+        card.className = 'section-card';
+        const frame = document.createElement('div');
+        frame.className = 'media-frame full-frame';
+        frame.innerHTML = makeMediaEl(extras[i]);
+        card.appendChild(frame);
+        extraDiv.appendChild(card);
+    }
+}
+
+// ── Boot ──
+const urlParams    = new URLSearchParams(window.location.search);
+const stationParam = urlParams.get('station');
+const initial      = stationParam && stationsLigneA[stationParam] ? stationParam : 'balma_gramont';
+select.value = initial;
+loadStation(initial);
 </script>
 
 </body>

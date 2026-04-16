@@ -112,7 +112,10 @@ export class MapExperience {
                 const tooltipContent = `
                     <div class="art-content">
                         <div class="station-header">
-                            <h3>${station.name}</h3>
+                            <div class="station-name-row">
+                                <img src="media/${station.id}/logo.svg" class="station-logo" alt="" onerror="this.style.display='none'">
+                                <h3>${station.name}</h3>
+                            </div>
                             <div class="line-tags">${lineTags}</div>
                         </div>
                         <div class="art-info">
