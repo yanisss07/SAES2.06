@@ -66,6 +66,9 @@
             font-weight: 900; letter-spacing: 1px;
             font-size: 13px; color: rgba(0,0,0,0.7);
         }
+        @media (min-width: 769px) {
+            .header-right { margin-right: 100px; }
+        }
 
         /* ── Main layout ── */
         main {
@@ -107,7 +110,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-right: 14px;
             padding: 4px 8px;
             border-radius: 50px;
             background: rgba(255, 255, 255, 0.12);
@@ -117,8 +119,22 @@
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 12px rgba(0,0,0,0.25);
             cursor: pointer;
             user-select: none;
+            position: fixed;
+            top: 29px;
+            right: 30px;
+            z-index: 1001;
         }
-        .slider-icon { font-size: 13px; line-height: 1; }
+        @media (max-width: 768px) {
+            .mode-slider {
+                top: auto;
+                right: auto;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        .mode-slider { color: rgba(0,0,0,0.8); }
+        .slider-icon { display: flex; align-items: center; opacity: 0.8; }
         .slider-track {
             position: relative;
             width: 36px;
@@ -232,14 +248,15 @@
         <select id="stationSelect" class="station-selector" onchange="loadStation(this.value)"></select>
     </div>
     <div style="display:flex;align-items:center;">
-        <div class="mode-slider" id="modeSlider" onclick="toggleMode()">
-            <span class="slider-icon">🌙</span>
-            <div class="slider-track"><div class="slider-knob"></div></div>
-            <span class="slider-icon">☀️</span>
-        </div>
         <span class="header-right">LIGNE B — ART & MÉTRO</span>
     </div>
 </header>
+
+<div class="mode-slider" id="modeSlider" onclick="toggleMode()">
+    <span class="slider-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+    <div class="slider-track"><div class="slider-knob"></div></div>
+    <span class="slider-icon"><svg width="13" height="13" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg></span>
+</div>
 
 <main id="mainContent">
 
@@ -561,16 +578,25 @@ async function buildExtras(stationId) {
 
 // ── Light/dark toggle ──
 function toggleMode() {
-    document.body.classList.toggle('light-mode');
+    const next = !document.body.classList.contains('light-mode');
+    document.body.classList.toggle('light-mode', next);
+    localStorage.setItem('theme', next ? 'light' : 'dark');
 }
 
-// Init from device preference
-if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.body.classList.add('light-mode');
-}
-window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
-    document.body.classList.toggle('light-mode', e.matches);
-});
+// Init: localStorage wins, then fall back to device preference
+(function () {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+        document.body.classList.add('light-mode');
+    } else if (!saved && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.body.classList.add('light-mode');
+    }
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+        if (!localStorage.getItem('theme')) {
+            document.body.classList.toggle('light-mode', e.matches);
+        }
+    });
+}());
 
 // ── Boot ──
 const urlParams    = new URLSearchParams(window.location.search);

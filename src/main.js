@@ -6,7 +6,8 @@ import { mapConfig } from "./data/stations.js";
 
 // ── Theme initialisation (runs before anything renders) ──
 const mq = window.matchMedia("(prefers-color-scheme: light)");
-let isLightMode = mq.matches;
+const savedTheme = localStorage.getItem("theme");
+let isLightMode = savedTheme ? savedTheme === "light" : mq.matches;
 if (isLightMode) document.body.classList.add("light-mode");
 
 const loader = new LoaderOverlay(document.getElementById("loader"));
@@ -74,16 +75,19 @@ async function bootstrap() {
     // ── Theme toggle wiring ──
     const toggleBtn = document.getElementById("theme-toggle");
     if (toggleBtn) {
-        const applyTheme = (light) => {
+        const applyTheme = (light, save = true) => {
             isLightMode = light;
             document.body.classList.toggle("light-mode", light);
             map.setTheme(!light);
+            if (save) localStorage.setItem("theme", light ? "light" : "dark");
         };
 
         toggleBtn.addEventListener("click", () => applyTheme(!isLightMode));
 
-        // Keep in sync if the OS theme changes while the page is open
-        mq.addEventListener("change", (e) => applyTheme(e.matches));
+        // Keep in sync if the OS theme changes and the user hasn't overridden it
+        mq.addEventListener("change", (e) => {
+            if (!localStorage.getItem("theme")) applyTheme(e.matches, false);
+        });
     }
 
     window.addEventListener("keydown", (event) => {

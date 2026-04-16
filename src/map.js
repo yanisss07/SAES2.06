@@ -14,7 +14,23 @@ export class MapExperience {
         this.stationListeners = new Set();
         this.interactionListeners = new Set();
         this.markerIndex = new Map();
+        this.mediaCache = new Map();
         this.isReady = false;
+    }
+
+    async fetchMedia(id) {
+        if (this.mediaCache.has(id)) return this.mediaCache.get(id);
+        const parse = txt => {
+            const lines = txt.trim().split("\n");
+            return { heading: lines[0] ?? "", body: lines.slice(2).join("\n").trim() };
+        };
+        const [oeuvreText, artistText] = await Promise.all([
+            fetch(`media/${id}/oeuvre.txt`).then(r => r.ok ? r.text() : "").catch(() => ""),
+            fetch(`media/${id}/artist.txt`).then(r => r.ok ? r.text() : "").catch(() => "")
+        ]);
+        const data = { oeuvre: parse(oeuvreText), artist: parse(artistText) };
+        this.mediaCache.set(id, data);
+        return data;
     }
 
     async init() {
@@ -113,8 +129,7 @@ export class MapExperience {
                     `<span class="line-tag" style="background: ${l.color};">LIGNE ${l.id}</span>`
                 ).join("");
 
-                const art = station.art ?? {};
-                const tooltipContent = `
+                const skeletonContent = `
                     <div class="art-content">
                         <div class="station-header">
                             <div class="station-name-row">
@@ -124,9 +139,8 @@ export class MapExperience {
                             <div class="line-tags">${lineTags}</div>
                         </div>
                         <div class="art-info">
-                            <h4>${art.artist ?? "Artiste à confirmer"}</h4>
-                            <em>${art.title ?? "Titre à venir"}</em>
-                            <p class="art-desc">${art.description ?? "Récit à venir."}</p>
+                            <h4>…</h4>
+                            <em>…</em>
                         </div>
                         <span class="click-hint">CLIQUEZ POUR VOIR PLUS →</span>
                     </div>
@@ -146,7 +160,7 @@ export class MapExperience {
                     riseOnHover: true
                 }).addTo(this.map);
 
-                marker.bindTooltip(tooltipContent, {
+                marker.bindTooltip(skeletonContent, {
                     direction: "top",
                     offset: [0, -12],
                     opacity: 1,
@@ -154,10 +168,49 @@ export class MapExperience {
                     sticky: true
                 });
 
+                marker.on("tooltipopen", () => {
+                    this.fetchMedia(station.id).then(data => {
+                        const tooltip = marker.getTooltip();
+                        if (!tooltip) return;
+                        const desc = data.oeuvre.body.length > 120
+                            ? data.oeuvre.body.slice(0, 120).trimEnd() + "…"
+                            : data.oeuvre.body;
+                        tooltip.setContent(`
+                            <div class="art-content">
+                                <div class="station-header">
+                                    <div class="station-name-row">
+                                        <img src="media/${station.id}/logo.svg" class="station-logo" alt="" onerror="this.style.display='none'">
+                                        <h3>${station.name}</h3>
+                                    </div>
+                                    <div class="line-tags">${lineTags}</div>
+                                </div>
+                                <div class="art-info">
+                                    <h4>${data.artist.heading || "Artiste à confirmer"}</h4>
+                                    <em>${data.oeuvre.heading || "Titre à venir"}</em>
+                                    <p class="art-desc">${desc || "Récit à venir."}</p>
+                                </div>
+                                <span class="click-hint">CLIQUEZ POUR VOIR PLUS →</span>
+                            </div>
+                        `);
+                    });
+                });
+
                 marker.on("click", () => {
                     this.notifyInteraction();
                     const target = this.getStationTarget(station, line);
-                    this.stationListeners.forEach((listener) => listener({ ...station, line: line.id, lineName: line.name, lineColor: line.color }));
+                    this.fetchMedia(station.id).then(data => {
+                        this.stationListeners.forEach(listener => listener({
+                            ...station,
+                            line: line.id,
+                            lineName: line.name,
+                            lineColor: line.color,
+                            art: {
+                                title: data.oeuvre.heading,
+                                artist: data.artist.heading,
+                                description: data.oeuvre.body
+                            }
+                        }));
+                    });
                     window.location.href = target;
                 });
 
