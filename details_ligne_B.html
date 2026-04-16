@@ -224,6 +224,8 @@
             transition: filter 0.8s ease, transform 0.8s ease;
         }
         #bg-layer.bg-loading { filter: blur(40px); transform: scale(1.08); }
+        #mainImage { transition: filter 0.6s ease, transform 0.6s ease; }
+        #mainImage.img-loading { filter: blur(20px); transform: scale(1.05); }
         .media-frame.frame-loading::after {
             content: '';
             position: absolute;
@@ -514,16 +516,25 @@ async function loadStation(key) {
     logo.onerror = () => { logo.style.display = 'none'; };
     logo.onload  = () => { logo.style.display = ''; };
 
-    // Card 1
+    // Card 1 — thumbnail shows instantly, progressive JPEG loads underneath
     const mainImg = document.getElementById('mainImage');
     const mainFrame = mainImg.closest('.media-frame');
     mainFrame.classList.add('frame-loading');
-    mainImg.onload = () => mainFrame.classList.remove('frame-loading');
-    mainImg.onerror = () => {
-        mainFrame.classList.remove('frame-loading');
-        mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>';
+    mainImg.classList.add('img-loading');
+    mainImg.onload = function onThumb() {
+        mainImg.onload = null; mainImg.onerror = null;
+        mainImg.src = `media/${key}/main.jpg`;
+        mainImg.onload = () => { mainImg.classList.remove('img-loading'); mainFrame.classList.remove('frame-loading'); };
+        mainImg.onerror = () => { mainImg.classList.remove('img-loading'); mainFrame.classList.remove('frame-loading'); mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>'; };
     };
-    mainImg.src = `media/${key}/main.jpg`;
+    mainImg.onerror = function onThumbFail() {
+        mainImg.onload = null; mainImg.onerror = null;
+        mainImg.classList.remove('img-loading');
+        mainImg.src = `media/${key}/main.jpg`;
+        mainImg.onload = () => mainFrame.classList.remove('frame-loading');
+        mainImg.onerror = () => { mainFrame.classList.remove('frame-loading'); mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>'; };
+    };
+    mainImg.src = `media/${key}/main_thumb.jpg`;
     document.getElementById('positionBadge').textContent = data.badge;
 
     const oeuvreFile = key === 'jean_jaures' ? `media/${key}/oeuvre_b.txt` : `media/${key}/oeuvre.txt`;
