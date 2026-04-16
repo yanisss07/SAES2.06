@@ -79,7 +79,7 @@
 
         /* ── Cards ── */
         .section-card {
-            background: rgba(255, 255, 255, 0.07);
+            background: rgba(0, 0, 0, 0.32);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             padding: 24px;
@@ -87,6 +87,62 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        /* ── Light mode ── */
+        body.light-mode .section-card {
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        body.light-mode .section-label  { color: rgba(0,0,0,0.5); }
+        body.light-mode .artwork-title  { color: #111; }
+        body.light-mode .artist-name    { color: #1a56c4; }
+        body.light-mode .artist-meta    { color: rgba(0,0,0,0.5); }
+        body.light-mode p               { color: #222; }
+        body.light-mode .placeholder    { color: #999; background: rgba(0,0,0,0.05); }
+
+        /* ── Liquid glass slider ── */
+        .mode-slider {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 14px;
+            padding: 4px 8px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 12px rgba(0,0,0,0.25);
+            cursor: pointer;
+            user-select: none;
+        }
+        .slider-icon { font-size: 13px; line-height: 1; }
+        .slider-track {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            border-radius: 50px;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            transition: background 0.3s;
+        }
+        body.light-mode .slider-track {
+            background: rgba(255,255,255,0.35);
+        }
+        .slider-knob {
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 1px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,1);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        body.light-mode .slider-knob {
+            transform: translateX(16px);
         }
 
         .grid-2 {
@@ -175,7 +231,14 @@
         <img id="headerLogo" class="header-logo" src="" alt="">
         <select id="stationSelect" class="station-selector" onchange="loadStation(this.value)"></select>
     </div>
-    <div class="header-right">LIGNE A — ART & MÉTRO</div>
+    <div style="display:flex;align-items:center;">
+        <div class="mode-slider" id="modeSlider" onclick="toggleMode()">
+            <span class="slider-icon">🌙</span>
+            <div class="slider-track"><div class="slider-knob"></div></div>
+            <span class="slider-icon">☀️</span>
+        </div>
+        <span class="header-right">LIGNE A — ART & MÉTRO</span>
+    </div>
 </header>
 
 <main id="mainContent">
@@ -478,6 +541,19 @@ async function buildExtras(stationId) {
         extraDiv.appendChild(card);
     }
 }
+
+// ── Light/dark toggle ──
+function toggleMode() {
+    document.body.classList.toggle('light-mode');
+}
+
+// Init from device preference
+if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.body.classList.add('light-mode');
+}
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+    document.body.classList.toggle('light-mode', e.matches);
+});
 
 // ── Boot ──
 const urlParams    = new URLSearchParams(window.location.search);
