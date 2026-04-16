@@ -133,6 +133,10 @@ body {
     font-family: inherit;
 }
 
+body.light-mode .leaflet-container {
+    background: radial-gradient(circle at 45% 25%, rgba(100, 130, 200, 0.12), transparent 55%), #e8e8e4;
+}
+
 .leaflet-pane {
     filter: drop-shadow(0 16px 48px rgba(4, 8, 20, 0.45));
 }
