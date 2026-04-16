@@ -1,12 +1,16 @@
 import { lines } from "./data/stations.js";
 
-const TILE_LAYER_URL = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const TILE_LAYERS = {
+    dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+};
 const TILE_LAYER_ATTRIBUTION = "&copy; OpenStreetMap &copy; CARTO";
 
 export class MapExperience {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
         this.map = null;
+        this.tileLayer = null;
         this.stationListeners = new Set();
         this.interactionListeners = new Set();
         this.markerIndex = new Map();
@@ -26,7 +30,8 @@ export class MapExperience {
             scrollWheelZoom: true
         }).setView([43.6005, 1.444], 13);
 
-        window.L.tileLayer(TILE_LAYER_URL, {
+        const isDark = !document.body.classList.contains("light-mode");
+        this.tileLayer = window.L.tileLayer(isDark ? TILE_LAYERS.dark : TILE_LAYERS.light, {
             attribution: TILE_LAYER_ATTRIBUTION,
             subdomains: "abcd",
             maxZoom: 20
@@ -225,6 +230,11 @@ export class MapExperience {
             easeLinearity: 0.25
         });
         marker.openTooltip();
+    }
+
+    setTheme(isDark) {
+        if (!this.map || !this.tileLayer) return;
+        this.tileLayer.setUrl(isDark ? TILE_LAYERS.dark : TILE_LAYERS.light);
     }
 
     activate() {

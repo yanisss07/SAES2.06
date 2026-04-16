@@ -4,6 +4,11 @@ import { MapExperience } from "./map.js";
 import { HintOverlay, StationPanel } from "./ui.js";
 import { mapConfig } from "./data/stations.js";
 
+// ── Theme initialisation (runs before anything renders) ──
+const mq = window.matchMedia("(prefers-color-scheme: light)");
+let isLightMode = mq.matches;
+if (isLightMode) document.body.classList.add("light-mode");
+
 const loader = new LoaderOverlay(document.getElementById("loader"));
 const globeStage = document.getElementById("globe-stage");
 const mapStage = document.getElementById("map-stage");
@@ -65,6 +70,21 @@ async function bootstrap() {
     map.onInteraction(() => {
         hintOverlay.hide();
     });
+
+    // ── Theme toggle wiring ──
+    const toggleBtn = document.getElementById("theme-toggle");
+    if (toggleBtn) {
+        const applyTheme = (light) => {
+            isLightMode = light;
+            document.body.classList.toggle("light-mode", light);
+            map.setTheme(!light);
+        };
+
+        toggleBtn.addEventListener("click", () => applyTheme(!isLightMode));
+
+        // Keep in sync if the OS theme changes while the page is open
+        mq.addEventListener("change", (e) => applyTheme(e.matches));
+    }
 
     window.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
