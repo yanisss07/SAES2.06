@@ -26,6 +26,40 @@ Plateforme web immersive consacrée aux œuvres d'art présentes sur les lignes 
 - `assets/` : logos placeholders et ressources déplacées (`img.png`, `photo1A.png`, `SAES2.svg`, support PDF, etc.).
 - `archive/` : prototype Leaflet d'origine conservé pour référence (`SAES2.html`, CSS/JS associés, pages de détails).
 
+## Système de chargement des images (fiches stations)
+
+Les images des fiches station utilisent deux techniques combinées pour éviter les écrans noirs sur connexion lente.
+
+### Images principales et galeries (`main.jpg`, `1.jpg`, `2.jpg`…)
+Encodées en **JPEG progressif** (`-interlace Plane`). Le navigateur reçoit et affiche l'image en plusieurs passes successives : d'abord floue sur toute sa surface, puis de plus en plus nette au fil de la réception des données — exactement comme Pinterest ou Medium.
+
+Pour `main.jpg` spécifiquement, un **miniature** (`main_thumb.jpg`, ~20 px de large, quelques Ko) s'affiche immédiatement pendant que le JPEG progressif se charge, ce qui évite tout écran noir initial. Quand le JPEG est prêt, la miniature disparaît avec une transition de flou.
+
+Une **barre de chargement rouge animée** apparaît en bas de chaque cadre image jusqu'à la fin du téléchargement.
+
+### Image de fond (`background.png` / `background_thumb.jpg`)
+Le fond utilise un système de **blur-up** : la miniature très floue (`background_thumb.jpg`, ~30 px) s'affiche immédiatement, puis le fond complet se substitue avec une transition douce une fois chargé.
+
+### Scripts à relancer si on ajoute une station
+```bash
+bash convert-to-progressive-jpeg.sh   # convertit main.png et les extras en JPEG progressif
+bash generate-thumbs.sh               # génère main_thumb.jpg et background_thumb.jpg
+```
+> `convert-to-progressive-jpeg.sh` doit être lancé **avant** `generate-thumbs.sh` (la miniature est générée depuis `main.jpg`).
+
+### Structure des fichiers média par station
+```
+media/{id}/
+├── main.jpg              ← JPEG progressif (artwork principal)
+├── main_thumb.jpg        ← miniature ~20px (générée automatiquement)
+├── background.png        ← fond pleine résolution
+├── background_thumb.jpg  ← miniature floue ~30px (générée automatiquement)
+├── logo.svg              ← logo affiché dans le header
+├── 1.jpg … 8.jpg         ← galerie extras en JPEG progressif (optionnel)
+├── artist.txt            ← nom et bio de l'artiste (1re ligne = nom)
+└── oeuvre.txt            ← titre et description de l'œuvre (1re ligne = titre)
+```
+
 ## Fondations techniques
 - **JavaScript natif** (`type="module"`) pour orchestrer loader, globe et carte sans bundler.
 - **Three.js** (copie locale en `vendor/three.module.js`) pour la scène 3D orbitale.

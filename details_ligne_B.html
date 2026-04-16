@@ -679,10 +679,18 @@ function toggleMode() {
     const toggle = document.getElementById('modeSlider');
     const footer = document.querySelector('footer');
     if (!toggle || !footer) return;
+    const GAP = 12;
     function update() {
-        const gap = 24;
-        const bottom = Math.max(gap, window.innerHeight - footer.getBoundingClientRect().top + gap);
-        toggle.style.bottom = bottom + 'px';
+        const footerTop = footer.getBoundingClientRect().top;
+        if (footerTop < window.innerHeight - 24) {
+            toggle.style.position = 'absolute';
+            toggle.style.top = (footerTop + window.scrollY - toggle.offsetHeight - GAP) + 'px';
+            toggle.style.bottom = '';
+        } else {
+            toggle.style.position = 'fixed';
+            toggle.style.bottom = '24px';
+            toggle.style.top = '';
+        }
     }
     window.addEventListener('scroll', update, { passive: true });
     update();

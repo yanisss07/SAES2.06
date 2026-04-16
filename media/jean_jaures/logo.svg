@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   version="1.1"
    width="737.008"
    height="510.236"
    viewBox="715 15 1 20"
    id="svg42"
-   sodipodi:docname="page-34.svg"
+   sodipodi:docname="logo.svg"
    inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   version="1.1"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -21,9 +20,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.03018173"
-     inkscape:cx="-4506.0373"
-     inkscape:cy="7753.0347"
+     inkscape:zoom="0.7076646"
+     inkscape:cx="-299.57694"
+     inkscape:cy="251.53159"
      inkscape:window-width="2185"
      inkscape:window-height="1468"
      inkscape:window-x="0"
@@ -32,18 +31,6 @@
      inkscape:current-layer="g37" />
   <defs
      id="defs4">
-    <linearGradient
-       id="linearGradient43"
-       inkscape:collect="always">
-      <stop
-         style="stop-color:#ffd000;stop-opacity:1;"
-         offset="0.28317294"
-         id="stop43" />
-      <stop
-         style="stop-color:#ff0000;stop-opacity:1;"
-         offset="0.34078002"
-         id="stop44" />
-    </linearGradient>
     <clipPath
        id="clip_1">
       <path
@@ -87,15 +74,6 @@
          d="M0 0H737.008V510.236H0Z"
          id="path4" />
     </clipPath>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient43"
-       id="linearGradient44"
-       x1="721.03583"
-       y1="190.52142"
-       x2="384.47635"
-       y2="319.71451"
-       gradientUnits="userSpaceOnUse" />
   </defs>
   <g
      clip-path="url(#clip_3)"
@@ -110,15 +88,6 @@
        stroke="#ffffff"
        d="M4 4H364.504V506.236H4Z"
        id="path5" />
-    <path
-       d="m 690.32803,462.05264 48.43244,0.70693 -5.75247,43.47643 -36.9275,-0.71906 z"
-       fill="#ffcb04"
-       id="path6"
-       style="fill:url(#linearGradient44);fill-rule:nonzero"
-       inkscape:transform-center-x="162.5019"
-       inkscape:transform-center-y="235.43512"
-       transform="matrix(1,0,0,-1,0,510.236)"
-       sodipodi:nodetypes="ccccc" />
     <path
        transform="matrix(1,0,0,-1,0,510.236)"
        stroke-width="8"
