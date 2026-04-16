@@ -14,10 +14,7 @@
             font-family: 'Roboto', sans-serif;
             min-height: 100vh;
             display: flex; flex-direction: column;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
+            }
 
 
         /* ── Floating header ── */
@@ -216,6 +213,21 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ── Progressive image loading ── */
+        #bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transform-origin: center;
+            transition: filter 0.8s ease, transform 0.8s ease;
+        }
+        #bg-layer.bg-loading { filter: blur(40px); transform: scale(1.08); }
+        #mainImage { transition: filter 0.6s ease, transform 0.6s ease; }
+        .img-loading { filter: blur(20px); transform: scale(1.05); }
+
         @media (max-width: 700px) {
             .grid-2 { grid-template-columns: 1fr; }
             header { top: 8px; left: 8px; right: 8px; }
@@ -236,6 +248,7 @@
     </style>
 </head>
 <body>
+<div id="bg-layer"></div>
 
 <header>
     <div class="header-left">
@@ -459,8 +472,8 @@ async function loadStation(key) {
     if (!data) return;
 
     // Background
-    document.body.style.backgroundImage =
-        `url('media/${key}/background.png')`;
+    const bgLayer = document.getElementById('bg-layer');
+    progressiveBg(bgLayer, `media/${key}/background_thumb.jpg`, `media/${key}/background.png`);
 
     // Header color
     const header = document.querySelector('header');
@@ -478,10 +491,8 @@ async function loadStation(key) {
 
     // Card 1
     const mainImg = document.getElementById('mainImage');
-    mainImg.src = `media/${key}/main.png`;
-    mainImg.onerror = () => {
-        mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>';
-    };
+    progressiveLoad(mainImg, `media/${key}/main_thumb.jpg`, `media/${key}/main.png`,
+        () => { mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>'; });
     document.getElementById('positionBadge').textContent = data.badge;
 
     const oeuvre = parseTextFile(await fetchText(`media/${key}/oeuvre.txt`));
@@ -518,7 +529,8 @@ function makeMediaEl(path) {
     if (isVideo) {
         return `<video src="${path}" controls style="width:100%;height:100%;object-fit:cover;display:block;"></video>`;
     }
-    return `<img src="${path}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+    const thumbPath = path.replace(/\.(png|jpg|jpeg)$/i, '_thumb.jpg');
+    return `<img src="${thumbPath}" data-full="${path}" style="width:100%;height:100%;object-fit:cover;display:block;transition:filter 0.6s ease,transform 0.6s ease;">`;
 }
 
 async function buildExtras(stationId) {
@@ -542,6 +554,8 @@ async function buildExtras(stationId) {
         firstEl.innerHTML = makeMediaEl(extras[0]);
         wrapper.style.display = '';
         inner.className = 'grid-2';
+        const firstImg = firstEl.querySelector('img[data-full]');
+        if (firstImg) applyProgressiveLoad(firstImg);
     } else {
         wrapper.style.display = 'none';
         inner.className = 'grid-1';
@@ -556,6 +570,63 @@ async function buildExtras(stationId) {
         frame.innerHTML = makeMediaEl(extras[i]);
         card.appendChild(frame);
         extraDiv.appendChild(card);
+    }
+    extraDiv.querySelectorAll('img[data-full]').forEach(applyProgressiveLoad);
+}
+
+// ── Progressive image loading ──
+function progressiveLoad(imgEl, thumbSrc, fullSrc, onFullError) {
+    imgEl.classList.add('img-loading');
+    imgEl.src = thumbSrc;
+    imgEl.onerror = () => {
+        imgEl.onerror = onFullError || null;
+        imgEl.classList.remove('img-loading');
+        imgEl.src = fullSrc;
+    };
+    imgEl.onload = () => {
+        imgEl.onload = null;
+        const full = new Image();
+        full.onload = () => { imgEl.src = fullSrc; imgEl.classList.remove('img-loading'); };
+        full.onerror = onFullError || (() => imgEl.classList.remove('img-loading'));
+        full.src = fullSrc;
+    };
+}
+
+function progressiveBg(bgLayer, thumbSrc, fullSrc) {
+    bgLayer.classList.add('bg-loading');
+    const thumb = new Image();
+    thumb.onload = () => {
+        bgLayer.style.backgroundImage = `url('${thumbSrc}')`;
+        const full = new Image();
+        full.onload = () => { bgLayer.style.backgroundImage = `url('${fullSrc}')`; bgLayer.classList.remove('bg-loading'); };
+        full.onerror = () => bgLayer.classList.remove('bg-loading');
+        full.src = fullSrc;
+    };
+    thumb.onerror = () => {
+        bgLayer.style.backgroundImage = `url('${fullSrc}')`;
+        bgLayer.classList.remove('bg-loading');
+    };
+    thumb.src = thumbSrc;
+}
+
+function applyProgressiveLoad(imgEl) {
+    const fullSrc = imgEl.dataset.full;
+    if (!fullSrc) return;
+    imgEl.classList.add('img-loading');
+    const startFull = () => {
+        const full = new Image();
+        full.onload = () => { imgEl.src = fullSrc; imgEl.classList.remove('img-loading'); };
+        full.onerror = () => imgEl.classList.remove('img-loading');
+        full.src = fullSrc;
+    };
+    if (imgEl.complete && imgEl.naturalWidth > 0) {
+        startFull();
+    } else if (imgEl.complete) {
+        imgEl.classList.remove('img-loading');
+        imgEl.src = fullSrc;
+    } else {
+        imgEl.onload = () => { imgEl.onload = null; startFull(); };
+        imgEl.onerror = () => { imgEl.onerror = null; imgEl.classList.remove('img-loading'); imgEl.src = fullSrc; };
     }
 }
 
