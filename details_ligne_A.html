@@ -225,8 +225,20 @@
             transition: filter 0.8s ease, transform 0.8s ease;
         }
         #bg-layer.bg-loading { filter: blur(40px); transform: scale(1.08); }
-        #mainImage { transition: filter 0.6s ease, transform 0.6s ease; }
-        .img-loading { filter: blur(20px); transform: scale(1.05); }
+        .media-frame.frame-loading::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #d2232a 40%, #ff6b6b 50%, #d2232a 60%, transparent);
+            background-size: 200% 100%;
+            animation: shimmer-bar 1.2s linear infinite;
+            z-index: 10;
+        }
+        @keyframes shimmer-bar {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
 
         @media (max-width: 700px) {
             .grid-2 { grid-template-columns: 1fr; }
@@ -261,7 +273,7 @@
         <select id="stationSelect" class="station-selector" onchange="loadStation(this.value)"></select>
     </div>
     <div style="display:flex;align-items:center;">
-        <span class="header-right">LIGNE A — ART & MÉTRO</span>
+        <span class="header-right">LIGNE A</span>
     </div>
 </header>
 
@@ -491,8 +503,14 @@ async function loadStation(key) {
 
     // Card 1
     const mainImg = document.getElementById('mainImage');
-    progressiveLoad(mainImg, `media/${key}/main_thumb.jpg`, `media/${key}/main.png`,
-        () => { mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>'; });
+    const mainFrame = mainImg.closest('.media-frame');
+    mainFrame.classList.add('frame-loading');
+    mainImg.onload = () => mainFrame.classList.remove('frame-loading');
+    mainImg.onerror = () => {
+        mainFrame.classList.remove('frame-loading');
+        mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>';
+    };
+    mainImg.src = `media/${key}/main.jpg`;
     document.getElementById('positionBadge').textContent = data.badge;
 
     const oeuvre = parseTextFile(await fetchText(`media/${key}/oeuvre.txt`));
@@ -529,15 +547,14 @@ function makeMediaEl(path) {
     if (isVideo) {
         return `<video src="${path}" controls style="width:100%;height:100%;object-fit:cover;display:block;"></video>`;
     }
-    const thumbPath = path.replace(/\.(png|jpg|jpeg)$/i, '_thumb.jpg');
-    return `<img src="${thumbPath}" data-full="${path}" style="width:100%;height:100%;object-fit:cover;display:block;transition:filter 0.6s ease,transform 0.6s ease;">`;
+    return `<img src="${path}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
 }
 
 async function buildExtras(stationId) {
     const extras = [];
     for (let i = 1; i <= 8; i++) {
         let found = null;
-        for (const ext of ['png', 'jpg', 'jpeg', 'mp4', 'webm']) {
+        for (const ext of ['jpg', 'jpeg', 'png', 'mp4', 'webm']) {
             const p = `media/${stationId}/${i}.${ext}`;
             if (await checkFile(p)) { found = p; break; }
         }
@@ -554,8 +571,16 @@ async function buildExtras(stationId) {
         firstEl.innerHTML = makeMediaEl(extras[0]);
         wrapper.style.display = '';
         inner.className = 'grid-2';
-        const firstImg = firstEl.querySelector('img[data-full]');
-        if (firstImg) applyProgressiveLoad(firstImg);
+        const firstImg = firstEl.querySelector('img');
+        if (firstImg) {
+            wrapper.classList.add('frame-loading');
+            if (firstImg.complete) {
+                wrapper.classList.remove('frame-loading');
+            } else {
+                firstImg.onload = () => wrapper.classList.remove('frame-loading');
+                firstImg.onerror = () => wrapper.classList.remove('frame-loading');
+            }
+        }
     } else {
         wrapper.style.display = 'none';
         inner.className = 'grid-1';
@@ -566,32 +591,22 @@ async function buildExtras(stationId) {
         const card = document.createElement('div');
         card.className = 'section-card';
         const frame = document.createElement('div');
-        frame.className = 'media-frame full-frame';
+        frame.className = 'media-frame full-frame frame-loading';
         frame.innerHTML = makeMediaEl(extras[i]);
+        const img = frame.querySelector('img');
+        if (img) {
+            if (img.complete) { frame.classList.remove('frame-loading'); }
+            else {
+                img.onload = () => frame.classList.remove('frame-loading');
+                img.onerror = () => frame.classList.remove('frame-loading');
+            }
+        }
         card.appendChild(frame);
         extraDiv.appendChild(card);
     }
-    extraDiv.querySelectorAll('img[data-full]').forEach(applyProgressiveLoad);
 }
 
-// ── Progressive image loading ──
-function progressiveLoad(imgEl, thumbSrc, fullSrc, onFullError) {
-    imgEl.classList.add('img-loading');
-    imgEl.src = thumbSrc;
-    imgEl.onerror = () => {
-        imgEl.onerror = onFullError || null;
-        imgEl.classList.remove('img-loading');
-        imgEl.src = fullSrc;
-    };
-    imgEl.onload = () => {
-        imgEl.onload = null;
-        const full = new Image();
-        full.onload = () => { imgEl.src = fullSrc; imgEl.classList.remove('img-loading'); };
-        full.onerror = onFullError || (() => imgEl.classList.remove('img-loading'));
-        full.src = fullSrc;
-    };
-}
-
+// ── Progressive loading ──
 function progressiveBg(bgLayer, thumbSrc, fullSrc) {
     bgLayer.classList.add('bg-loading');
     const thumb = new Image();
@@ -607,27 +622,6 @@ function progressiveBg(bgLayer, thumbSrc, fullSrc) {
         bgLayer.classList.remove('bg-loading');
     };
     thumb.src = thumbSrc;
-}
-
-function applyProgressiveLoad(imgEl) {
-    const fullSrc = imgEl.dataset.full;
-    if (!fullSrc) return;
-    imgEl.classList.add('img-loading');
-    const startFull = () => {
-        const full = new Image();
-        full.onload = () => { imgEl.src = fullSrc; imgEl.classList.remove('img-loading'); };
-        full.onerror = () => imgEl.classList.remove('img-loading');
-        full.src = fullSrc;
-    };
-    if (imgEl.complete && imgEl.naturalWidth > 0) {
-        startFull();
-    } else if (imgEl.complete) {
-        imgEl.classList.remove('img-loading');
-        imgEl.src = fullSrc;
-    } else {
-        imgEl.onload = () => { imgEl.onload = null; startFull(); };
-        imgEl.onerror = () => { imgEl.onerror = null; imgEl.classList.remove('img-loading'); imgEl.src = fullSrc; };
-    }
 }
 
 // ── Light/dark toggle ──
@@ -650,6 +644,21 @@ function toggleMode() {
             document.body.classList.toggle('light-mode', e.matches);
         }
     });
+}());
+
+// ── Mobile toggle: float above footer when reached ──
+(function () {
+    if (window.innerWidth > 768) return;
+    const toggle = document.getElementById('modeSlider');
+    const footer = document.querySelector('footer');
+    if (!toggle || !footer) return;
+    function update() {
+        const gap = 24;
+        const bottom = Math.max(gap, window.innerHeight - footer.getBoundingClientRect().top + gap);
+        toggle.style.bottom = bottom + 'px';
+    }
+    window.addEventListener('scroll', update, { passive: true });
+    update();
 }());
 
 // ── Boot ──
