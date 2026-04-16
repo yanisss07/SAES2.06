@@ -33,13 +33,11 @@
             padding: 0 20px;
             height: 58px;
             display: flex; justify-content: space-between; align-items: center;
-            background-color: #EFC00E;
+            background-color: #ffcb04;
             border: none;
             box-shadow: 0 4px 32px rgba(0, 0, 0, 0.8);
             border-radius: 14px;
             overflow: hidden;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             z-index: 100;
         }
 
@@ -387,9 +385,9 @@ async function loadStation(key) {
     // Header color
     const header = document.querySelector('header');
     if (key === 'jean_jaures') {
-        header.style.background = 'linear-gradient(90deg, #E61E37, #EFC00E)';
+        header.style.background = 'linear-gradient(90deg, #E61E37, #ffcb04)';
     } else {
-        header.style.background = '#EFC00E';
+        header.style.background = '#ffcb04';
     }
 
     // Header logo
