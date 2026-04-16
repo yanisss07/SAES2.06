@@ -30,11 +30,14 @@
         header {
             position: fixed;
             top: 16px; left: 16px; right: 16px;
-            padding: 10px 20px;
+            padding: 0 20px;
+            height: 58px;
             display: flex; justify-content: space-between; align-items: center;
-            background-color: rgba(32, 33, 36, 0.88);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background-color: #EFC00E;
+            border: none;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.8);
             border-radius: 14px;
+            overflow: hidden;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             z-index: 100;
@@ -43,39 +46,40 @@
         .header-left { display: flex; align-items: center; gap: 10px; }
 
         .back-btn {
-            text-decoration: none; color: #9aa0a6;
+            text-decoration: none; color: rgba(0,0,0,0.7);
             display: flex; align-items: center;
             padding: 6px; border-radius: 8px;
             transition: color 0.2s;
         }
-        .back-btn:hover { color: #fff; }
+        .back-btn:hover { color: #000; }
         .back-btn svg { fill: currentColor; display: block; }
 
         .header-logo {
-            height: 36px; width: 36px;
+            height: 84px;
+            width: 84px;
             object-fit: contain;
-            border-radius: 6px;
+            flex-shrink: 0;
         }
 
         .station-selector {
-            background: transparent; color: #fff;
+            background: transparent; color: #000;
             border: none; outline: none;
             font-family: 'Roboto', sans-serif;
             font-size: 15px; font-weight: 700;
             cursor: pointer;
         }
-        .station-selector option { background: #303134; }
+        .station-selector option { background: #303134; color: #fff; }
 
         .header-right {
             font-weight: 900; letter-spacing: 1px;
-            font-size: 13px; color: #9aa0a6;
+            font-size: 13px; color: rgba(0,0,0,0.7);
         }
 
         /* ── Main layout ── */
         main {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 100px 20px 60px;
+            padding: calc(16px + 56px + 24px) 20px 60px;
             animation: fadeIn 0.7s ease-out;
         }
 
@@ -108,9 +112,11 @@
         .media-frame img,
         .media-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-        .main-frame { aspect-ratio: 4/3; }
+        .main-frame img,
+        .full-frame img,
+        .full-frame video { height: auto; object-fit: unset; }
+
         .side-frame { min-height: 200px; height: 100%; }
-        .full-frame { aspect-ratio: 16/9; }
 
         .placeholder {
             width: 100%; height: 100%; min-height: 200px;
@@ -376,7 +382,15 @@ async function loadStation(key) {
 
     // Background
     document.body.style.backgroundImage =
-        `linear-gradient(rgba(20,20,20,0.72), rgba(20,20,20,0.72)), url('media/${key}/background.png')`;
+        `url('media/${key}/background.png')`;
+
+    // Header color
+    const header = document.querySelector('header');
+    if (key === 'jean_jaures') {
+        header.style.background = 'linear-gradient(90deg, #E61E37, #EFC00E)';
+    } else {
+        header.style.background = '#EFC00E';
+    }
 
     // Header logo
     const logo = document.getElementById('headerLogo');
