@@ -1,0 +1,17 @@
+- [ ] button to fullscreen a single image 
+- [ ] jean jores
+    - [ ] change the whole logic for station that are unisuqe, maybe make a separate html file for exeptions (details_exeption.html or smth like that)
+    - [ ] fix the gradient
+    - [ ] fix the details
+- [ ] fix the header on phone
+- [ ] fix the light dark mode toggle on phone (mb make it dissapear when u reach bottom ikd)
+- [ ] next previous station arrows left right of the screen desktop (maybe making a swipe feature on phone but not sure about the idea don't overthink it)
+- [ ] overhall the hover thing on the map
+    - [ ] nuke the whole hover system (btw I realised there are 2 hover thigns)
+    - [ ] make the point bigger on hover and get rid of the window
+    - [ ] show a glassy window above the bottom left window with the description so it doesn't bother being above the cursor
+    - [ ] disable hovering on phone
+- [ ] texte readability on frosted glass effect (I think it's because the <p> arn't full black or white)
+- [ ] make all images / video have a max res and size because even tho we overhall how images are loaded and all it's still not enough
+- [ ] greatly optimize the webstie because it's horrible look at chrome web tools
+- [ ] fix  some poop picutres
