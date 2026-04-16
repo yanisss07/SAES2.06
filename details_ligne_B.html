@@ -18,13 +18,6 @@
             background-attachment: fixed;
         }
 
-        .neon-border-top { position: relative; }
-        .neon-border-top::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, #a50e0e, #e37400, #cfba3f, #07b2ef, #174ea6);
-            box-shadow: 0 0 15px rgba(255, 165, 0, 0.6);
-            border-radius: 4px 4px 0 0;
-        }
 
         /* ── Floating header ── */
         header {
@@ -373,6 +366,17 @@ document.getElementById('backButtonB').addEventListener('click', e => {
     if (window.history.length > 1) { e.preventDefault(); window.history.back(); }
 });
 
+// ── Helpers ──
+async function fetchText(path) {
+    try { const r = await fetch(path); return r.ok ? await r.text() : null; }
+    catch { return null; }
+}
+function parseTextFile(raw) {
+    if (!raw) return null;
+    const lines = raw.trim().split('\n');
+    return { heading: lines[0].trim(), body: lines.slice(1).join('\n').trim() };
+}
+
 // ── Load station ──
 async function loadStation(key) {
     const data = stationsLigneB[key];
@@ -403,12 +407,18 @@ async function loadStation(key) {
         mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>';
     };
     document.getElementById('positionBadge').textContent = data.badge;
-    document.getElementById('titreOeuvre').textContent   = data.title;
-    document.getElementById('descOeuvre').innerHTML      = data.desc;
+
+    const oeuvreFile = key === 'jean_jaures' ? `media/${key}/oeuvre_b.txt` : `media/${key}/oeuvre.txt`;
+    const oeuvre = parseTextFile(await fetchText(oeuvreFile));
+    document.getElementById('titreOeuvre').textContent = oeuvre ? oeuvre.heading : data.title;
+    document.getElementById('descOeuvre').innerHTML    = oeuvre ? `<p>${oeuvre.body.replace(/\n/g, '<br>')}</p>` : data.desc;
 
     // Card 2
-    document.getElementById('nomArtiste').textContent  = data.artist;
     document.getElementById('metaArtiste').textContent = data.meta;
+    const artistFile = key === 'jean_jaures' ? `media/${key}/artist_b.txt` : `media/${key}/artist.txt`;
+    const artist = parseTextFile(await fetchText(artistFile));
+    document.getElementById('nomArtiste').textContent = artist ? artist.heading : data.artist;
+    document.getElementById('bioArtiste').innerHTML   = artist ? `<p>${artist.body.replace(/\n/g, '<br>')}</p>` : data.bio;
     document.getElementById('bioArtiste').innerHTML    = data.bio;
 
     // Extra media
