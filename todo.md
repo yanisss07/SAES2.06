@@ -1,3 +1,12 @@
+- [ ] page d'intro
+    - [ ] problematique
+    - [ ] contexte
+    - [ ] zoom out
+    - [ ] transition toulouse metro
+- [ ] Interview
+    - [ ] boutton sur la truc du sute
+    - [ ] duocup en haut on a l'intro
+    - [ ] et apres on a chaque interview qui defile 
 - [ ] button to fullscreen a single image 
 - [ ] jean jores
     - [ ] change the whole logic for station that are unisuqe, maybe make a separate html file for exeptions (details_exeption.html or smth like that)
