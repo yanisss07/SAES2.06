@@ -49,7 +49,7 @@
             background-color: #e8e8e4;
         }
         body.light-mode #bg-overlay {
-            background: rgba(220, 220, 215, 0.55);
+            background: rgba(4, 5, 16, 0.55);
         }
         body.light-mode .section-card {
             background: rgba(255, 255, 255, 0.55);
@@ -58,7 +58,7 @@
         }
         body.light-mode .card-name    { color: #111; }
         body.light-mode .card-summary { color: #444; }
-        body.light-mode .page-desc    { color: #555; }
+        body.light-mode .page-desc    { color: #97a0c5; }
         body.light-mode .back-btn     { color: rgba(0,0,0,0.6); }
         body.light-mode .back-btn:hover { color: #111; }
         body.light-mode .modal-panel {
@@ -185,7 +185,7 @@
             background-clip: text;
         }
         body.light-mode .page-intro h1 {
-            background: linear-gradient(135deg, #111 30%, #555);
+            background: linear-gradient(135deg, #fff 30%, #97a0c5);
             -webkit-background-clip: text;
             background-clip: text;
         }
@@ -313,8 +313,8 @@
             background: rgba(255, 59, 106, 0.08);
         }
         body.light-mode .iv-card.is-active {
-            border-color: rgba(255, 59, 106, 0.4);
-            background: rgba(255, 59, 106, 0.06);
+            border-color: rgba(255, 59, 106, 0.5);
+            background: rgba(255, 255, 255, 0.85);
         }
 
         .card-name {
@@ -374,6 +374,7 @@
             border-top: 1px solid rgba(255,255,255,0.10);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
+            margin-bottom: 32px;
         }
         body.light-mode .iv-panel {
             background: rgba(255,255,255,0.45);
@@ -445,19 +446,21 @@
         /* ── Footer ── */
         footer {
             text-align: center; padding: 18px 40px;
-            color: rgba(255,255,255,0.6); font-size: 12px;
-            margin: 32px 24px 24px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.75); font-size: 12px;
+            margin: auto 24px 24px;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255,255,255,0.15);
             border-radius: 16px;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
             flex-shrink: 0;
         }
         body.light-mode footer {
-            background: rgba(0,0,0,0.05);
-            border-color: rgba(0,0,0,0.08);
-            color: rgba(0,0,0,0.45);
+            background: rgba(255,255,255,0.6);
+            border-color: rgba(255,255,255,0.9);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+            color: rgba(0,0,0,0.6);
         }
 
         @media (max-width: 700px) {
@@ -765,6 +768,7 @@ function openPanel(iv, card) {
 
     panel.classList.add('is-open');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    paused = true;
 
     if (iv.station_id) loadBackground(iv.station_id);
 }
@@ -773,6 +777,7 @@ function closePanel() {
     panel.classList.remove('is-open');
     document.querySelectorAll('.iv-card.is-active').forEach(c => c.classList.remove('is-active'));
     activeId = null;
+    paused = false;
 }
 
 function goToStation(stationId) {
