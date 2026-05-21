@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interviews — Quai des Arts</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="./styles/interviews.css">
+</head>
+<body>
+    <div class="iv-page">
+        <header class="iv-header">
+            <a href="./index.html" class="iv-back">← Retour à la carte</a>
+            <div class="iv-header__text">
+                <h1 class="iv-title">Interviews</h1>
+                <p class="iv-desc">Des usagers du métro toulousain partagent leur regard sur les œuvres d'art des stations A et B.</p>
+            </div>
+        </header>
+
+        <main class="iv-main">
+            <div class="carousel-wrapper">
+                <div class="carousel-track" id="carousel-track"></div>
+            </div>
+        </main>
+    </div>
+
+    <div class="iv-modal" id="iv-modal" aria-hidden="true">
+        <div class="iv-modal__backdrop" id="iv-backdrop"></div>
+        <div class="iv-modal__panel" role="dialog" aria-modal="true">
+            <button class="iv-modal__close" id="iv-close" aria-label="Fermer">✕</button>
+            <div class="iv-modal__body" id="iv-modal-body"></div>
+        </div>
+    </div>
+
+    <script type="module" src="./src/interviews.js"></script>
+</body>
+</html>

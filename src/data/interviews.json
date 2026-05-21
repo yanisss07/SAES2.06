@@ -1,0 +1,228 @@
+[
+  {
+    "id": "erik_p",
+    "name": "Erik P.",
+    "station_id": null,
+    "station_name": null,
+    "summary": "Il n'y fait pas vraiment attention, mais reconnaît que ça donne de la vie.",
+    "interview": null
+  },
+  {
+    "id": "samia_b",
+    "name": "Samia B.",
+    "station_id": null,
+    "station_name": null,
+    "summary": "Elle aime l'effet de surprise et les couleurs des œuvres.",
+    "interview": null
+  },
+  {
+    "id": "michel_t",
+    "name": "Michel T.",
+    "station_id": "carmes",
+    "station_name": "Carmes",
+    "summary": "Il trouve que l'art adoucit le côté oppressant du sous-sol.",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Non, deux ou trois fois par semaine pour faire quelques courses au centre-ville ou voir mes petits-enfants."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "J'aime beaucoup celle de la station Carmes. Ces grandes fresques, ça donne une impression d'espace, ça rappelle un peu le cosmos."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "Absolument. Le sous-sol est souvent oppressant, l'art permet de respirer un peu avant de remonter à la surface."
+      }
+    ]
+  },
+  {
+    "id": "lea_m",
+    "name": "Léa M.",
+    "station_id": "marengo_sncf",
+    "station_name": "Marengo SNCF",
+    "summary": "Toujours pressée, elle admet tout de même que ça habille bien le béton gris.",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Oui, matin et soir. Je fais la navette pour aller au boulot."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "Sincèrement, je cours toujours pour attraper ma rame, donc je ne les regarde pas vraiment. Mais je me souviens d'un grand truc métallique à Marengo."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "Oui, c'est mieux que des murs gris en béton. Même si on ne s'arrête pas pour les contempler, ça habille la station."
+      }
+    ]
+  },
+  {
+    "id": "thomas_r",
+    "name": "Thomas R.",
+    "station_id": "esquirol",
+    "station_name": "Esquirol",
+    "summary": "Il apprécie cet art gratuit, dont certaines œuvres servent de point de rendez-vous.",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Presque tous les jours, oui. Surtout pour aller à la fac et rejoindre mes potes."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "L'arbre en métal à Esquirol ! Je donne souvent rendez-vous à mes amis \"sous l'arbre\", c'est devenu un vrai repère pour nous."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "Carrément ! Le métro c'est un endroit de passage, mettre de l'art gratuit accessible à tous comme ça, c'est le meilleur moyen de toucher les gens."
+      }
+    ]
+  },
+  {
+    "id": "sophie_d",
+    "name": "Sophie D.",
+    "station_id": "barriere_de_paris",
+    "station_name": "Barrière de Paris",
+    "summary": "Elle trouve que cela rend l'attente sur le quai plus amusante pour les enfants.",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Seulement le week-end, pour les sorties en famille sans avoir à chercher une place de parking."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "Mes enfants adorent les grandes mosaïques avec les visages. Ils essaient de les compter et d'imiter leurs expressions à chaque fois."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "Oui, ça rend l'attente sur le quai beaucoup plus ludique pour les enfants, et ça donne une identité propre à chaque station."
+      }
+    ]
+  },
+  {
+    "id": "antoine_l",
+    "name": "Antoine L.",
+    "station_id": "capitole",
+    "station_name": "Capitole",
+    "summary": "Ce touriste salue cette belle initiative culturelle souterraine de la ville.",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Non, je suis juste de passage pour la semaine, je visite la ville."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "Je n'ai pas encore tout vu, mais les grandes colonnes à la station Capitole m'ont bien marqué. Ça colle bien au quartier historique juste au-dessus."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "Je trouve que c'est une excellente initiative. Ça montre qu'une ville s'investit dans sa culture, même sous terre."
+      }
+    ]
+  },
+  {
+    "id": "karim_f",
+    "name": "Karim F.",
+    "station_id": "st_cyprien",
+    "station_name": "St Cyprien République",
+    "summary": "Il estime que la présence de l'art est importante pour garder le moral.",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Oui, tous les jours. C'est mon moyen de transport principal pour absolument tout, je n'ai pas le permis."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "J'aime bien les cercles lumineux à Saint-Cyprien. C'est simple, mais ça donne un style un peu moderne et épuré."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "Sans l'art, ce serait glauque. Quand tu rentres fatigué le soir en hiver, avoir un peu de couleur et de lumière sur les murs, ça joue sur le moral."
+      }
+    ]
+  },
+  {
+    "id": "claire_v",
+    "name": "Claire V.",
+    "station_id": "basso_cambo",
+    "station_name": "Basso Cambo",
+    "summary": "Rivée sur son téléphone, elle préférerait plus de rames de métro plutôt que de l'art.",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Malheureusement oui, pour faire mon trajet domicile-travail. Trente minutes de trajet tous les matins."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "Je vous avoue que je n'en ai aucune idée. J'ai les écouteurs sur les oreilles et les yeux rivés sur mon téléphone dès que je franchis les portiques."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "C'est sympa pour l'esthétique, c'est sûr. Mais en tant qu'usagère quotidienne, je préférerais qu'ils investissent ce budget dans plus de rames aux heures de pointe !"
+      }
+    ]
+  },
+  {
+    "id": "julien_b",
+    "name": "Julien B.",
+    "station_id": "palais_de_justice",
+    "station_name": "Palais de Justice",
+    "summary": "Il considère le réseau de transport comme un véritable \"musée du quotidien\".",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Oui, j'ai abandonné la voiture il y a deux ans à cause des bouchons, donc c'est métro pour aller bosser."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "Celle de Palais de Justice. L'architecture de la station laisse entrer la lumière naturelle qui vient de l'extérieur, ça met vraiment les œuvres en valeur."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "Tout à fait. C'est un musée du quotidien. On a la chance d'avoir une ambiance différente par station, c'est une vraie richesse."
+      }
+    ]
+  },
+  {
+    "id": "emma_c",
+    "name": "Emma C.",
+    "station_id": "borderouge",
+    "station_name": "Borderouge",
+    "summary": "Elle trouve que les œuvres permettent de briser la monotonie des trajets.",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Je le prends surtout quand il pleut, sinon je préfère prendre le vélo pour aller au campus."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "Je dirais les espèces de vagues colorées à Borderouge. Ça donne un côté dynamique à la station."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "Oui, un trajet en transport en commun c'est souvent monotone et très automatique. L'art permet de casser un peu cette routine."
+      }
+    ]
+  },
+  {
+    "id": "raymond_p",
+    "name": "Raymond P.",
+    "station_id": "jeanne_d_arc",
+    "station_name": "Jeanne d'Arc",
+    "summary": "De nature classique, il admet que ces installations modernes égayent les stations.",
+    "interview": [
+      {
+        "question": "Prenez vous le métro tous les jours ? Si oui, pourquoi ?",
+        "answer": "Très rarement, seulement quand je dois aller à la gare ou que j'ai un rendez-vous médical en centre-ville."
+      },
+      {
+        "question": "Quelle est votre œuvre préférée ?",
+        "answer": "Je suis plutôt de l'ancienne école, je préfère l'architecture classique, mais je dois dire que les grandes sculptures modernes de Jeanne d'Arc m'ont interpellé la dernière fois."
+      },
+      {
+        "question": "Pensez-vous que ces œuvres ont leur place dans le métro ?",
+        "answer": "Pourquoi pas. Ça fait travailler les artistes locaux et ça égaye le béton. C'est toujours ça de pris."
+      }
+    ]
+  }
+]

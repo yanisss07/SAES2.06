@@ -63,6 +63,18 @@ export class MapExperience {
         this.map.on("movestart zoomstart dragstart", () => this.notifyInteraction());
         this.map.on("click", () => this.notifyInteraction());
 
+        const InterviewsBtn = window.L.Control.extend({
+            options: { position: "topright" },
+            onAdd() {
+                const a = window.L.DomUtil.create("a", "interviews-ctrl-btn");
+                a.href = "./interviews.html";
+                a.textContent = "Interviews";
+                window.L.DomEvent.disableClickPropagation(a);
+                return a;
+            }
+        });
+        new InterviewsBtn().addTo(this.map);
+
         window.L.control.zoom({ position: "topright" }).addTo(this.map);
     }
 
@@ -157,43 +169,8 @@ export class MapExperience {
                         iconAnchor,
                         popupAnchor: [0, -8]
                     }),
-                    riseOnHover: true
+                    riseOnHover: false
                 }).addTo(this.map);
-
-                marker.bindTooltip(skeletonContent, {
-                    direction: "top",
-                    offset: [0, -12],
-                    opacity: 1,
-                    className: "custom-art-tooltip",
-                    sticky: true
-                });
-
-                marker.on("tooltipopen", () => {
-                    this.fetchMedia(station.id).then(data => {
-                        const tooltip = marker.getTooltip();
-                        if (!tooltip) return;
-                        const desc = data.oeuvre.body.length > 120
-                            ? data.oeuvre.body.slice(0, 120).trimEnd() + "…"
-                            : data.oeuvre.body;
-                        tooltip.setContent(`
-                            <div class="art-content">
-                                <div class="station-header">
-                                    <div class="station-name-row">
-                                        <img src="media/${station.id}/logo.svg" class="station-logo" alt="" onerror="this.style.display='none'">
-                                        <h3>${station.name}</h3>
-                                    </div>
-                                    <div class="line-tags">${lineTags}</div>
-                                </div>
-                                <div class="art-info">
-                                    <h4>${data.artist.heading || "Artiste à confirmer"}</h4>
-                                    <em>${data.oeuvre.heading || "Titre à venir"}</em>
-                                    <p class="art-desc">${desc || "Récit à venir."}</p>
-                                </div>
-                                <span class="click-hint">CLIQUEZ POUR VOIR PLUS →</span>
-                            </div>
-                        `);
-                    });
-                });
 
                 marker.on("click", () => {
                     this.notifyInteraction();

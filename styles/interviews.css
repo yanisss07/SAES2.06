@@ -1,0 +1,354 @@
+:root {
+    color-scheme: dark;
+    --color-bg: #060713;
+    --color-panel: rgba(0, 0, 0, 0.35);
+    --color-panel-border: rgba(255, 255, 255, 0.15);
+    --color-text: #f5f7ff;
+    --color-muted: #97a0c5;
+    --color-accent-a: #ff3b6a;
+    --color-accent-b: #ffd056;
+    --color-panel-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.12);
+    font-family: "Roboto", "Segoe UI", "Helvetica", "Arial", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden;
+}
+
+/* ── Page layout ── */
+.iv-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ── Header ── */
+.iv-header {
+    flex-shrink: 0;
+    padding: 40px 60px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: radial-gradient(circle at 20% 0%, rgba(70, 110, 255, 0.1), transparent 60%), var(--color-bg);
+    border-bottom: 1px solid var(--color-panel-border);
+}
+
+.iv-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    transition: color 0.2s ease;
+    width: fit-content;
+}
+
+.iv-back:hover { color: var(--color-text); }
+
+.iv-header__text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.iv-title {
+    margin: 0;
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #fff 30%, var(--color-muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.iv-desc {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--color-muted);
+    line-height: 1.5;
+    max-width: 560px;
+}
+
+/* ── Main / carousel area ── */
+.iv-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 0;
+}
+
+.carousel-wrapper {
+    width: 100%;
+    overflow: hidden;
+    padding: 40px 0;
+    cursor: grab;
+}
+
+.carousel-wrapper:active { cursor: grabbing; }
+
+.carousel-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    padding: 0 60px;
+    user-select: none;
+}
+
+/* ── Interview card ── */
+.iv-card {
+    flex-shrink: 0;
+    width: 300px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-panel-border);
+    box-shadow: var(--color-panel-shadow);
+    border-radius: 16px;
+    padding: 22px 24px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.iv-card:hover {
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-4px);
+}
+
+.iv-card__name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: 0.03em;
+}
+
+.iv-card__station {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--color-accent-b);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.iv-card__station::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent-b);
+    flex-shrink: 0;
+}
+
+.iv-card--no-station .iv-card__station {
+    color: var(--color-muted);
+}
+
+.iv-card--no-station .iv-card__station::before {
+    background: var(--color-muted);
+}
+
+.iv-card__summary {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    line-height: 1.55;
+    margin: 0;
+    flex: 1;
+}
+
+.iv-card__cta {
+    align-self: flex-start;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-accent-a);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* ── Modal ── */
+.iv-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.iv-modal.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.iv-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 6, 18, 0.8);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    cursor: pointer;
+}
+
+.iv-modal__panel {
+    position: relative;
+    z-index: 1;
+    width: min(560px, 90vw);
+    max-height: 80vh;
+    overflow-y: auto;
+    background: rgba(10, 12, 30, 0.95);
+    border: 1px solid var(--color-panel-border);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+    border-radius: 20px;
+    padding: 36px 40px;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.iv-modal.is-open .iv-modal__panel {
+    transform: translateY(0);
+}
+
+.iv-modal__close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--color-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.iv-modal__close:hover {
+    color: var(--color-text);
+    background: rgba(255,255,255,0.08);
+}
+
+.iv-modal__name {
+    margin: 0 0 4px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.iv-modal__station-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-accent-b);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    border: 1px solid rgba(255, 208, 86, 0.3);
+    padding: 4px 12px;
+    border-radius: 999px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.iv-modal__station-link:hover {
+    background: rgba(255, 208, 86, 0.1);
+    border-color: rgba(255, 208, 86, 0.6);
+}
+
+.iv-modal__station-link::before {
+    content: "→";
+}
+
+.iv-modal__qa {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.iv-modal__q {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0 0 6px;
+}
+
+.iv-modal__a {
+    font-size: 0.95rem;
+    color: var(--color-text);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Interviews control button (on map page) ── */
+.interviews-ctrl-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    height: 34px;
+    border-radius: 10px !important;
+    background: var(--color-panel, rgba(0,0,0,0.35)) !important;
+    border: 1px solid var(--color-panel-border, rgba(255,255,255,0.15)) !important;
+    box-shadow: var(--color-panel-shadow, 0 4px 24px rgba(0,0,0,0.4)) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: var(--color-text, #f5f7ff) !important;
+    font-family: inherit;
+    font-size: 0.78rem !important;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+}
+
+.interviews-ctrl-btn:hover {
+    background: rgba(255,255,255,0.18) !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+    .iv-header {
+        padding: 24px 20px 20px;
+    }
+
+    .iv-title {
+        font-size: 1.6rem;
+    }
+
+    .iv-modal__panel {
+        padding: 28px 24px;
+    }
+
+    .carousel-track {
+        padding: 0 20px;
+    }
+}
