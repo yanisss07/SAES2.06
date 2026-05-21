@@ -249,29 +249,7 @@
             position: relative;
         }
         .carousel-track-wrap:active { cursor: grabbing; }
-        .carousel-track-wrap::before,
-        .carousel-track-wrap::after {
-            content: "";
-            position: absolute;
-            top: 0; bottom: 0;
-            width: 60px;
-            z-index: 2;
-            pointer-events: none;
-        }
-        .carousel-track-wrap::before {
-            left: 0;
-            background: linear-gradient(to right, rgba(6,7,19,0.85), transparent);
-        }
-        .carousel-track-wrap::after {
-            right: 0;
-            background: linear-gradient(to left, rgba(6,7,19,0.85), transparent);
-        }
-        body.light-mode .carousel-track-wrap::before {
-            background: linear-gradient(to right, rgba(232,232,228,0.85), transparent);
-        }
-        body.light-mode .carousel-track-wrap::after {
-            background: linear-gradient(to left, rgba(232,232,228,0.85), transparent);
-        }
+
 
         .carousel-track {
             display: flex;
@@ -412,6 +390,7 @@
             font-family: inherit;
         }
         .iv-panel__close:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        body.light-mode .iv-panel__close { color: #444; }
         body.light-mode .iv-panel__close:hover { color: #111; background: rgba(0,0,0,0.06); }
 
         .iv-panel__station-btn {

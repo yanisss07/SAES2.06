@@ -2,7 +2,7 @@ import { LoaderOverlay } from "./loader.js";
 import { GlobeExperience } from "./globe.js";
 import { MapExperience } from "./map.js";
 import { HintOverlay, StationPanel } from "./ui.js";
-import { mapConfig } from "./data/stations.js";
+import { mapConfig, buildStationIndex } from "./data/stations.js";
 
 // ── Theme initialisation (runs before anything renders) ──
 const mq = window.matchMedia("(prefers-color-scheme: light)");
@@ -68,6 +68,12 @@ async function bootstrap() {
     };
 
     map.onStationSelected(handleStationSelected);
+
+    const targetId = new URLSearchParams(window.location.search).get("station");
+    if (targetId) {
+        const station = buildStationIndex().get(targetId);
+        if (station) handleStationSelected(station);
+    }
 
     map.onInteraction(() => {
         hintOverlay.hide();

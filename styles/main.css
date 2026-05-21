@@ -172,6 +172,11 @@ body.light-mode .leaflet-container {
     box-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
     outline: 1px solid rgba(17, 19, 34, 0.85);
     cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.station-icon:hover {
+    transform: scale(1.6);
 }
 
 
