@@ -13,6 +13,7 @@ if (isLightMode) document.body.classList.add("light-mode");
 const loader = new LoaderOverlay(document.getElementById("loader"));
 const globeStage = document.getElementById("globe-stage");
 const mapStage = document.getElementById("map-stage");
+const interviewsBtn = document.querySelector(".interviews-ctrl-btn");
 const hintOverlay = new HintOverlay(document.querySelector("[data-hint]"));
 const stationPanel = new StationPanel(document.getElementById("station-panel"));
 const hasVisitedBefore = sessionStorage.getItem("atlasVisited") === "1";
@@ -98,6 +99,7 @@ async function bootstrap() {
 
     if (shouldPlayIntro) {
         mapStage.classList.add("is-visible");
+        interviewsBtn?.classList.add("is-visible");
         map.activate();
         hintOverlay.schedule(5000);
         await delay(300);
@@ -108,6 +110,7 @@ async function bootstrap() {
         sessionStorage.setItem("atlasVisited", "1");
     } else {
         mapStage.classList.add("is-visible");
+        interviewsBtn?.classList.add("is-visible");
         map.activate();
         hintOverlay.schedule(2000);
     }

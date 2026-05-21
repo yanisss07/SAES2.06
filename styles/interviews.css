@@ -305,33 +305,45 @@ html, body {
     margin: 0;
 }
 
-/* ── Interviews control button (on map page) ── */
+/* ── Interviews button (fixed, left of zoom control) ── */
 .interviews-ctrl-btn {
+    position: fixed;
+    top: 10px;
+    right: 54px;
+    opacity: 0;
+    pointer-events: none;
+    transition: background 0.2s ease, opacity 0.4s ease; /* 10px zoom right offset + 34px zoom width + 10px gap */
+    z-index: 1100;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0 14px;
     height: 34px;
-    border-radius: 10px !important;
-    background: var(--color-panel, rgba(0,0,0,0.35)) !important;
-    border: 1px solid var(--color-panel-border, rgba(255,255,255,0.15)) !important;
-    box-shadow: var(--color-panel-shadow, 0 4px 24px rgba(0,0,0,0.4)) !important;
+    border-radius: 10px;
+    background: var(--color-panel, rgba(0,0,0,0.35));
+    border: 1px solid var(--color-panel-border, rgba(255,255,255,0.15));
+    box-shadow: var(--color-panel-shadow, 0 4px 24px rgba(0,0,0,0.4));
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    color: var(--color-text, #f5f7ff) !important;
-    font-family: inherit;
-    font-size: 0.78rem !important;
+    color: var(--color-text, #f5f7ff);
+    font-family: "Roboto", "Segoe UI", "Helvetica", "Arial", sans-serif;
+    font-size: 0.78rem;
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    text-decoration: none !important;
+    text-decoration: none;
     cursor: pointer;
     transition: background 0.2s ease;
     white-space: nowrap;
 }
 
 .interviews-ctrl-btn:hover {
-    background: rgba(255,255,255,0.18) !important;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.interviews-ctrl-btn.is-visible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* ── Responsive ── */

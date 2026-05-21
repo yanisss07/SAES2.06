@@ -5,34 +5,828 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interviews — Quai des Arts</title>
     <link rel="icon" type="image/png" href="./assets/favicon.png">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
-    <link rel="stylesheet" href="./styles/interviews.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: #060713;
+            color: #e8eaed;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Background layer ── */
+        #bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-color: #060713;
+            background-size: cover;
+            background-position: center;
+            transition: filter 0.8s ease;
+        }
+        #bg-layer.bg-loading {
+            filter: blur(40px);
+        }
+        #bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: rgba(4, 5, 16, 0.62);
+            pointer-events: none;
+        }
+
+        /* ── Light mode ── */
+        body.light-mode {
+            background-color: #e8e8e4;
+            color: #111;
+        }
+        body.light-mode #bg-layer {
+            background-color: #e8e8e4;
+        }
+        body.light-mode #bg-overlay {
+            background: rgba(220, 220, 215, 0.55);
+        }
+        body.light-mode .section-card {
+            background: rgba(255, 255, 255, 0.55);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        body.light-mode .card-name    { color: #111; }
+        body.light-mode .card-summary { color: #444; }
+        body.light-mode .page-desc    { color: #555; }
+        body.light-mode .back-btn     { color: rgba(0,0,0,0.6); }
+        body.light-mode .back-btn:hover { color: #111; }
+        body.light-mode .modal-panel {
+            background: rgba(240, 240, 236, 0.97);
+            border-color: rgba(0,0,0,0.1);
+        }
+        body.light-mode .modal-q { color: rgba(0,0,0,0.45); }
+        body.light-mode .modal-a { color: #111; }
+        body.light-mode .modal-name { color: #111; }
+        body.light-mode .modal-close { color: rgba(0,0,0,0.5); }
+        body.light-mode .modal-close:hover { color: #111; background: rgba(0,0,0,0.06); }
+        body.light-mode .slider-track { background: rgba(255,255,255,0.35); }
+
+        /* ── Floating header ── */
+        header {
+            position: fixed;
+            top: 16px; left: 16px; right: 16px;
+            padding: 0 24px;
+            height: 58px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.12);
+            border-radius: 14px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            z-index: 100;
+        }
+        body.light-mode header {
+            background: rgba(255,255,255,0.55);
+            border-color: rgba(255,255,255,0.6);
+            box-shadow: 0 4px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 14px; }
+
+        .back-btn {
+            text-decoration: none;
+            color: rgba(255,255,255,0.75);
+            display: flex; align-items: center;
+            padding: 6px; border-radius: 8px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #fff; }
+        .back-btn svg { fill: currentColor; display: block; }
+        body.light-mode .back-btn { color: rgba(0,0,0,0.55); }
+        body.light-mode .back-btn:hover { color: #111; }
+
+        .header-title {
+            font-size: 15px; font-weight: 900;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: #fff;
+        }
+        body.light-mode .header-title { color: #111; }
+
+        .header-right {
+            font-weight: 900; font-size: 12px;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-right: 110px;
+        }
+        @media (max-width: 768px) { .header-right { display: none; } }
+        body.light-mode .header-right { color: rgba(0,0,0,0.45); }
+
+        /* ── Dark/light slider ── */
+        .mode-slider {
+            display: flex; align-items: center; gap: 6px;
+            padding: 4px 8px; border-radius: 50px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.25);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 12px rgba(0,0,0,0.25);
+            cursor: pointer; user-select: none;
+            position: fixed; top: 29px; right: 30px; z-index: 1001;
+            color: rgba(255,255,255,0.9);
+        }
+        @media (max-width: 768px) {
+            .mode-slider { top: auto; right: auto; bottom: 24px; left: 50%; transform: translateX(-50%); }
+        }
+        .slider-icon { display: flex; align-items: center; opacity: 0.8; }
+        .slider-track {
+            position: relative; width: 36px; height: 20px; border-radius: 50px;
+            background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); transition: background 0.3s;
+        }
+        .slider-knob {
+            position: absolute; top: 2px; left: 2px; width: 14px; height: 14px;
+            border-radius: 50%; background: rgba(255,255,255,0.95);
+            box-shadow: 0 1px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,1);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        body.light-mode .slider-knob { transform: translateX(16px); }
+
+        /* ── Main content (intro only — constrained width) ── */
+        main {
+            padding: calc(16px + 58px + 32px) 24px 32px;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            flex-shrink: 0;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Page intro ── */
+        .page-intro {
+            margin-bottom: 40px;
+        }
+        .page-intro h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            text-align: center;
+            background: linear-gradient(135deg, #fff 30%, #97a0c5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        body.light-mode .page-intro h1 {
+            background: linear-gradient(135deg, #111 30%, #555);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        .page-desc {
+            font-size: 0.95rem;
+            color: #97a0c5;
+            line-height: 1.6;
+            max-width: 620px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* ── Section label ── */
+        .section-label {
+            font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.85);
+            text-transform: uppercase; letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        body.light-mode .section-label { color: rgba(0,0,0,0.6); }
+
+        /* ── Carousel wrapper (full-bleed, outside main) ── */
+        .carousel-section {
+            background: rgba(0, 0, 0, 0.32);
+            border-top: 1px solid rgba(255, 255, 255, 0.10);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+            padding: 24px 0;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        body.light-mode .carousel-section {
+            background: rgba(255,255,255,0.45);
+            border-top-color: rgba(0,0,0,0.07);
+            border-bottom-color: rgba(0,0,0,0.07);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        .carousel-label {
+            padding: 0 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .carousel-count {
+            font-size: 11px; font-weight: 700;
+            color: rgba(255,255,255,0.65);
+            letter-spacing: 1px;
+            padding-right: 24px;
+        }
+        body.light-mode .carousel-count { color: rgba(0,0,0,0.5); }
+
+        .carousel-track-wrap {
+            overflow: hidden;
+            cursor: grab;
+            padding: 4px 0 8px;
+            position: relative;
+        }
+        .carousel-track-wrap:active { cursor: grabbing; }
+        .carousel-track-wrap::before,
+        .carousel-track-wrap::after {
+            content: "";
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 60px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .carousel-track-wrap::before {
+            left: 0;
+            background: linear-gradient(to right, rgba(6,7,19,0.85), transparent);
+        }
+        .carousel-track-wrap::after {
+            right: 0;
+            background: linear-gradient(to left, rgba(6,7,19,0.85), transparent);
+        }
+        body.light-mode .carousel-track-wrap::before {
+            background: linear-gradient(to right, rgba(232,232,228,0.85), transparent);
+        }
+        body.light-mode .carousel-track-wrap::after {
+            background: linear-gradient(to left, rgba(232,232,228,0.85), transparent);
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 16px;
+            width: max-content;
+            padding: 0 24px;
+            user-select: none;
+        }
+
+        /* ── Interview card ── */
+        .iv-card {
+            flex-shrink: 0;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 20px;
+            cursor: pointer;
+            transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .iv-card:hover {
+            background: rgba(255, 255, 255, 0.11);
+            border-color: rgba(255, 255, 255, 0.28);
+            transform: translateY(-3px);
+        }
+        body.light-mode .iv-card {
+            background: rgba(255,255,255,0.5);
+            border-color: rgba(0,0,0,0.08);
+        }
+        body.light-mode .iv-card:hover {
+            background: rgba(255,255,255,0.75);
+            border-color: rgba(0,0,0,0.15);
+        }
+        .iv-card--no-interview { cursor: default; }
+        .iv-card--no-interview:hover { transform: none; }
+        .iv-card.is-active {
+            border-color: rgba(255, 59, 106, 0.6);
+            background: rgba(255, 59, 106, 0.08);
+        }
+        body.light-mode .iv-card.is-active {
+            border-color: rgba(255, 59, 106, 0.4);
+            background: rgba(255, 59, 106, 0.06);
+        }
+
+        .card-name {
+            font-size: 0.95rem; font-weight: 700;
+            color: #fff; letter-spacing: 0.03em;
+        }
+        body.light-mode .card-name { color: #111; }
+
+        .card-station {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.68rem; font-weight: 600;
+            color: #ffd056; letter-spacing: 0.07em; text-transform: uppercase;
+        }
+        .card-station::before {
+            content: ""; display: inline-block;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #ffd056; flex-shrink: 0;
+        }
+        .card-station--none { color: #9aa0a6; }
+        .card-station--none::before { background: #9aa0a6; }
+
+        .card-summary {
+            font-size: 0.83rem; color: #9aa0a6;
+            line-height: 1.55; flex: 1;
+        }
+        body.light-mode .card-summary { color: #555; }
+
+        .card-cta {
+            font-size: 0.68rem; font-weight: 700;
+            color: #ff3b6a; letter-spacing: 0.08em; text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        /* ── Section card (reusable) ── */
+        .section-card {
+            background: rgba(0, 0, 0, 0.32);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        body.light-mode .section-card {
+            background: rgba(255,255,255,0.55);
+            border-color: rgba(255,255,255,0.6);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        /* ── Inline interview panel ── */
+        .iv-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.38);
+            border-top: 1px solid rgba(255,255,255,0.10);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        body.light-mode .iv-panel {
+            background: rgba(255,255,255,0.45);
+            border-top-color: rgba(0,0,0,0.07);
+        }
+        .iv-panel.is-open { max-height: 600px; }
+
+        .iv-panel__inner {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 36px 24px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .iv-panel__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .iv-panel__name {
+            font-size: 1.2rem; font-weight: 700;
+            color: #fff; letter-spacing: 0.03em;
+        }
+        body.light-mode .iv-panel__name { color: #111; }
+
+        .iv-panel__close {
+            background: none; border: none;
+            color: #9aa0a6; font-size: 1rem;
+            cursor: pointer; padding: 5px 10px; border-radius: 8px;
+            transition: color 0.2s, background 0.2s;
+            font-family: inherit;
+        }
+        .iv-panel__close:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        body.light-mode .iv-panel__close:hover { color: #111; background: rgba(0,0,0,0.06); }
+
+        .iv-panel__station-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.72rem; font-weight: 600;
+            color: #ffd056;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            border: 1px solid rgba(255,208,86,0.3); padding: 4px 14px;
+            border-radius: 999px; margin-bottom: 24px;
+            transition: background 0.2s, border-color 0.2s;
+            cursor: pointer; background: none; font-family: inherit;
+        }
+        .iv-panel__station-btn:hover {
+            background: rgba(255,208,86,0.1);
+            border-color: rgba(255,208,86,0.6);
+        }
+
+        .iv-panel__qa { display: flex; flex-direction: column; gap: 20px; }
+
+        .iv-panel__q {
+            font-size: 0.72rem; font-weight: 700;
+            color: #9aa0a6; letter-spacing: 0.05em;
+            text-transform: uppercase; margin-bottom: 5px;
+        }
+        body.light-mode .iv-panel__q { color: rgba(0,0,0,0.45); }
+
+        .iv-panel__a {
+            font-size: 0.92rem; color: #e8eaed; line-height: 1.65;
+        }
+        body.light-mode .iv-panel__a { color: #222; }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center; padding: 18px 40px;
+            color: rgba(255,255,255,0.6); font-size: 12px;
+            margin: auto 24px 24px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            flex-shrink: 0;
+        }
+        body.light-mode footer {
+            background: rgba(0,0,0,0.05);
+            border-color: rgba(0,0,0,0.08);
+            color: rgba(0,0,0,0.45);
+        }
+
+        @media (max-width: 700px) {
+            header { top: 8px; left: 8px; right: 8px; }
+            main { padding-top: 90px; padding-left: 16px; padding-right: 16px; }
+            .iv-panel__inner { padding: 24px 16px 32px; }
+            footer { margin: 0 16px 16px; }
+        }
+    </style>
 </head>
 <body>
-    <div class="iv-page">
-        <header class="iv-header">
-            <a href="./index.html" class="iv-back">← Retour à la carte</a>
-            <div class="iv-header__text">
-                <h1 class="iv-title">Interviews</h1>
-                <p class="iv-desc">Des usagers du métro toulousain partagent leur regard sur les œuvres d'art des stations A et B.</p>
-            </div>
-        </header>
+<div id="bg-layer"></div>
+<div id="bg-overlay"></div>
 
-        <main class="iv-main">
-            <div class="carousel-wrapper">
-                <div class="carousel-track" id="carousel-track"></div>
-            </div>
-        </main>
+<header>
+    <div class="header-left">
+        <a href="index.html" class="back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20">
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/>
+            </svg>
+        </a>
+        <span class="header-title">Interviews</span>
     </div>
+    <span class="header-right">Quai des Arts</span>
+</header>
 
-    <div class="iv-modal" id="iv-modal" aria-hidden="true">
-        <div class="iv-modal__backdrop" id="iv-backdrop"></div>
-        <div class="iv-modal__panel" role="dialog" aria-modal="true">
-            <button class="iv-modal__close" id="iv-close" aria-label="Fermer">✕</button>
-            <div class="iv-modal__body" id="iv-modal-body"></div>
+<div class="mode-slider" id="modeSlider" onclick="toggleMode()">
+    <span class="slider-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+    <div class="slider-track"><div class="slider-knob"></div></div>
+    <span class="slider-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg></span>
+</div>
+
+<main>
+    <div class="page-intro">
+        <h1>Interviews</h1>
+        <p class="page-desc">Nous avons interviewé des passants dans le métro toulousain pour leur demander ce qu'ils pensent des œuvres d'art qui ornent les stations des lignes A et B. En leur posant quelques questions simples, nous avons recueilli des témoignages sincères sur leur rapport à l'art du quotidien.</p>
+    </div>
+</main>
+
+<div class="carousel-section">
+    <div class="carousel-label">
+        <p class="section-label">Témoignages</p>
+        <span class="carousel-count">12 interviews</span>
+    </div>
+    <div class="carousel-track-wrap" id="carouselWrap">
+        <div class="carousel-track" id="carouselTrack"></div>
+    </div>
+</div>
+
+<div class="iv-panel" id="iv-panel">
+    <div class="iv-panel__inner" id="iv-panel-inner"></div>
+</div>
+
+<footer>Tisséo Collectivités — Parcours Culturel · Quai des Arts</footer>
+
+<script>
+const INTERVIEWS = [
+    {
+        id: "erik_p", name: "Erik P.",
+        station_id: null, station_name: null,
+        summary: "Il n'y fait pas vraiment attention, mais reconnaît que ça donne de la vie.",
+        interview: null
+    },
+    {
+        id: "samia_b", name: "Samia B.",
+        station_id: null, station_name: null,
+        summary: "Elle aime l'effet de surprise et les couleurs des œuvres.",
+        interview: null
+    },
+    {
+        id: "michel_t", name: "Michel T.",
+        station_id: "carmes", station_name: "Carmes",
+        summary: "Il trouve que l'art adoucit le côté oppressant du sous-sol.",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Non, deux ou trois fois par semaine pour faire quelques courses au centre-ville ou voir mes petits-enfants." },
+            { q: "Quelle est votre œuvre préférée ?", a: "J'aime beaucoup celle de la station Carmes. Ces grandes fresques, ça donne une impression d'espace, ça rappelle un peu le cosmos." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Absolument. Le sous-sol est souvent oppressant, l'art permet de respirer un peu avant de remonter à la surface." }
+        ]
+    },
+    {
+        id: "lea_m", name: "Léa M.",
+        station_id: "marengo_sncf", station_name: "Marengo SNCF",
+        summary: "Toujours pressée, elle admet tout de même que ça habille bien le béton gris.",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Oui, matin et soir. Je fais la navette pour aller au boulot." },
+            { q: "Quelle est votre œuvre préférée ?", a: "Sincèrement, je cours toujours pour attraper ma rame, donc je ne les regarde pas vraiment. Mais je me souviens d'un grand truc métallique à Marengo." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Oui, c'est mieux que des murs gris en béton. Même si on ne s'arrête pas pour les contempler, ça habille la station." }
+        ]
+    },
+    {
+        id: "thomas_r", name: "Thomas R.",
+        station_id: "esquirol", station_name: "Esquirol",
+        summary: "Il apprécie cet art gratuit, dont certaines œuvres servent de point de rendez-vous.",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Presque tous les jours, oui. Surtout pour aller à la fac et rejoindre mes potes." },
+            { q: "Quelle est votre œuvre préférée ?", a: "L'arbre en métal à Esquirol ! Je donne souvent rendez-vous à mes amis \"sous l'arbre\", c'est devenu un vrai repère pour nous." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Carrément ! Le métro c'est un endroit de passage, mettre de l'art gratuit accessible à tous comme ça, c'est le meilleur moyen de toucher les gens." }
+        ]
+    },
+    {
+        id: "sophie_d", name: "Sophie D.",
+        station_id: "barriere_de_paris", station_name: "Barrière de Paris",
+        summary: "Elle trouve que cela rend l'attente sur le quai plus amusante pour les enfants.",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Seulement le week-end, pour les sorties en famille sans avoir à chercher une place de parking." },
+            { q: "Quelle est votre œuvre préférée ?", a: "Mes enfants adorent les grandes mosaïques avec les visages. Ils essaient de les compter et d'imiter leurs expressions à chaque fois." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Oui, ça rend l'attente sur le quai beaucoup plus ludique pour les enfants, et ça donne une identité propre à chaque station." }
+        ]
+    },
+    {
+        id: "antoine_l", name: "Antoine L.",
+        station_id: "capitole", station_name: "Capitole",
+        summary: "Ce touriste salue cette belle initiative culturelle souterraine de la ville.",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Non, je suis juste de passage pour la semaine, je visite la ville." },
+            { q: "Quelle est votre œuvre préférée ?", a: "Je n'ai pas encore tout vu, mais les grandes colonnes à la station Capitole m'ont bien marqué. Ça colle bien au quartier historique juste au-dessus." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Je trouve que c'est une excellente initiative. Ça montre qu'une ville s'investit dans sa culture, même sous terre." }
+        ]
+    },
+    {
+        id: "karim_f", name: "Karim F.",
+        station_id: "st_cyprien", station_name: "St Cyprien République",
+        summary: "Il estime que la présence de l'art est importante pour garder le moral.",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Oui, tous les jours. C'est mon moyen de transport principal pour absolument tout, je n'ai pas le permis." },
+            { q: "Quelle est votre œuvre préférée ?", a: "J'aime bien les cercles lumineux à Saint-Cyprien. C'est simple, mais ça donne un style un peu moderne et épuré." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Sans l'art, ce serait glauque. Quand tu rentres fatigué le soir en hiver, avoir un peu de couleur et de lumière sur les murs, ça joue sur le moral." }
+        ]
+    },
+    {
+        id: "claire_v", name: "Claire V.",
+        station_id: "basso_cambo", station_name: "Basso Cambo",
+        summary: "Rivée sur son téléphone, elle préférerait plus de rames de métro plutôt que de l'art.",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Malheureusement oui, pour faire mon trajet domicile-travail. Trente minutes de trajet tous les matins." },
+            { q: "Quelle est votre œuvre préférée ?", a: "Je vous avoue que je n'en ai aucune idée. J'ai les écouteurs sur les oreilles et les yeux rivés sur mon téléphone dès que je franchis les portiques." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "C'est sympa pour l'esthétique, c'est sûr. Mais en tant qu'usagère quotidienne, je préférerais qu'ils investissent ce budget dans plus de rames aux heures de pointe !" }
+        ]
+    },
+    {
+        id: "julien_b", name: "Julien B.",
+        station_id: "palais_de_justice", station_name: "Palais de Justice",
+        summary: "Il considère le réseau de transport comme un véritable « musée du quotidien ».",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Oui, j'ai abandonné la voiture il y a deux ans à cause des bouchons, donc c'est métro pour aller bosser." },
+            { q: "Quelle est votre œuvre préférée ?", a: "Celle de Palais de Justice. L'architecture de la station laisse entrer la lumière naturelle qui vient de l'extérieur, ça met vraiment les œuvres en valeur." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Tout à fait. C'est un musée du quotidien. On a la chance d'avoir une ambiance différente par station, c'est une vraie richesse." }
+        ]
+    },
+    {
+        id: "emma_c", name: "Emma C.",
+        station_id: "borderouge", station_name: "Borderouge",
+        summary: "Elle trouve que les œuvres permettent de briser la monotonie des trajets.",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Je le prends surtout quand il pleut, sinon je préfère prendre le vélo pour aller au campus." },
+            { q: "Quelle est votre œuvre préférée ?", a: "Je dirais les espèces de vagues colorées à Borderouge. Ça donne un côté dynamique à la station." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Oui, un trajet en transport en commun c'est souvent monotone et très automatique. L'art permet de casser un peu cette routine." }
+        ]
+    },
+    {
+        id: "raymond_p", name: "Raymond P.",
+        station_id: "jeanne_d_arc", station_name: "Jeanne d'Arc",
+        summary: "De nature classique, il admet que ces installations modernes égayent les stations.",
+        interview: [
+            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Très rarement, seulement quand je dois aller à la gare ou que j'ai un rendez-vous médical en centre-ville." },
+            { q: "Quelle est votre œuvre préférée ?", a: "Je suis plutôt de l'ancienne école, je préfère l'architecture classique, mais je dois dire que les grandes sculptures modernes de Jeanne d'Arc m'ont interpellé la dernière fois." },
+            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Pourquoi pas. Ça fait travailler les artistes locaux et ça égaye le béton. C'est toujours ça de pris." }
+        ]
+    }
+];
+
+// ── Build carousel ──
+const track = document.getElementById('carouselTrack');
+const doubled = [...INTERVIEWS, ...INTERVIEWS];
+
+doubled.forEach(iv => {
+    const card = document.createElement('div');
+    card.className = 'iv-card' + (iv.interview ? '' : ' iv-card--no-interview');
+
+    const stationHtml = iv.station_name
+        ? `<div class="card-station">${iv.station_name}</div>`
+        : `<div class="card-station card-station--none">Station inconnue</div>`;
+
+    const ctaHtml = iv.interview
+        ? `<div class="card-cta">Lire l'interview &#8250;</div>`
+        : '';
+
+    card.innerHTML = `
+        <div class="card-name">${iv.name}</div>
+        ${stationHtml}
+        <p class="card-summary">${iv.summary}</p>
+        ${ctaHtml}
+    `;
+
+    if (iv.interview) {
+        card.addEventListener('click', () => openPanel(iv, card));
+    }
+
+    track.appendChild(card);
+});
+
+// ── Auto-scroll carousel ──
+const wrap = document.getElementById('carouselWrap');
+const SPEED = 0.55;
+let pos = 0;
+let paused = false;
+let dragging = false;
+let dragStartX = 0;
+let dragStartPos = 0;
+
+function tick() {
+    if (!paused && !dragging) {
+        pos += SPEED;
+        const half = track.scrollWidth / 2;
+        if (pos >= half) pos -= half;
+        wrap.scrollLeft = pos;
+    }
+    requestAnimationFrame(tick);
+}
+
+wrap.addEventListener('mouseenter', () => { paused = true; });
+wrap.addEventListener('mouseleave', () => { paused = false; });
+
+// Mouse wheel → horizontal scroll
+wrap.addEventListener('wheel', e => {
+    e.preventDefault();
+    const delta = e.deltaY !== 0 ? e.deltaY : e.deltaX;
+    pos = Math.max(0, pos + delta);
+    wrap.scrollLeft = pos;
+}, { passive: false });
+
+wrap.addEventListener('mousedown', e => {
+    dragging = true;
+    dragStartX = e.pageX;
+    dragStartPos = wrap.scrollLeft;
+    pos = wrap.scrollLeft;
+});
+window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const newPos = dragStartPos - (e.pageX - dragStartX);
+    wrap.scrollLeft = newPos;
+    pos = newPos;
+});
+window.addEventListener('mouseup', () => { dragging = false; });
+
+wrap.addEventListener('touchstart', e => {
+    dragging = true;
+    dragStartX = e.touches[0].pageX;
+    dragStartPos = wrap.scrollLeft;
+    pos = wrap.scrollLeft;
+}, { passive: true });
+wrap.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const newPos = dragStartPos - (e.touches[0].pageX - dragStartX);
+    wrap.scrollLeft = newPos;
+    pos = newPos;
+}, { passive: true });
+wrap.addEventListener('touchend', () => { dragging = false; });
+
+requestAnimationFrame(tick);
+
+// ── Inline panel ──
+const panel      = document.getElementById('iv-panel');
+const panelInner = document.getElementById('iv-panel-inner');
+let activeId     = null;
+
+function openPanel(iv, card) {
+    if (activeId === iv.id) {
+        closePanel();
+        return;
+    }
+    activeId = iv.id;
+
+    document.querySelectorAll('.iv-card.is-active').forEach(c => c.classList.remove('is-active'));
+    card.classList.add('is-active');
+
+    const stationBtn = iv.station_id
+        ? `<button class="iv-panel__station-btn" onclick="goToStation('${iv.station_id}')">Voir la station · ${iv.station_name}</button>`
+        : '';
+
+    const qaHtml = iv.interview.map(({ q, a }) => `
+        <div>
+            <p class="iv-panel__q">${q}</p>
+            <p class="iv-panel__a">${iv.name.split(' ')[0]} : ${a}</p>
         </div>
-    </div>
+    `).join('');
 
-    <script type="module" src="./src/interviews.js"></script>
+    panelInner.innerHTML = `
+        <div class="iv-panel__header">
+            <span class="iv-panel__name">${iv.name}</span>
+            <button class="iv-panel__close" onclick="closePanel()">✕ Fermer</button>
+        </div>
+        ${stationBtn}
+        <div class="iv-panel__qa">${qaHtml}</div>
+    `;
+
+    panel.classList.add('is-open');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closePanel() {
+    panel.classList.remove('is-open');
+    document.querySelectorAll('.iv-card.is-active').forEach(c => c.classList.remove('is-active'));
+    activeId = null;
+}
+
+function goToStation(stationId) {
+    window.location.href = `index.html?station=${stationId}`;
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+
+// ── Random background — progressive load (thumb → full) ──
+(function () {
+    const stations = [
+        'arenes','argoulets','bagatelle','balma_gramont','barriere_de_paris',
+        'basso_cambo','bellefontaine','borderouge','canal_du_midi','capitole',
+        'carmes','compans_caffarelli','empalot','esquirol','fac_pharmacie',
+        'fontaine_lestang','francois_verdier','jean_jaures','jeanne_d_arc',
+        'jolimont','la_vache','marengo_sncf','mermoz','minimes','mirail_universite',
+        'palais_de_justice','patte_d_oie','ramonville','rangueil','reynerie',
+        'roseraie','saouzelong','st_cyprien','st_michel','trois_cocus',
+        'universite_paul_sabatier'
+    ];
+    const pick = stations[Math.floor(Math.random() * stations.length)];
+    const bg = document.getElementById('bg-layer');
+
+    bg.classList.add('bg-loading');
+
+    const thumb = new Image();
+    thumb.onload = () => {
+        bg.style.backgroundImage = `url('media/${pick}/background_thumb.jpg')`;
+        const full = new Image();
+        full.onload = () => {
+            bg.style.backgroundImage = `url('media/${pick}/background.png')`;
+            bg.classList.remove('bg-loading');
+        };
+        full.onerror = () => bg.classList.remove('bg-loading');
+        full.src = `media/${pick}/background.png`;
+    };
+    thumb.onerror = () => {
+        const full = new Image();
+        full.onload = () => {
+            bg.style.backgroundImage = `url('media/${pick}/background.png')`;
+            bg.classList.remove('bg-loading');
+        };
+        full.onerror = () => bg.classList.remove('bg-loading');
+        full.src = `media/${pick}/background.png`;
+    };
+    thumb.src = `media/${pick}/background_thumb.jpg`;
+}());
+
+// ── Dark/light mode ──
+function toggleMode() {
+    const next = !document.body.classList.contains('light-mode');
+    document.body.classList.toggle('light-mode', next);
+    localStorage.setItem('theme', next ? 'light' : 'dark');
+}
+
+(function () {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+        document.body.classList.add('light-mode');
+    } else if (!saved && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.body.classList.add('light-mode');
+    }
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+        if (!localStorage.getItem('theme')) document.body.classList.toggle('light-mode', e.matches);
+    });
+}());
+</script>
 </body>
 </html>

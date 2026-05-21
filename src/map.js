@@ -63,18 +63,6 @@ export class MapExperience {
         this.map.on("movestart zoomstart dragstart", () => this.notifyInteraction());
         this.map.on("click", () => this.notifyInteraction());
 
-        const InterviewsBtn = window.L.Control.extend({
-            options: { position: "topright" },
-            onAdd() {
-                const a = window.L.DomUtil.create("a", "interviews-ctrl-btn");
-                a.href = "./interviews.html";
-                a.textContent = "Interviews";
-                window.L.DomEvent.disableClickPropagation(a);
-                return a;
-            }
-        });
-        new InterviewsBtn().addTo(this.map);
-
         window.L.control.zoom({ position: "topright" }).addTo(this.map);
     }
 
