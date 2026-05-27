@@ -398,104 +398,6 @@ body.light-mode .leaflet-container {
     100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-.station-panel {
-    position: absolute;
-    right: 24px;
-    bottom: 24px;
-    width: min(360px, 80vw);
-    padding: 20px 22px;
-    border-radius: 18px;
-    background: var(--color-panel);
-    border: 1px solid var(--color-panel-border);
-    box-shadow: var(--color-panel-shadow);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    pointer-events: none;
-}
-
-.station-panel.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-}
-
-.station-panel__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.station-panel__line {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 56px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    background: linear-gradient(135deg, rgba(255, 92, 115, 0.92), rgba(255, 193, 109, 0.65));
-    color: #12143a;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.station-panel__title {
-    margin: 0;
-    font-size: 1.35rem;
-    letter-spacing: 0.02em;
-}
-
-.station-panel__body {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.station-panel__artwork {
-    margin: 0;
-    font-weight: 600;
-    font-size: 1.05rem;
-}
-
-.station-panel__artist {
-    margin: 0;
-    color: var(--color-muted);
-    font-size: 0.95rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-}
-
-.station-panel__description {
-    margin: 0;
-    color: var(--color-muted);
-    font-size: 0.92rem;
-    line-height: 1.6;
-}
-
-.station-panel__footer {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.station-panel__cta {
-    padding: 10px 18px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--color-text);
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    cursor: not-allowed;
-}
 
 /* ── Map credits overlay ── */
 .map-credits {
@@ -546,15 +448,7 @@ body.light-mode .leaflet-container {
         max-width: none;
     }
 
-    .station-panel {
-        position: relative;
-        right: auto;
-        bottom: auto;
-        margin: 20px;
-        width: calc(100% - 40px);
-    }
-
-    .map-hint {
+.map-hint {
         left: 16px;
         right: 16px;
     }

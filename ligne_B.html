@@ -555,8 +555,7 @@ async function loadStation(key) {
     const artistFile = key === 'jean_jaures' ? `/media/${key}/artist_b.txt` : `/media/${key}/artist.txt`;
     const artist = parseTextFile(await fetchText(artistFile));
     document.getElementById('nomArtiste').textContent = artist ? artist.heading : data.artist;
-    document.getElementById('bioArtiste').innerHTML   = artist ? `<p>${artist.body.replace(/\n/g, '<br>')}</p>` : data.bio;
-    document.getElementById('bioArtiste').innerHTML    = data.bio;
+    document.getElementById('bioArtiste').innerHTML = artist ? `<p>${artist.body.replace(/\n/g, '<br>')}</p>` : data.bio;
 
     // Extra media
     await buildExtras(key);
