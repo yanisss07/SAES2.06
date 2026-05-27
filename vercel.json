@@ -3,8 +3,8 @@
   "outputDirectory": ".",
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/ligne_A/:station", "destination": "/ligne_A.html" },
-    { "source": "/ligne_B/:station", "destination": "/ligne_B.html" }
+    { "source": "/ligne_A/:station", "destination": "/ligne_A" },
+    { "source": "/ligne_B/:station", "destination": "/ligne_B" }
   ],
   "headers": [
     {
