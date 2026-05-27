@@ -348,9 +348,9 @@
 
         /* ── Inline interview panel ── */
         .iv-panel {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1);
             background: rgba(0, 0, 0, 0.38);
             border-top: 1px solid rgba(255,255,255,0.10);
             backdrop-filter: blur(20px);
@@ -361,15 +361,13 @@
             background: rgba(255,255,255,0.45);
             border-top-color: rgba(0,0,0,0.07);
         }
-        .iv-panel.is-open { max-height: 600px; }
+        .iv-panel.is-open { grid-template-rows: 1fr; }
+        .iv-panel__overflow { overflow: hidden; min-height: 0; }
 
         .iv-panel__inner {
             max-width: 800px;
             margin: 0 auto;
             padding: 36px 24px 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
         }
 
         .iv-panel__header {
@@ -386,15 +384,19 @@
         body.light-mode .iv-panel__name { color: #111; }
 
         .iv-panel__close {
-            background: none; border: none;
-            color: #9aa0a6; font-size: 1rem;
-            cursor: pointer; padding: 5px 10px; border-radius: 8px;
-            transition: color 0.2s, background 0.2s;
-            font-family: inherit;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.55);
+            cursor: pointer;
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: color 0.2s, border-color 0.2s;
         }
-        .iv-panel__close:hover { color: #fff; background: rgba(255,255,255,0.08); }
-        body.light-mode .iv-panel__close { color: #444; }
-        body.light-mode .iv-panel__close:hover { color: #111; background: rgba(0,0,0,0.06); }
+        .iv-panel__close:hover { color: #fff; border-color: rgba(255,255,255,0.55); }
+        body.light-mode .iv-panel__close { border-color: rgba(0,0,0,0.2); color: rgba(0,0,0,0.45); }
+        body.light-mode .iv-panel__close:hover { color: #111; border-color: rgba(0,0,0,0.5); }
 
         .iv-panel__station-btn {
             display: inline-flex; align-items: center; gap: 6px;
@@ -402,7 +404,7 @@
             color: #ffd056;
             letter-spacing: 0.06em; text-transform: uppercase;
             border: 1px solid rgba(255,208,86,0.3); padding: 4px 14px;
-            border-radius: 999px; margin-bottom: 24px;
+            border-radius: 999px; margin-bottom: 28px;
             transition: background 0.2s, border-color 0.2s;
             cursor: pointer; background: none; font-family: inherit;
         }
@@ -411,19 +413,25 @@
             border-color: rgba(255,208,86,0.6);
         }
 
-        .iv-panel__qa { display: flex; flex-direction: column; gap: 20px; }
+        .iv-panel__transcript { line-height: 1.78; }
+
+        .iv-panel__block { margin-bottom: 16px; }
+        .iv-panel__block:last-child { margin-bottom: 0; }
 
         .iv-panel__q {
-            font-size: 0.72rem; font-weight: 700;
-            color: #9aa0a6; letter-spacing: 0.05em;
-            text-transform: uppercase; margin-bottom: 5px;
+            font-size: 0.8rem;
+            font-style: italic;
+            color: rgba(255,255,255,0.42);
+            margin-bottom: 2px;
         }
-        body.light-mode .iv-panel__q { color: rgba(0,0,0,0.45); }
+        body.light-mode .iv-panel__q { color: rgba(0,0,0,0.38); }
 
         .iv-panel__a {
-            font-size: 0.92rem; color: #e8eaed; line-height: 1.65;
+            font-size: 0.93rem;
+            color: #e8eaed;
+            line-height: 1.72;
         }
-        body.light-mode .iv-panel__a { color: #222; }
+        body.light-mode .iv-panel__a { color: #1a1a1a; }
 
         /* ── Footer ── */
         footer {
@@ -494,7 +502,9 @@
 </div>
 
 <div class="iv-panel" id="iv-panel">
-    <div class="iv-panel__inner" id="iv-panel-inner"></div>
+    <div class="iv-panel__overflow">
+        <div class="iv-panel__inner" id="iv-panel-inner"></div>
+    </div>
 </div>
 
 <footer>Tisséo Collectivités · Parcours Culturel · Quai des Arts</footer>
@@ -648,20 +658,22 @@ function openPanel(iv, card) {
         ? `<button class="iv-panel__station-btn" onclick="goToStation('${iv.station_id}','${iv.line}')">Voir la station · ${iv.station_name}</button>`
         : '';
 
-    const qaHtml = iv.interview.map(({ q, a }) => `
-        <div>
+    const transcriptHtml = iv.interview.map(({ q, a }) => `
+        <div class="iv-panel__block">
             <p class="iv-panel__q">${q}</p>
-            <p class="iv-panel__a">${iv.name.split(' ')[0]} : ${a}</p>
+            <p class="iv-panel__a">${a}</p>
         </div>
     `).join('');
 
     panelInner.innerHTML = `
         <div class="iv-panel__header">
             <span class="iv-panel__name">${iv.name}</span>
-            <button class="iv-panel__close" onclick="closePanel()">✕ Fermer</button>
+            <button class="iv-panel__close" onclick="closePanel()" aria-label="Fermer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
         </div>
         ${stationBtn}
-        <div class="iv-panel__qa">${qaHtml}</div>
+        <div class="iv-panel__transcript">${transcriptHtml}</div>
     `;
 
     panel.classList.add('is-open');

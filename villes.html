@@ -66,12 +66,7 @@
             filter: hue-rotate(var(--hue-rot, 0deg));
         }
 
-        .city-card__thumb {
-            width: 100%;
-            aspect-ratio: 3/2;
-            object-fit: cover;
-            display: block;
-        }
+        .city-card__thumb-old-rule { display: none; } /* replaced by thumb-wrap */
 
         .city-card__label {
             position: absolute;
@@ -163,10 +158,80 @@
             max-height: 480px;
             object-fit: cover;
             display: block;
-            transition: opacity 0.35s ease;
+            transition: opacity 0.35s ease, filter 0.5s ease;
         }
 
         .viewer-img.is-fading { opacity: 0; }
+        .viewer-img.is-loading {
+            filter: blur(12px);
+            transform: scale(1.04);
+        }
+
+        /* Shimmer bar over image while loading */
+        .viewer-image-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255,255,255,0.08) 40%,
+                rgba(255,255,255,0.16) 50%,
+                rgba(255,255,255,0.08) 60%,
+                transparent 100%);
+            background-size: 200% 100%;
+            animation: shimmer-villes 1.4s infinite linear;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .viewer-image-wrap.is-loading::after { opacity: 1; }
+
+        @keyframes shimmer-villes {
+            from { background-position: 200% 0; }
+            to   { background-position: -200% 0; }
+        }
+
+        /* City card thumb shimmer */
+        .city-card__thumb-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3/2;
+            overflow: hidden;
+            background: rgba(255,255,255,0.06);
+        }
+
+        .city-card__thumb {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: filter 0.5s ease, opacity 0.4s ease;
+        }
+
+        .city-card__thumb.is-loading {
+            filter: blur(8px);
+            transform: scale(1.08);
+        }
+
+        .city-card__thumb-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255,255,255,0.1) 40%,
+                rgba(255,255,255,0.2) 50%,
+                rgba(255,255,255,0.1) 60%,
+                transparent 100%);
+            background-size: 200% 100%;
+            animation: shimmer-villes 1.4s infinite linear;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .city-card__thumb-wrap.is-loading::after { opacity: 1; }
 
         .viewer-arrow {
             position: absolute;
@@ -341,15 +406,33 @@
             var card = document.createElement("div");
             card.className = "city-card anim-in";
             card.style.animationDelay = (0.05*i+0.1)+"s";
+
+            var wrap = document.createElement("div");
+            wrap.className = "city-card__thumb-wrap is-loading";
+
             var img = document.createElement("img");
-            img.className = "city-card__thumb";
-            img.src = "./villes/"+encodeURIComponent(city.id)+"/"+city.images[0]+"."+city.ext;
+            img.className = "city-card__thumb is-loading";
             img.alt = city.name;
-            img.loading = "lazy";
+
+            var thumbSrc = "./villes/"+encodeURIComponent(city.id)+"/"+city.images[0]+"_thumb."+city.ext;
+            var fullSrc  = "./villes/"+encodeURIComponent(city.id)+"/"+city.images[0]+"."+city.ext;
+
+            img.src = thumbSrc;
+            img.onload = function() {
+                var full = new Image();
+                full.onload = function() {
+                    img.src = full.src;
+                    img.classList.remove("is-loading");
+                    wrap.classList.remove("is-loading");
+                };
+                full.src = fullSrc;
+            };
+
             var label = document.createElement("div");
             label.className = "city-card__label";
             label.textContent = city.name;
-            card.appendChild(img);
+            wrap.appendChild(img);
+            card.appendChild(wrap);
             card.appendChild(label);
             card.addEventListener("click", function() { openCity(city, card); });
             strip.appendChild(card);
@@ -408,14 +491,28 @@
             }
         }
 
+        var viewerImgWrap = document.querySelector(".viewer-image-wrap");
+
         function setViewerImg(idx) {
             currentImg = (idx + currentCity.images.length) % currentCity.images.length;
-            var src = "./villes/"+encodeURIComponent(currentCity.id)+"/"+currentCity.images[currentImg]+"."+currentCity.ext;
+            var base = "./villes/"+encodeURIComponent(currentCity.id)+"/"+currentCity.images[currentImg];
+            var thumbSrc = base + "_thumb." + currentCity.ext;
+            var fullSrc  = base + "." + currentCity.ext;
+
             viewerImg.classList.add("is-fading");
             setTimeout(function() {
-                viewerImg.src = src;
+                viewerImg.src = thumbSrc;
                 viewerImg.alt = currentCity.name + " " + (currentImg+1);
                 viewerImg.classList.remove("is-fading");
+                viewerImg.classList.add("is-loading");
+                viewerImgWrap.classList.add("is-loading");
+                var full = new Image();
+                full.onload = function() {
+                    viewerImg.src = full.src;
+                    viewerImg.classList.remove("is-loading");
+                    viewerImgWrap.classList.remove("is-loading");
+                };
+                full.src = fullSrc;
             }, 180);
             viewerDots.querySelectorAll(".viewer-dot").forEach(function(d,i) {
                 d.classList.toggle("is-active", i===currentImg);
