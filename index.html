@@ -72,7 +72,7 @@
             line-height: 1.1;
         }
 
-        body.light-mode .accueil-title { color: #fff; }
+        body.light-mode .accueil-title { color: #1a1a2e; }
 
         .accueil-subtitle {
             margin: 0 0 48px;
@@ -82,6 +82,8 @@
             letter-spacing: 0.04em;
             max-width: 380px;
         }
+
+        body.light-mode .accueil-subtitle { color: rgba(30, 30, 50, 0.65); }
 
         /* ── Bottom-right skip link ── */
         .accueil-skip {
@@ -115,10 +117,13 @@
         <img src="./logo.png" alt="Logo Quai des Arts" class="accueil-logo anim-in">
         <h1 class="accueil-title anim-in anim-in-delay-1">Quai des Arts</h1>
         <p class="accueil-subtitle anim-in anim-in-delay-2">Un voyage à travers l'art caché du métro toulousain.</p>
-        <a href="./villes.html" class="btn-primary btn-commencer anim-in anim-in-delay-3">Commencer</a>
+        <a href="./villes" class="btn-primary btn-commencer anim-in anim-in-delay-3">
+            Commencer
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
     </div>
 
-    <a href="./carte.html" class="accueil-skip anim-in anim-in-delay-4">Accéder à la carte directement →</a>
+    <a href="./carte" class="accueil-skip anim-in anim-in-delay-4">Accéder à la carte directement →</a>
 
     <script>
         // ── Theme ──
@@ -176,6 +181,7 @@
         // Set initial background immediately
         setSlide(bgA, STATIONS[idx]);
         setInterval(nextBg, 30000);
+
     </script>
 </body>
 </html>

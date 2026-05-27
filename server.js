@@ -22,21 +22,32 @@ Bun.serve({
     async fetch(req) {
         const url = new URL(req.url);
         let pathname = decodeURIComponent(url.pathname);
-        if (pathname === "/" || pathname === "") pathname = "/index.html";
 
-        const filePath = join(ROOT, pathname);
+        // Redirect .html URLs to clean paths
+        if (pathname.endsWith(".html")) {
+            const clean = pathname.slice(0, -5) || "/";
+            return Response.redirect(new URL(clean, req.url).href, 301);
+        }
+
+        // Resolve to a file path
+        let resolved = pathname;
+        if (resolved === "/" || resolved === "") {
+            resolved = "/index.html";
+        } else if (!extname(resolved)) {
+            resolved = resolved + ".html";
+        }
+
+        const filePath = join(ROOT, resolved);
         const file = Bun.file(filePath);
 
         if (!await file.exists()) {
             return new Response("404 Not Found", { status: 404 });
         }
 
-        const ext = extname(pathname).toLowerCase();
+        const ext = extname(resolved).toLowerCase();
         const type = MIME[ext] ?? "application/octet-stream";
 
-        return new Response(file, {
-            headers: { "Content-Type": type }
-        });
+        return new Response(file, { headers: { "Content-Type": type } });
     },
 });
 

@@ -14,6 +14,8 @@
         html, body { height: 100%; overflow: hidden; }
 
         .enter-stage {
+            position: relative;
+            z-index: 2;
             width: 100%;
             height: 100vh;
             display: flex;
@@ -41,32 +43,36 @@
             font-weight: 500;
         }
 
+        @keyframes explorer-glow {
+            0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 32px rgba(255,59,106,0.4), 0 2px 8px rgba(0,0,0,0.3); }
+            50%       { box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 12px 52px rgba(255,59,106,0.65), 0 4px 16px rgba(0,0,0,0.35); }
+        }
+
         .btn-explorer {
             position: relative;
             overflow: hidden;
             display: inline-flex;
             align-items: center;
-            gap: 14px;
-            padding: 24px 60px;
-            border-radius: 14px;
+            gap: 16px;
+            padding: 22px 56px;
+            border-radius: 16px;
             background: linear-gradient(135deg, #ff3b6a, #ffd056);
-            border: none;
+            border: 1px solid rgba(255,255,255,0.2);
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            letter-spacing: 0.10em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             text-decoration: none;
             cursor: pointer;
-            box-shadow: 0 8px 42px rgba(255,59,106,0.45), 0 2px 8px rgba(0,0,0,0.3);
-            animation: hue-spin 20s linear infinite;
-            animation-delay: var(--btn-hue-offset);
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+            animation: hue-spin 20s linear infinite, explorer-glow 3s ease-in-out infinite;
+            animation-delay: var(--btn-hue-offset), 0s;
+            transition: transform 0.2s ease;
         }
 
         .btn-explorer:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 16px 56px rgba(255,59,106,0.6), 0 4px 12px rgba(0,0,0,0.35);
+            transform: translateY(-4px) scale(1.02);
         }
 
         .enter-hint {
@@ -96,7 +102,7 @@
         <p class="enter-line anim-in">
             La carte que <em>Tisséo</em> n'a pas su garder.
         </p>
-        <a href="./carte.html" class="btn-explorer anim-in anim-in-delay-2">
+        <a href="./carte" class="btn-explorer anim-in anim-in-delay-2">
             Explorer les œuvres
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>

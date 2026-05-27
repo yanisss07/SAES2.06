@@ -131,10 +131,14 @@
         .viewer-close {
             background: none;
             border: 1px solid var(--color-panel-border);
-            border-radius: 999px;
-            padding: 5px 14px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: var(--color-muted);
-            font-size: 0.8rem;
             cursor: pointer;
             transition: color 0.2s, border-color 0.2s;
             flex-shrink: 0;
@@ -231,7 +235,7 @@
     </div>
 
     <nav class="intro-nav">
-        <a href="./index.html" class="btn-back">← Retour</a>
+        <a href="./" class="btn-back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg> Retour</a>
     </nav>
 
     <div class="page-content">
@@ -250,7 +254,9 @@
                             <h3 class="city-viewer__name" id="viewer-name"></h3>
                             <span class="city-viewer__country" id="viewer-country"></span>
                         </div>
-                        <button class="viewer-close" id="viewer-close">Fermer ✕</button>
+                        <button class="viewer-close" id="viewer-close" aria-label="Fermer">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
                     </div>
                     <div class="viewer-image-wrap">
                         <button class="viewer-arrow viewer-arrow--prev" id="viewer-prev">‹</button>
@@ -266,7 +272,7 @@
         <div class="villes-spacer"></div>
     </div>
 
-    <a href="./toulouse.html" class="btn-primary btn-fixed-br">Continuer →</a>
+    <a href="./toulouse" class="btn-primary btn-fixed-br">Continuer <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
 
     <script>
         // ── Theme ──

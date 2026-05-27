@@ -20,6 +20,25 @@
             gap: 56px;
         }
 
+        /* ── Page title ── */
+        .arteo-title {
+            margin: 0;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #fff 30%, #97a0c5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.light-mode .arteo-title {
+            background: linear-gradient(135deg, #111 30%, #555);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
         /* ── Intro text ── */
         .arteo-intro {
             padding: 32px 36px;
@@ -29,15 +48,6 @@
             box-shadow: var(--color-panel-shadow);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-        }
-
-        .arteo-intro h2 {
-            margin: 0 0 16px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--color-accent-a);
         }
 
         .arteo-intro p {
@@ -96,8 +106,15 @@
             padding-right: 16px;
         }
 
+        .timeline-item:last-child {
+            grid-template-columns: 96px 1fr;
+        }
+
         .timeline-item:last-child .timeline-year {
             color: var(--color-muted);
+            font-size: 0.72rem;
+            letter-spacing: 0;
+            padding-right: 20px;
         }
 
         .timeline-dot {
@@ -134,25 +151,17 @@
         }
 
         .timeline-item:last-child .timeline-body p {
-            color: rgba(151, 160, 197, 0.65);
-            font-style: italic;
+            color: var(--color-muted);
         }
 
         /* ── Conclusion ── */
         .arteo-conclusion {
-            padding: 28px 32px;
-            border-radius: 16px;
-            border-left: 3px solid var(--color-accent-a);
-            background: rgba(255, 59, 106, 0.06);
-        }
-
-        body.light-mode .arteo-conclusion {
-            background: rgba(255, 59, 106, 0.04);
+            text-align: center;
         }
 
         .arteo-conclusion p {
             margin: 0;
-            font-size: 1rem;
+            font-size: 1.1rem;
             line-height: 1.75;
             color: var(--color-muted);
         }
@@ -188,15 +197,16 @@
     </div>
 
     <nav class="intro-nav">
-        <a href="./toulouse.html" class="btn-back">← Retour</a>
+        <a href="./toulouse" class="btn-back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg> Retour</a>
     </nav>
 
     <div class="page-content">
         <div class="arteo-content">
 
+            <h2 class="arteo-title anim-in">ARTéo</h2>
+
             <div class="arteo-intro anim-in">
-                <h2>ARTéo</h2>
-                <p>Tisséo le savait. Des millions de voyageurs passaient chaque jour devant ces œuvres sans les voir. Alors en 2018, ils ont agi&nbsp;: <span class="app-name">ARTéo</span>, une application dédiée, avec une carte interactive, des fiches artistes, et des visites guidées par GPS. L'idée était là. L'outil existait. Tout ce qu'il fallait pour rendre ces œuvres visibles.</p>
+                <p>Tisséo le savait. Des millions de voyageurs passaient chaque jour devant ces œuvres sans les voir. Alors en 2018, ils ont pris la décision de lancer <span class="app-name">ARTéo</span>, une application dédiée, avec une carte interactive, des fiches artistes, et des visites guidées par GPS. L'idée était là. L'outil existait. Tout ce qu'il fallait pour rendre ces œuvres visibles.</p>
             </div>
 
             <div class="timeline anim-in anim-in-delay-1">
@@ -222,7 +232,7 @@
                     </div>
                 </div>
                 <div class="timeline-item">
-                    <span class="timeline-year">202?</span>
+                    <span class="timeline-year">2020</span>
                     <div class="timeline-dot"></div>
                     <div class="timeline-body">
                         <p><strong>ARTéo disparaît des stores.</strong> Sans annonce, sans remplacement, sans archivage public.</p>
@@ -246,7 +256,7 @@
         </div>
     </div>
 
-    <a href="./enter.html" class="btn-primary btn-fixed-br">Continuer →</a>
+    <a href="./enter" class="btn-primary btn-fixed-br">Continuer <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
 
     <script>
         // ── Theme init ──

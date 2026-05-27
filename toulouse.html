@@ -142,6 +142,29 @@
             margin-bottom: 12px;
         }
 
+        .artwork-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .artwork-arrow:hover { background: rgba(0,0,0,0.8); }
+        .artwork-arrow--prev { left: 12px; }
+        .artwork-arrow--next { right: 12px; }
+
         .artwork-slide {
             position: absolute;
             inset: 0;
@@ -218,7 +241,7 @@
     </div>
 
     <nav class="intro-nav">
-        <a href="./villes.html" class="btn-back">← Retour</a>
+        <a href="./villes" class="btn-back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg> Retour</a>
     </nav>
 
     <div class="toulouse-stage page-content">
@@ -235,14 +258,21 @@
         <div class="response-section" id="response-section">
             <p class="response-text" id="response-text"></p>
 
-            <div class="artwork-slideshow" id="artwork-slideshow"></div>
+            <div class="artwork-slideshow" id="artwork-slideshow">
+                <button class="artwork-arrow artwork-arrow--prev" id="artwork-prev" aria-label="Image précédente">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button class="artwork-arrow artwork-arrow--next" id="artwork-next" aria-label="Image suivante">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
             <div class="artwork-dots" id="artwork-dots"></div>
 
             <div style="height:80px;"></div>
         </div>
     </div>
 
-    <a href="./arteo.html" class="btn-primary btn-fixed-br" id="btn-continuer" style="display:none;">Continuer →</a>
+    <a href="./arteo" class="btn-primary btn-fixed-br" id="btn-continuer" style="display:none;">Continuer <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
 
     <script>
         // ── Theme init ──
@@ -265,7 +295,7 @@
         // ── Content ──
         const TEXT_OUI = "Vous ne le savez peut-être pas, mais vous l'avez croisé des centaines de fois. Les mêmes stations, les mêmes couloirs, la même attente sur le quai. Et pourtant, depuis 1993, 38 artistes de renommée internationale ont transformé chaque station en œuvre d'art. Une collection d'art contemporain unique au monde, sous vos yeux, chaque jour — que beaucoup ne remarquent même pas.";
 
-        const TEXT_NON = "Quand Toulouse a construit son métro, elle a décidé que chaque station serait aussi une œuvre. Des plasticiens de renommée internationale ont été invités à transformer ces espaces souterrains. Le résultat : une galerie d'art contemporain de 28 kilomètres, que des millions de voyageurs traversent chaque année sans forcément s'en rendre compte.";
+        const TEXT_NON = "Quand Toulouse a construit son métro, elle a décidé que chaque station serait aussi une œuvre. Des artistes de renommée internationale ont été invités à transformer ces espaces souterrains.<br><br>Le résultat : une galerie d'art contemporain de 28 kilomètres, que des millions de voyageurs traversent chaque année sans forcément s'en rendre compte.";
 
         const ARTWORKS = [
             { src: "./media/capitole/main.jpg",          caption: "Capitole" },
@@ -277,6 +307,12 @@
             { src: "./media/borderouge/main.jpg",        caption: "Borderouge" },
             { src: "./media/reynerie/main.jpg",          caption: "Reynerie" }
         ];
+
+        // Shuffle artworks so each visit starts fresh
+        for (let _i = ARTWORKS.length - 1; _i > 0; _i--) {
+            const _j = Math.floor(Math.random() * (_i + 1));
+            [ARTWORKS[_i], ARTWORKS[_j]] = [ARTWORKS[_j], ARTWORKS[_i]];
+        }
 
         // ── Build artwork slideshow ──
         let artSlide = 0;
@@ -330,7 +366,7 @@
             questionSection.style.opacity = "0";
             questionSection.style.transform = "translateY(-12px)";
             questionSection.style.pointerEvents = "none";
-            responseText.textContent = text;
+            responseText.innerHTML = text;
             setTimeout(() => {
                 questionSection.style.display = "none";
                 responseSection.classList.add("is-visible");
@@ -341,6 +377,8 @@
 
         document.getElementById("btn-oui").addEventListener("click", () => showResponse(TEXT_OUI));
         document.getElementById("btn-non").addEventListener("click", () => showResponse(TEXT_NON));
+        document.getElementById("artwork-prev").addEventListener("click", () => { clearInterval(artTimer); goArt(artSlide - 1); startAutoSlide(); });
+        document.getElementById("artwork-next").addEventListener("click", () => { clearInterval(artTimer); goArt(artSlide + 1); startAutoSlide(); });
         function initBgCycle() {
             var STATIONS = ["capitole","esquirol","jean_jaures","st_cyprien","palais_de_justice","carmes","borderouge","reynerie","mermoz","jolimont","rangueil","arenes","compans_caffarelli","patte_d_oie","marengo_sncf"];
             for (var i = STATIONS.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t = STATIONS[i]; STATIONS[i] = STATIONS[j]; STATIONS[j] = t; }

@@ -1,6 +1,7 @@
 {
   "buildCommand": "bun run build",
   "outputDirectory": ".",
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/assets/(.*)",
