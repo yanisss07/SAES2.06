@@ -69,6 +69,45 @@ async function bootstrap() {
 
     map.onStationSelected(handleStationSelected);
 
+    // ── Hover guide panel ──
+    const guideEl      = document.getElementById("map-guide");
+    const guideArt     = document.getElementById("guide-art");
+    const guideImgWrap = document.getElementById("guide-img-wrap");
+    const guideImg     = document.getElementById("guide-img");
+    const guideName    = document.getElementById("guide-name");
+    if (guideEl) {
+        map.onStationHovered((station) => {
+            if (!station) return;
+            const title = station.art?.title;
+            const artist = station.art?.artist || "Artiste inconnu";
+            guideArt.textContent = (!title || title === "Sans titre")
+                ? `Œuvre par ${artist} :`
+                : `${title} par ${artist} :`;
+            guideName.textContent = station.name;
+
+            // Line tint
+            const isA = station.line === "A";
+            guideEl.style.setProperty("--guide-tint",   isA ? "rgba(210, 35, 42, 0.07)"  : "rgba(255, 180, 0, 0.07)");
+            guideEl.style.setProperty("--guide-border",  isA ? "rgba(210, 35, 42, 0.35)"  : "rgba(255, 180, 0, 0.35)");
+
+            // Thumb instantly, full image progressively
+            guideImg.classList.add("is-loading");
+            guideImgWrap.classList.add("is-loading");
+            guideImg.src = `media/${station.id}/main_thumb.jpg`;
+            guideImg.alt = station.name;
+
+            const full = new Image();
+            full.onload = () => {
+                guideImg.src = full.src;
+                guideImg.classList.remove("is-loading");
+                guideImgWrap.classList.remove("is-loading");
+            };
+            full.src = `media/${station.id}/main.jpg`;
+
+            guideEl.classList.add("has-station");
+        });
+    }
+
     const targetId = new URLSearchParams(window.location.search).get("station");
     if (targetId) {
         const station = buildStationIndex().get(targetId);

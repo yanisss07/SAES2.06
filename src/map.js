@@ -13,6 +13,7 @@ export class MapExperience {
         this.tileLayer = null;
         this.stationListeners = new Set();
         this.interactionListeners = new Set();
+        this.hoverListeners = new Set();
         this.markerIndex = new Map();
         this.mediaCache = new Map();
         this.isReady = false;
@@ -179,7 +180,19 @@ export class MapExperience {
                     window.location.href = target;
                 });
 
-                marker.on("mouseover", () => this.notifyInteraction());
+                marker.on("mouseover", () => {
+                    this.notifyInteraction();
+                    this.fetchMedia(station.id).then(data => {
+                        this.hoverListeners.forEach(fn => fn({
+                            ...station,
+                            line: line.id,
+                            art: { title: data.oeuvre.heading, artist: data.artist.heading }
+                        }));
+                    });
+                });
+                marker.on("mouseout", () => {
+                    this.hoverListeners.forEach(fn => fn(null));
+                });
                 this.markerIndex.set(station.id, marker);
             }
         }
@@ -224,6 +237,11 @@ export class MapExperience {
     onStationSelected(listener) {
         this.stationListeners.add(listener);
         return () => this.stationListeners.delete(listener);
+    }
+
+    onStationHovered(listener) {
+        this.hoverListeners.add(listener);
+        return () => this.hoverListeners.delete(listener);
     }
 
     onInteraction(listener) {
