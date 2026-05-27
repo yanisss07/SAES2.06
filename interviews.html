@@ -500,161 +500,77 @@
 <footer>Tisséo Collectivités — Parcours Culturel · Quai des Arts</footer>
 
 <script>
+// ── txt format: first line = summary, then ---, then Q/A blocks separated by blank lines ──
+function parseTxt(text, firstName) {
+    const [summaryPart, ...rest] = text.split(/^---$/m);
+    const summary = summaryPart.trim();
+    const blocks = rest.join(‘---’).trim().split(/\n\n+/);
+    const interview = blocks.map(block => {
+        const lines = block.trim().split(‘\n’);
+        return { q: lines[0].trim(), a: lines.slice(1).join(‘\n’).trim() };
+    }).filter(p => p.q && p.a);
+    return { summary, interview };
+}
+
 const INTERVIEWS = [
-    {
-        id: "erik_p", name: "Erik P.",
-        station_id: "jean_jaures", station_name: "Jean Jaurès",
-        summary: "Il prend le métro en mode pilote automatique. Les murs ? Il ne les voit pas.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Oui. Tous les jours." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Quelle œuvre ? Je sais pas de quoi vous parlez. Il y a des trucs aux murs ?" },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Si vous le dites. Moi je regarde le sol ou mon téléphone. C'est pareil pour tout le monde non ?" }
-        ]
-    },
-    {
-        id: "samia_b", name: "Samia B.",
-        station_id: "reynerie", station_name: "Reynerie",
-        summary: "Elle avait remarqué des spirales à Reynerie, mais pensait que c'était des éléments techniques.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Oui oui, presque ! J'habite juste à côté de Reynerie, c'est trop pratique." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Ah attendez, il y a des trucs qui bougent à Reynerie, des espèces de spirales ? Je pensais que c'était de la ventilation ou un truc technique ! C'est de l'art ça ?" },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Ah bah si c'est de l'art c'est cool ! J'aurais pas deviné toute seule haha. Mais oui, c'est joli, ça change de l'ordinaire." }
-        ]
-    },
-    {
-        id: "michel_t", name: "Michel T.",
-        station_id: "carmes", station_name: "Carmes",
-        summary: "Il avait vu des couleurs sur les murs des Carmes, qu'il prenait pour de la décoration standard.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Non, deux ou trois fois par semaine. Pour le marché ou voir mes petits-enfants, principalement." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Je ne suis pas sûr de comprendre la question. Il y a des choses colorées aux murs à Carmes, c'est agréable. Mais je pensais que c'était simplement la décoration habituelle de la station." },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Si ce sont de véritables œuvres d'artistes, alors oui, je trouve ça très bien. Je ne le savais pas. Ça donne effectivement un peu de chaleur à ces espaces souterrains." }
-        ]
-    },
-    {
-        id: "lea_m", name: "Léa M.",
-        station_id: "marengo_sncf", station_name: "Marengo SNCF",
-        summary: "Toujours en retard, elle n'a jamais levé les yeux assez longtemps pour remarquer quoi que ce soit.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Tous les jours oui, matin et soir, je fais le trajet pour le boulot. C'est long." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Des œuvres dans le métro ? Vous êtes sérieux là ? J'ai la tête dans mon téléphone ou je cours pour pas rater ma rame. Je regarde rien du tout." },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Bah si ça existe déjà et que je l'ai pas vu en deux ans de trajet quotidien... je suppose que c'est discret. Tant mieux, ça gêne pas." }
-        ]
-    },
-    {
-        id: "thomas_r", name: "Thomas R.",
-        station_id: "esquirol", station_name: "Esquirol",
-        summary: "Il donne rendez-vous à ses amis «sous l’arbre» à Esquirol sans avoir jamais su que c’était une sculpture.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Ouais carrément, tous les jours ou presque. Pour la fac, pour voir les gens, pour tout en fait." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Attendez... l'arbre à Esquirol c'est une œuvre d'art ?! Je donne rendez-vous à tout le monde là-dessous depuis genre un an. Je croyais que c'était un pilier décoratif ou un truc de la station. Sérieux ?" },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Franchement oui, surtout si c'est intégré comme ça et que les gens s'en servent sans même savoir. C'est devenu un repère naturel pour tout le quartier." }
-        ]
-    },
-    {
-        id: "sophie_d", name: "Sophie D.",
-        station_id: "barriere_de_paris", station_name: "Barrière de Paris",
-        summary: "Débordée avec ses enfants, elle n'a jamais eu l'occasion de regarder les murs.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Le week-end surtout, pour les sorties en famille. Avec deux enfants en bas âge, c'est plus simple que la voiture." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Je n'ai honnêtement jamais fait attention. Quand on est avec les enfants dans le métro, on surveille qu'ils ne tombent pas, on tient les poussettes, on compte les têtes. On ne regarde pas les murs." },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Certainement oui. Si ça peut distraire les enfants pendant l'attente, c'est déjà bien. Promis, la prochaine fois je lève la tête." }
-        ]
-    },
-    {
-        id: "antoine_l", name: "Antoine L.",
-        station_id: "capitole", station_name: "Capitole",
-        summary: "Touriste averti, il avait lu un article sur le patrimoine artistique du métro toulousain avant de venir.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Je suis de passage pour quelques jours, je visite la ville. Mais j'ai pris le métro exprès parce que j'avais lu un article sur les œuvres dans les stations." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Les colonnes à Capitole, clairement. Il y a quelque chose de très cohérent avec le quartier historique au-dessus. Mais j'ai aussi beaucoup aimé ce que j'ai vu à Esquirol, cette sculpture qui ressemble à un arbre. Chaque station a vraiment sa propre identité." },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Absolument, et je trouve même que Toulouse fait ça mieux que d'autres villes que j'ai visitées. Le fait d'intégrer l'art dans le quotidien des gens, sans les forcer à aller dans un musée, c'est une démarche vraiment intelligente." }
-        ]
-    },
-    {
-        id: "karim_f", name: "Karim F.",
-        station_id: "st_cyprien", station_name: "St Cyprien République",
-        summary: "Il appréciait l'ambiance de Saint-Cyprien sans savoir que c'était dû à des installations artistiques.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Ouais tous les jours, j'ai pas le permis donc c'est mon seul moyen de transport. Je connais les lignes par coeur." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Je savais même pas que c'était de l'art. À Saint-Cyprien il y a des trucs lumineux sur les murs, je trouvais ça classe, je pensais que c'était juste le design de la station. Genre l'architecture." },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Si ça crée une ambiance stylée et que les gens apprécient sans même savoir que c'est de l'art... ouais c'est réussi non ? Moi ça me convient." }
-        ]
-    },
-    {
-        id: "claire_v", name: "Claire V.",
-        station_id: "basso_cambo", station_name: "Basso Cambo",
-        summary: "Casque sur les oreilles du quai au bureau, elle n'a jamais remarqué la moindre œuvre.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Malheureusement oui. Trente minutes matin et soir. C'est mon purgatoire quotidien." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Aucune. Zéro. Nada. J'ai le casque sur les oreilles dès que je passe les portiques, je regarde mon écran et je décompresse. Les murs du métro, je les ai jamais vraiment vus." },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Sur le principe oui, pourquoi pas. Mais si ça coûte cher et que la moitié des usagers s'en fiche, je préfèrerais qu'on mette cet argent dans des rames qui arrivent à l'heure." }
-        ]
-    },
-    {
-        id: "julien_b", name: "Julien B.",
-        station_id: "palais_de_justice", station_name: "Palais de Justice",
-        summary: "Un matin, il a levé les yeux par hasard à Palais de Justice. Depuis, il ne prend plus le métro de la même façon.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Oui, depuis que j'ai abandonné la voiture il y a deux ans. Je travaille en centre-ville, c'est devenu mon quotidien." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Je dois avouer que pendant des mois, je n'avais rien remarqué. Puis un matin, à Palais de Justice, j'ai levé les yeux par hasard. La lumière naturelle qui entrait et se reflétait sur les installations... j'ai loupé mon arrêt. Depuis je regarde toutes les stations différemment. C'est devenu comme un musée que je traverse chaque jour." },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Non seulement elles ont leur place, mais je pense que c'est l'endroit idéal. Un musée, ça s'y rend exprès. Là, l'art vient à vous, dans votre routine. Et le jour où vous le remarquez enfin, ça change tout." }
-        ]
-    },
-    {
-        id: "emma_c", name: "Emma C.",
-        station_id: "borderouge", station_name: "Borderouge",
-        summary: "Elle avait remarqué les couleurs à Borderouge, mais les attribuait aux choix de peinture de la RATP.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Seulement quand il pleut trop fort pour le vélo, donc pas tous les jours. Je préfère pédaler, c'est meilleur pour la planète." },
-            { q: "Quelle est votre œuvre préférée ?", a: "Borderouge a des couleurs sympas sur les murs, j'avais trouvé ça agréable. Mais je pensais que c'était juste les architectes qui avaient choisi une palette colorée. C'est une vraie commande artistique ?" },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Oui, clairement. L'art devrait être partout dans l'espace public, pas enfermé dans des galeries privées. Le métro c'est démocratique, c'est bien." }
-        ]
-    },
-    {
-        id: "raymond_p", name: "Raymond P.",
-        station_id: "jeanne_d_arc", station_name: "Jeanne d'Arc",
-        summary: "Il avait noté la présence d'éléments inhabituels à Jeanne d'Arc, sans imaginer qu'il s'agissait d'art contemporain.",
-        interview: [
-            { q: "Prenez vous le métro tous les jours ? Si oui, pourquoi ?", a: "Très rarement. Uniquement pour les rendez-vous médicaux au centre-ville ou lorsque je dois me rendre à la gare." },
-            { q: "Quelle est votre œuvre préférée ?", a: "J'avais effectivement remarqué des éléments singuliers à la station Jeanne d'Arc. Des formes que je ne m'expliquais pas vraiment. Je pensais à une installation technique, ou peut-être à un vestige de travaux. Pas à de l'art contemporain, non." },
-            { q: "Pensez-vous que ces œuvres ont leur place dans le métro ?", a: "Je reste perplexe sur certains choix esthétiques, je préfère le classique. Mais s'il s'agit d'une politique culturelle de la ville, je n'ai rien contre. Cela occupe certainement des artistes." }
-        ]
-    }
+    { id: "erik_p",    name: "Erik P.",    station_id: "jean_jaures",      station_name: "Jean Jaurès" },
+    { id: "samia_b",   name: "Samia B.",   station_id: "reynerie",         station_name: "Reynerie" },
+    { id: "michel_t",  name: "Michel T.",  station_id: "carmes",           station_name: "Carmes" },
+    { id: "lea_m",     name: "Léa M.",     station_id: "marengo_sncf",     station_name: "Marengo SNCF" },
+    { id: "thomas_r",  name: "Thomas R.",  station_id: "esquirol",         station_name: "Esquirol" },
+    { id: "sophie_d",  name: "Sophie D.",  station_id: "barriere_de_paris",station_name: "Barrière de Paris" },
+    { id: "antoine_l", name: "Antoine L.", station_id: "capitole",         station_name: "Capitole" },
+    { id: "karim_f",   name: "Karim F.",   station_id: "st_cyprien",       station_name: "St Cyprien République" },
+    { id: "claire_v",  name: "Claire V.",  station_id: "basso_cambo",      station_name: "Basso Cambo" },
+    { id: "julien_b",  name: "Julien B.",  station_id: "palais_de_justice",station_name: "Palais de Justice" },
+    { id: "emma_c",    name: "Emma C.",    station_id: "borderouge",       station_name: "Borderouge" },
+    { id: "raymond_p", name: "Raymond P.", station_id: "jeanne_d_arc",     station_name: "Jeanne d’Arc" },
 ];
+
+// Fetch all txt files up front so cards can show summaries
+const cache = {};
+Promise.all(INTERVIEWS.map(iv =>
+    fetch(`interview/${iv.id}.txt`)
+        .then(r => r.ok ? r.text() : null)
+        .then(text => { if (text) { const parsed = parseTxt(text, iv.name.split(‘ ‘)[0]); iv.summary = parsed.summary; iv.interview = parsed.interview; } })
+        .catch(() => {})
+)).then(buildCarousel);
 
 // ── Build carousel ──
 const track = document.getElementById('carouselTrack');
-const doubled = [...INTERVIEWS, ...INTERVIEWS];
+const wrap = document.getElementById('carouselWrap');
 
-doubled.forEach(iv => {
-    const card = document.createElement('div');
-    card.className = 'iv-card' + (iv.interview ? '' : ' iv-card--no-interview');
+function buildCarousel() {
+    track.innerHTML = '';
+    const doubled = [...INTERVIEWS, ...INTERVIEWS];
+    doubled.forEach(iv => {
+        const card = document.createElement('div');
+        card.className = 'iv-card' + (iv.interview ? '' : ' iv-card--no-interview');
 
-    const stationHtml = iv.station_name
-        ? `<div class="card-station">${iv.station_name}</div>`
-        : `<div class="card-station card-station--none">Station inconnue</div>`;
+        const stationHtml = iv.station_name
+            ? `<div class="card-station">${iv.station_name}</div>`
+            : `<div class="card-station card-station--none">Station inconnue</div>`;
 
-    const ctaHtml = iv.interview
-        ? `<div class="card-cta">Lire l'interview &#8250;</div>`
-        : '';
+        const ctaHtml = iv.interview
+            ? `<div class="card-cta">Lire l'interview &#8250;</div>`
+            : '';
 
-    card.innerHTML = `
-        <div class="card-name">${iv.name}</div>
-        ${stationHtml}
-        <p class="card-summary">${iv.summary}</p>
-        ${ctaHtml}
-    `;
+        card.innerHTML = `
+            <div class="card-name">${iv.name}</div>
+            ${stationHtml}
+            <p class="card-summary">${iv.summary || ''}</p>
+            ${ctaHtml}
+        `;
 
-    if (iv.interview) {
-        card.addEventListener('click', () => openPanel(iv, card));
-    }
+        if (iv.interview) {
+            card.addEventListener('click', () => openPanel(iv, card));
+        }
 
-    track.appendChild(card);
-});
+        track.appendChild(card);
+    });
+}
 
 // ── Auto-scroll carousel ──
-const wrap = document.getElementById('carouselWrap');
 const SPEED = 0.55;
 let pos = 0;
 let paused = false;
