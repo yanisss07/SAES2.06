@@ -98,6 +98,14 @@
         </span>
     </div>
 
+    <button id="share-btn" class="share-bubble" aria-label="Partager">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+    <div id="share-popup" class="share-popup" hidden>
+        <span class="share-popup__url">quai-des-arts.vercel.app</span>
+        <button class="share-popup__copy" id="share-copy">Copier</button>
+    </div>
+
     <div class="enter-stage">
         <p class="enter-line anim-in">
             La carte que <em>Tisséo</em> n'a pas su garder.
@@ -201,5 +209,6 @@
             draw();
         })();
     </script>
+    <script src="./assets/share.js"></script>
 </body>
 </html>

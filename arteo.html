@@ -73,7 +73,7 @@
         .timeline::before {
             content: "";
             position: absolute;
-            left: 72px;
+            left: 88px;
             top: 0;
             bottom: 0;
             width: 2px;
@@ -83,7 +83,7 @@
         .timeline-item {
             position: relative;
             display: grid;
-            grid-template-columns: 80px 1fr;
+            grid-template-columns: 96px 1fr;
             gap: 20px;
             padding: 20px 0;
         }
@@ -103,23 +103,18 @@
             letter-spacing: 0.04em;
             padding-top: 2px;
             text-align: right;
-            padding-right: 16px;
-        }
-
-        .timeline-item:last-child {
-            grid-template-columns: 96px 1fr;
+            padding-right: 28px;
         }
 
         .timeline-item:last-child .timeline-year {
             color: var(--color-muted);
-            font-size: 0.72rem;
+            font-size: 0.8rem;
             letter-spacing: 0;
-            padding-right: 20px;
         }
 
         .timeline-dot {
             position: absolute;
-            left: 66px;
+            left: 82px;
             top: 24px;
             width: 14px;
             height: 14px;
@@ -196,6 +191,14 @@
         </span>
     </div>
 
+    <button id="share-btn" class="share-bubble" aria-label="Partager">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+    <div id="share-popup" class="share-popup" hidden>
+        <span class="share-popup__url">quai-des-arts.vercel.app</span>
+        <button class="share-popup__copy" id="share-copy">Copier</button>
+    </div>
+
     <nav class="intro-nav">
         <a href="./toulouse" class="btn-back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg> Retour</a>
     </nav>
@@ -239,7 +242,7 @@
                     </div>
                 </div>
                 <div class="timeline-item">
-                    <span class="timeline-year">Aujourd'hui</span>
+                    <span class="timeline-year" id="timeline-now"></span>
                     <div class="timeline-dot"></div>
                     <div class="timeline-body">
                         <p>Aucun outil officiel n'existe plus pour découvrir la collection.</p>
@@ -272,6 +275,7 @@
         };
         toggle.addEventListener("click", () => apply(!isLight));
         mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
+        document.getElementById("timeline-now").textContent = new Date().getFullYear();
         document.documentElement.style.setProperty("--btn-hue-offset", "-" + (Math.random() * 20).toFixed(1) + "s");
         function initBgCycle() {
             var STATIONS = ["capitole","esquirol","jean_jaures","st_cyprien","palais_de_justice","carmes","borderouge","reynerie","mermoz","jolimont","rangueil","arenes","compans_caffarelli","patte_d_oie","marengo_sncf"];
@@ -285,5 +289,6 @@
         }
         initBgCycle();
     </script>
+    <script src="./assets/share.js"></script>
 </body>
 </html>
