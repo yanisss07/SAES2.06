@@ -65,7 +65,7 @@ export class GlobeExperience {
         this.scene.add(ambientLight, keyLight, rimLight);
 
         const earthGeometry = new THREE.SphereGeometry(1.35, 96, 96);
-        const earthTextureUrl = new URL("../assets/earth-night.jpg", import.meta.url).href;
+        const earthTextureUrl = "./assets/earth-night.jpg";
         const earthTexture = await loadTexture(earthTextureUrl);
 
         const earthMaterial = new THREE.MeshPhongMaterial({

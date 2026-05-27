@@ -61,7 +61,7 @@ body {
 .bg-slide--hidden { opacity: 0; }
 
 body.light-mode .bg-slide {
-    filter: blur(28px) brightness(0.55) saturate(0.8);
+    filter: blur(28px) brightness(1.7) saturate(0.4);
 }
 
 .bg-overlay {
@@ -72,7 +72,7 @@ body.light-mode .bg-slide {
     pointer-events: none;
 }
 
-body.light-mode .bg-overlay { background: rgba(6, 7, 19, 0.3); }
+body.light-mode .bg-overlay { background: rgba(232, 232, 228, 0.72); }
 
 /* ── Content wrapper ── */
 .page-content {

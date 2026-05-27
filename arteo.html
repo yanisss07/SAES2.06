@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
     <link rel="stylesheet" href="./styles/intro.css">
+    <script>document.documentElement.style.setProperty("--btn-hue-offset","-"+(Math.random()*20).toFixed(1)+"s")</script>
     <style>
         .arteo-content {
             max-width: 720px;
@@ -262,6 +263,17 @@
         toggle.addEventListener("click", () => apply(!isLight));
         mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
         document.documentElement.style.setProperty("--btn-hue-offset", "-" + (Math.random() * 20).toFixed(1) + "s");
+        function initBgCycle() {
+            var STATIONS = ["capitole","esquirol","jean_jaures","st_cyprien","palais_de_justice","carmes","borderouge","reynerie","mermoz","jolimont","rangueil","arenes","compans_caffarelli","patte_d_oie","marengo_sncf"];
+            for (var i = STATIONS.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t = STATIONS[i]; STATIONS[i] = STATIONS[j]; STATIONS[j] = t; }
+            var bgA = document.getElementById("bg-a"), bgB = document.getElementById("bg-b");
+            var useA = true, idx = 0;
+            function setSlide(el, s) { el.style.backgroundImage = "url('./media/"+s+"/background_thumb.jpg')"; }
+            function nextBg() { idx = (idx+1) % STATIONS.length; if (useA) { setSlide(bgB,STATIONS[idx]); bgB.classList.remove("bg-slide--hidden"); bgA.classList.add("bg-slide--hidden"); } else { setSlide(bgA,STATIONS[idx]); bgA.classList.remove("bg-slide--hidden"); bgB.classList.add("bg-slide--hidden"); } useA = !useA; }
+            setSlide(bgA, STATIONS[idx]);
+            setInterval(nextBg, 30000);
+        }
+        initBgCycle();
     </script>
 </body>
 </html>

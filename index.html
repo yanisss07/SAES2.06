@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
     <link rel="stylesheet" href="./styles/intro.css">
+    <script>document.documentElement.style.setProperty("--btn-hue-offset","-"+(Math.random()*20).toFixed(1)+"s")</script>
     <style>
         html, body { height: 100%; overflow: hidden; }
 
@@ -25,7 +26,7 @@
         .bg-slide--hidden { opacity: 0; }
 
         body.light-mode .bg-slide {
-            filter: blur(28px) brightness(0.55) saturate(0.8);
+            filter: blur(28px) brightness(1.7) saturate(0.4);
         }
 
         /* ── Dark overlay so text stays readable ── */
@@ -36,7 +37,7 @@
             z-index: 1;
             pointer-events: none;
         }
-        body.light-mode .bg-overlay { background: rgba(6, 7, 19, 0.3); }
+        body.light-mode .bg-overlay { background: rgba(232, 232, 228, 0.72); }
 
         /* ── Center stage ── */
         .accueil-stage {
@@ -117,7 +118,7 @@
         <a href="./villes.html" class="btn-primary btn-commencer anim-in anim-in-delay-3">Commencer</a>
     </div>
 
-    <a href="./carte.html" class="accueil-skip anim-in anim-in-delay-4">Accéder à la carte →</a>
+    <a href="./carte.html" class="accueil-skip anim-in anim-in-delay-4">Accéder à la carte directement →</a>
 
     <script>
         // ── Theme ──

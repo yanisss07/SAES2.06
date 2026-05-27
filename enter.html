@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
     <link rel="stylesheet" href="./styles/intro.css">
+    <script>document.documentElement.style.setProperty("--btn-hue-offset","-"+(Math.random()*20).toFixed(1)+"s")</script>
     <style>
         html, body { height: 100%; overflow: hidden; }
 
@@ -40,29 +41,32 @@
             font-weight: 500;
         }
 
-        .btn-enter {
+        .btn-explorer {
+            position: relative;
+            overflow: hidden;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 18px 44px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, var(--color-accent-a), var(--color-accent-b));
+            gap: 14px;
+            padding: 24px 60px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #ff3b6a, #ffd056);
             border: none;
             color: #fff;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.10em;
             text-transform: uppercase;
             text-decoration: none;
             cursor: pointer;
-            box-shadow: 0 6px 36px rgba(255, 59, 106, 0.4);
-            transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 8px 42px rgba(255,59,106,0.45), 0 2px 8px rgba(0,0,0,0.3);
+            animation: hue-spin 20s linear infinite;
+            animation-delay: var(--btn-hue-offset);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
 
-        .btn-enter:hover {
-            opacity: 0.92;
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 12px 48px rgba(255, 59, 106, 0.55);
+        .btn-explorer:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 56px rgba(255,59,106,0.6), 0 4px 12px rgba(0,0,0,0.35);
         }
 
         .enter-hint {
@@ -92,9 +96,9 @@
         <p class="enter-line anim-in">
             La carte que <em>Tisséo</em> n'a pas su garder.
         </p>
-        <a href="./carte.html" class="btn-enter btn-primary btn-commencer anim-in anim-in-delay-2">
+        <a href="./carte.html" class="btn-explorer anim-in anim-in-delay-2">
             Explorer les œuvres
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
         <span class="enter-hint anim-in anim-in-delay-3">38 artistes · 2 lignes · 28 km</span>
     </div>
@@ -113,8 +117,83 @@
         };
         toggle.addEventListener("click", () => apply(!isLight));
         mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
-        document.documentElement.style.setProperty("--btn-hue-offset", "-" + (Math.random() * 20).toFixed(1) + "s");
+        function initBgCycle() {
+            var STATIONS = ["capitole","esquirol","jean_jaures","st_cyprien","palais_de_justice","carmes","borderouge","reynerie","mermoz","jolimont","rangueil","arenes","compans_caffarelli","patte_d_oie","marengo_sncf"];
+            for (var i = STATIONS.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t = STATIONS[i]; STATIONS[i] = STATIONS[j]; STATIONS[j] = t; }
+            var bgA = document.getElementById("bg-a"), bgB = document.getElementById("bg-b");
+            var useA = true, idx = 0;
+            function setSlide(el, s) { el.style.backgroundImage = "url('./media/"+s+"/background_thumb.jpg')"; }
+            function nextBg() { idx = (idx+1) % STATIONS.length; if (useA) { setSlide(bgB,STATIONS[idx]); bgB.classList.remove("bg-slide--hidden"); bgA.classList.add("bg-slide--hidden"); } else { setSlide(bgA,STATIONS[idx]); bgA.classList.remove("bg-slide--hidden"); bgB.classList.add("bg-slide--hidden"); } useA = !useA; }
+            setSlide(bgA, STATIONS[idx]);
+            setInterval(nextBg, 30000);
+        }
         initBgCycle();
+
+        // ── Noise canvas on explorer button ──
+        (function() {
+            var perlin = (function(){
+                var p=[];
+                for(var i=0;i<256;i++) p[i]=i;
+                for(var i=255;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),t=p[i];p[i]=p[j];p[j]=t; }
+                for(var i=0;i<256;i++) p[i+256]=p[i];
+                function fade(t){return t*t*t*(t*(t*6-15)+10);}
+                function lerp(a,b,t){return a+t*(b-a);}
+                function grad(h,x,y,z){h&=15;var u=h<8?x:y,v=h<4?y:(h==12||h==14?x:z);return((h&1)?-u:u)+((h&2)?-v:v);}
+                return {noise:function(x,y,z){
+                    var X=Math.floor(x)&255,Y=Math.floor(y)&255,Z=Math.floor(z)&255;
+                    x-=Math.floor(x);y-=Math.floor(y);z-=Math.floor(z);
+                    var u=fade(x),v=fade(y),w=fade(z);
+                    var A=p[X]+Y,AA=p[A]+Z,AB=p[A+1]+Z,B=p[X+1]+Y,BA=p[B]+Z,BB=p[B+1]+Z;
+                    return lerp(lerp(lerp(grad(p[AA],x,y,z),grad(p[BA],x-1,y,z),u),lerp(grad(p[AB],x,y-1,z),grad(p[BB],x-1,y-1,z),u),v),lerp(lerp(grad(p[AA+1],x,y,z-1),grad(p[BA+1],x-1,y,z-1),u),lerp(grad(p[AB+1],x,y-1,z-1),grad(p[BB+1],x-1,y-1,z-1),u),v),w);
+                }};
+            })();
+            var PS=8, OP=0.22, SP=1.2, RD=0.4, TD=0.3, LD=0.4;
+            var btn = document.querySelector(".btn-explorer");
+            var cvs = document.createElement("canvas");
+            cvs.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:luminosity;image-rendering:pixelated;";
+            var ctx2 = cvs.getContext("2d");
+            ctx2.imageSmoothingEnabled = false;
+            btn.appendChild(cvs);
+            var isHov=false, hovStart=null, leaveStart=null, frzAge=0, frzRev=0;
+            var iA=1, hA=0, hAge=0, rev=0, t0=Date.now();
+            btn.addEventListener("mouseenter", function(){ isHov=true; hovStart=Date.now(); leaveStart=null; });
+            btn.addEventListener("mouseleave", function(){ isHov=false; leaveStart=Date.now(); frzAge=hAge; frzRev=rev; });
+            function resize(){ var dpr=devicePixelRatio||1, r=btn.getBoundingClientRect(); cvs.width=Math.ceil(r.width*dpr); cvs.height=Math.ceil(r.height*dpr); }
+            resize();
+            window.addEventListener("resize", resize);
+            function draw() {
+                var now=Date.now(), t=(now-t0)*0.001, dpr=devicePixelRatio||1, ps=PS*dpr;
+                var cols=Math.ceil(cvs.width/ps)+1, rows=Math.ceil(cvs.height/ps)+1;
+                if(isHov){ var el=(now-hovStart)*0.001,pr=Math.min(el/TD,1); iA=1-pr; hA=pr; hAge=el; rev=1-Math.pow(1-Math.min(0.5*el,1),3); }
+                else if(leaveStart!==null){ var lp=Math.min((now-leaveStart)*0.001/LD,1); iA=lp; hA=1-lp; hAge=frzAge; rev=frzRev; if(lp>=1) leaveStart=null; }
+                else { iA=1; hA=0; }
+                ctx2.clearRect(0,0,cvs.width,cvs.height);
+                if(iA>0.01) for(var e=0;e<cols;e++) for(var a=0;a<rows;a++) {
+                    var ph=(e+a)/(cols+rows)*Math.PI*5-t*1.1, bv=(Math.sin(ph)+1)*0.5;
+                    var rn=43758.5453*Math.sin(12.9898*e+78.233*a); rn=rn-Math.floor(rn);
+                    var v=bv*0.7+rn*0.3; v=v*v;
+                    var j=Math.floor(255*(0.3+v*0.7));
+                    ctx2.fillStyle="rgba("+j+","+j+","+j+","+(OP*0.85*iA)+")";
+                    ctx2.fillRect(e*ps,a*ps,ps,ps);
+                }
+                if(hA>0.01) for(var e=0;e<cols;e++) for(var a=0;a<rows;a++) {
+                    var l=perlin.noise(0.2*e,0.2*a,0.5*hAge*SP);
+                    var s=43758.5453*Math.sin(12.9898*e+78.233*a); s=s-Math.floor(s);
+                    var d=(l+(s*2-1)*RD+1)*0.75;
+                    var bx=(e+.5)/cols, by=(a+.5)/rows, ar=cols/rows;
+                    var fx=(bx-0.5)*ar, fy=by-0.5;
+                    var dist=Math.sqrt(fx*fx+fy*fy)/ar+(s-0.5)*RD*0.35;
+                    var pA=0;
+                    if(dist<=rev) pA=OP; else if(dist<=rev+0.08) pA=OP*(1-(dist-rev)/0.08);
+                    if(pA<0.001) continue;
+                    var jj=Math.floor(255*d);
+                    ctx2.fillStyle="rgba("+jj+","+jj+","+jj+","+(pA*hA)+")";
+                    ctx2.fillRect(e*ps,a*ps,ps,ps);
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
     </script>
 </body>
 </html>

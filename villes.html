@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
     <link rel="stylesheet" href="./styles/intro.css">
+    <script>document.documentElement.style.setProperty("--btn-hue-offset","-"+(Math.random()*20).toFixed(1)+"s")</script>
     <style>
         .villes-hero {
             max-width: 700px;
@@ -298,121 +299,6 @@
             { id:'stockholm', name:'Stockholm', country:'Suède',       desc:'Capitale de la Suède, connue pour son design scandinave, ses îles et sa qualité de vie élevée.', images:['1','2','3','4','5'], ext:'webp' }
         ];
 
-        // ── Perlin noise (compact) ──
-        var perlin = (function(){
-            var p=[];
-            for(var i=0;i<256;i++) p[i]=i;
-            for(var i=255;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),t=p[i];p[i]=p[j];p[j]=t; }
-            for(var i=0;i<256;i++) p[i+256]=p[i];
-            function fade(t){return t*t*t*(t*(t*6-15)+10);}
-            function lerp(a,b,t){return a+t*(b-a);}
-            function grad(h,x,y,z){h&=15;var u=h<8?x:y,v=h<4?y:(h==12||h==14?x:z);return((h&1)?-u:u)+((h&2)?-v:v);}
-            return {noise:function(x,y,z){
-                var X=Math.floor(x)&255,Y=Math.floor(y)&255,Z=Math.floor(z)&255;
-                x-=Math.floor(x);y-=Math.floor(y);z-=Math.floor(z);
-                var u=fade(x),v=fade(y),w=fade(z);
-                var A=p[X]+Y,AA=p[A]+Z,AB=p[A+1]+Z,B=p[X+1]+Y,BA=p[B]+Z,BB=p[B+1]+Z;
-                return lerp(lerp(lerp(grad(p[AA],x,y,z),grad(p[BA],x-1,y,z),u),lerp(grad(p[AB],x,y-1,z),grad(p[BB],x-1,y-1,z),u),v),lerp(lerp(grad(p[AA+1],x,y,z-1),grad(p[BA+1],x-1,y,z-1),u),lerp(grad(p[AB+1],x,y-1,z-1),grad(p[BB+1],x-1,y-1,z-1),u),v),w);
-            }};
-        })();
-
-        // ── Noise canvas on a card element ──
-        var PIXEL_SIZE=12, OPACITY=0.28, SPEED=1.4, RANDOMNESS=0.35, TRANS_DUR=0.35, LEAVE_DUR=0.45;
-
-        function attachNoise(card) {
-            var canvas = document.createElement("canvas");
-            canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;mix-blend-mode:luminosity;image-rendering:pixelated;";
-            ctx = canvas.getContext("2d");
-            ctx.imageSmoothingEnabled = false;
-            card.appendChild(canvas);
-
-            var isHovered=false, hoverStart=null, leaveStart=null, frozenHoverAge=0, frozenReveal=0;
-            var iA=1, hA=0, hAge=0, reveal=0;
-            var rafId=null, startTime=Date.now();
-
-            function resize() {
-                var dpr=devicePixelRatio||1;
-                var r=card.getBoundingClientRect();
-                canvas.width=Math.ceil(r.width*dpr);
-                canvas.height=Math.ceil(r.height*dpr);
-            }
-            resize();
-
-            card.addEventListener("mouseenter",function(){
-                isHovered=true; hoverStart=Date.now(); leaveStart=null;
-            });
-            card.addEventListener("mouseleave",function(){
-                isHovered=false; leaveStart=Date.now();
-                frozenHoverAge=hAge; frozenReveal=reveal;
-            });
-
-            function draw() {
-                var now=Date.now();
-                var t=(now-startTime)*0.001;
-                var dpr=devicePixelRatio||1;
-                var ps=PIXEL_SIZE*dpr;
-                var cols=Math.ceil(canvas.width/ps)+1;
-                var rows=Math.ceil(canvas.height/ps)+1;
-
-                if(isHovered) {
-                    var el=(now-hoverStart)*0.001;
-                    var pr=Math.min(el/TRANS_DUR,1);
-                    iA=1-pr; hA=pr; hAge=el;
-                    reveal=1-Math.pow(1-Math.min(0.5*el,1),3);
-                } else if(leaveStart!==null) {
-                    var lp=Math.min((now-leaveStart)*0.001/LEAVE_DUR,1);
-                    iA=lp; hA=1-lp; hAge=frozenHoverAge; reveal=frozenReveal;
-                    if(lp>=1) leaveStart=null;
-                } else {
-                    iA=1; hA=0;
-                }
-
-                ctx.clearRect(0,0,canvas.width,canvas.height);
-
-                // Idle: wave-noisy
-                if(iA>0.01) {
-                    for(var e=0;e<cols;e++) {
-                        for(var a=0;a<rows;a++) {
-                            var phase=(e+a)/(cols+rows)*Math.PI*5-t*1.1;
-                            var base=(Math.sin(phase)+1)*0.5;
-                            var rnd=43758.5453*Math.sin(12.9898*e+78.233*a);
-                            rnd=rnd-Math.floor(rnd);
-                            var v=base*0.7+rnd*0.3; v=v*v;
-                            var j=Math.floor(255*(0.3+v*0.7));
-                            ctx.fillStyle="rgba("+j+","+j+","+j+","+(OPACITY*0.85*iA)+")";
-                            ctx.fillRect(e*ps,a*ps,ps,ps);
-                        }
-                    }
-                }
-
-                // Hover: Perlin reveal
-                if(hA>0.01) {
-                    for(var e=0;e<cols;e++) {
-                        for(var a=0;a<rows;a++) {
-                            var l=perlin.noise(0.2*e,0.2*a,0.5*hAge*SPEED);
-                            var s=43758.5453*Math.sin(12.9898*e+78.233*a);
-                            s=s-Math.floor(s);
-                            var d=(l+(s*2-1)*RANDOMNESS+1)*0.75;
-                            var bx=(e+.5)/cols,by=(a+.5)/rows;
-                            var ar=cols/rows;
-                            var fx=(bx-0.5)*ar,fy=by-0.5;
-                            var dist=Math.sqrt(fx*fx+fy*fy)/ar+(s-0.5)*RANDOMNESS*0.35;
-                            var pA=0;
-                            if(dist<=reveal) pA=OPACITY;
-                            else if(dist<=reveal+0.08) pA=OPACITY*(1-(dist-reveal)/0.08);
-                            if(pA<0.001) continue;
-                            var jj=Math.floor(255*d);
-                            ctx.fillStyle="rgba("+jj+","+jj+","+jj+","+(pA*hA)+")";
-                            ctx.fillRect(e*ps,a*ps,ps,ps);
-                        }
-                    }
-                }
-
-                rafId=requestAnimationFrame(draw);
-            }
-            draw();
-        }
-
         // ── Build city strip ──
         var strip = document.getElementById("city-strip");
         CITIES.forEach(function(city, i) {
@@ -431,7 +317,6 @@
             card.appendChild(label);
             card.addEventListener("click", function() { openCity(city, card); });
             strip.appendChild(card);
-            attachNoise(card);
         });
 
         // ── Viewer logic ──
@@ -508,6 +393,16 @@
             if (e.key==="ArrowLeft") setViewerImg(currentImg-1);
             if (e.key==="ArrowRight") setViewerImg(currentImg+1);
         });
+        function initBgCycle() {
+            var STATIONS = ["capitole","esquirol","jean_jaures","st_cyprien","palais_de_justice","carmes","borderouge","reynerie","mermoz","jolimont","rangueil","arenes","compans_caffarelli","patte_d_oie","marengo_sncf"];
+            for (var i = STATIONS.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t = STATIONS[i]; STATIONS[i] = STATIONS[j]; STATIONS[j] = t; }
+            var bgA = document.getElementById("bg-a"), bgB = document.getElementById("bg-b");
+            var useA = true, idx = 0;
+            function setSlide(el, s) { el.style.backgroundImage = "url('./media/"+s+"/background_thumb.jpg')"; }
+            function nextBg() { idx = (idx+1) % STATIONS.length; if (useA) { setSlide(bgB,STATIONS[idx]); bgB.classList.remove("bg-slide--hidden"); bgA.classList.add("bg-slide--hidden"); } else { setSlide(bgA,STATIONS[idx]); bgA.classList.remove("bg-slide--hidden"); bgB.classList.add("bg-slide--hidden"); } useA = !useA; }
+            setSlide(bgA, STATIONS[idx]);
+            setInterval(nextBg, 30000);
+        }
         initBgCycle();
     </script>
 </body>
