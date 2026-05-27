@@ -202,7 +202,9 @@
     </style>
 </head>
 <body>
-    <div class="page-bg"></div>
+    <div class="bg-slide" id="bg-a"></div>
+    <div class="bg-slide bg-slide--hidden" id="bg-b"></div>
+    <div class="bg-overlay"></div>
 
     <div id="theme-toggle" class="theme-bubble" role="button" aria-label="Basculer le thème">
         <span class="tb-icon">
@@ -220,8 +222,8 @@
 
     <div class="toulouse-stage page-content">
         <!-- Question -->
-        <div class="question-section">
-            <h2 class="question-text anim-in">Avez-vous déjà pris le métro toulousain&nbsp;?</h2>
+        <div class="question-section" id="question-section">
+            <h2 class="question-text anim-in" id="question-text">Avez-vous déjà pris le métro toulousain&nbsp;?</h2>
             <div class="question-buttons anim-in anim-in-delay-2" id="question-buttons">
                 <button class="btn-choice" id="btn-oui">Oui</button>
                 <button class="btn-choice" id="btn-non">Non, jamais</button>
@@ -235,11 +237,11 @@
             <div class="artwork-slideshow" id="artwork-slideshow"></div>
             <div class="artwork-dots" id="artwork-dots"></div>
 
-            <div class="toulouse-continue">
-                <a href="./arteo.html" class="btn-primary">Continuer →</a>
-            </div>
+            <div style="height:80px;"></div>
         </div>
     </div>
+
+    <a href="./arteo.html" class="btn-primary btn-fixed-br" id="btn-continuer" style="display:none;">Continuer →</a>
 
     <script>
         // ── Theme init ──
@@ -255,6 +257,9 @@
         };
         toggle.addEventListener("click", () => apply(!isLight));
         mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
+
+        // ── Random hue offset ──
+        document.documentElement.style.setProperty("--btn-hue-offset", "-" + (Math.random() * 20).toFixed(1) + "s");
 
         // ── Content ──
         const TEXT_OUI = "Vous ne le savez peut-être pas, mais vous l'avez croisé des centaines de fois. Les mêmes stations, les mêmes couloirs, la même attente sur le quai. Et pourtant, depuis 1993, 38 artistes de renommée internationale ont transformé chaque station en œuvre d'art. Une collection d'art contemporain unique au monde, sous vos yeux, chaque jour — que beaucoup ne remarquent même pas.";
@@ -317,17 +322,25 @@
         const responseSection = document.getElementById("response-section");
         const responseText = document.getElementById("response-text");
 
+        const questionSection = document.getElementById("question-section");
+
         function showResponse(text) {
-            buttons.classList.add("is-hidden");
+            questionSection.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+            questionSection.style.opacity = "0";
+            questionSection.style.transform = "translateY(-12px)";
+            questionSection.style.pointerEvents = "none";
             responseText.textContent = text;
             setTimeout(() => {
+                questionSection.style.display = "none";
                 responseSection.classList.add("is-visible");
+                document.getElementById("btn-continuer").style.display = "";
                 startAutoSlide();
             }, 420);
         }
 
         document.getElementById("btn-oui").addEventListener("click", () => showResponse(TEXT_OUI));
         document.getElementById("btn-non").addEventListener("click", () => showResponse(TEXT_NON));
+        initBgCycle();
     </script>
 </body>
 </html>

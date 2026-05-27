@@ -12,110 +12,169 @@
     <style>
         html, body { height: 100%; overflow: hidden; }
 
+        /* ── Cycling background ── */
+        .bg-slide {
+            position: fixed;
+            inset: -30px;
+            background-size: cover;
+            background-position: center;
+            filter: blur(28px) brightness(0.38) saturate(0.9);
+            transition: opacity 2s ease;
+            z-index: 0;
+        }
+        .bg-slide--hidden { opacity: 0; }
+
+        body.light-mode .bg-slide {
+            filter: blur(28px) brightness(0.55) saturate(0.8);
+        }
+
+        /* ── Dark overlay so text stays readable ── */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 7, 19, 0.45);
+            z-index: 1;
+            pointer-events: none;
+        }
+        body.light-mode .bg-overlay { background: rgba(6, 7, 19, 0.3); }
+
+        /* ── Center stage ── */
         .accueil-stage {
             position: relative;
+            z-index: 2;
             width: 100%;
             height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0;
             text-align: center;
             padding: 24px;
+            gap: 0;
         }
 
         .accueil-logo {
-            width: 96px;
-            height: 96px;
+            width: 140px;
+            height: 140px;
             object-fit: contain;
-            margin-bottom: 32px;
-            opacity: 0.9;
-            filter: drop-shadow(0 0 24px rgba(255, 59, 106, 0.4));
+            margin-bottom: 28px;
+            filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5));
         }
 
         .accueil-title {
-            margin: 0 0 12px;
+            margin: 0 0 14px;
             font-size: clamp(2.4rem, 6vw, 4rem);
             font-weight: 700;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            background: linear-gradient(135deg, #fff 30%, #97a0c5);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #fff;
             line-height: 1.1;
         }
 
-        body.light-mode .accueil-title {
-            background: linear-gradient(135deg, #111 30%, #555);
-            -webkit-background-clip: text;
-            background-clip: text;
-        }
+        body.light-mode .accueil-title { color: #fff; }
 
         .accueil-subtitle {
             margin: 0 0 48px;
-            font-size: 1.05rem;
-            color: var(--color-muted);
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
             font-weight: 300;
             letter-spacing: 0.04em;
             max-width: 380px;
         }
 
+        /* ── Bottom-right skip link ── */
         .accueil-skip {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: var(--color-muted);
-            opacity: 0.6;
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 1100;
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.45);
             text-decoration: none;
-            letter-spacing: 0.04em;
-            transition: opacity 0.2s;
+            letter-spacing: 0.06em;
+            transition: color 0.2s;
+            text-align: right;
         }
-
-        .accueil-skip:hover { opacity: 1; }
+        .accueil-skip:hover { color: rgba(255, 255, 255, 0.85); }
     </style>
 </head>
 <body>
-    <div class="page-bg"></div>
+    <!-- Cycling blurred backgrounds -->
+    <div class="bg-slide" id="bg-a"></div>
+    <div class="bg-slide bg-slide--hidden" id="bg-b"></div>
+    <div class="bg-overlay"></div>
 
     <div id="theme-toggle" class="theme-bubble" role="button" aria-label="Basculer le thème">
-        <span class="tb-icon">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </span>
+        <span class="tb-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
         <div class="tb-track"><div class="tb-knob"></div></div>
-        <span class="tb-icon">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>
-        </span>
+        <span class="tb-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg></span>
     </div>
 
     <div class="accueil-stage">
         <img src="./logo.png" alt="Logo Quai des Arts" class="accueil-logo anim-in">
         <h1 class="accueil-title anim-in anim-in-delay-1">Quai des Arts</h1>
         <p class="accueil-subtitle anim-in anim-in-delay-2">Un voyage à travers l'art caché du métro toulousain.</p>
-        <a href="./villes.html" class="btn-primary anim-in anim-in-delay-3">Commencer</a>
-        <a href="./carte.html" class="accueil-skip anim-in anim-in-delay-4">Accéder directement à la carte →</a>
+        <a href="./villes.html" class="btn-primary btn-commencer anim-in anim-in-delay-3">Commencer</a>
     </div>
 
-    <script>
-        // ── Theme init ──
-        const mq = window.matchMedia("(prefers-color-scheme: light)");
-        const saved = localStorage.getItem("theme");
-        let isLight = saved ? saved === "light" : mq.matches;
-        if (isLight) document.body.classList.add("light-mode");
+    <a href="./carte.html" class="accueil-skip anim-in anim-in-delay-4">Accéder à la carte →</a>
 
-        const toggle = document.getElementById("theme-toggle");
-        const apply = (light, save = true) => {
+    <script>
+        // ── Theme ──
+        var mq = window.matchMedia("(prefers-color-scheme: light)");
+        var saved = localStorage.getItem("theme");
+        var isLight = saved ? saved === "light" : mq.matches;
+        if (isLight) document.body.classList.add("light-mode");
+        var toggle = document.getElementById("theme-toggle");
+        function applyTheme(light, save) {
             isLight = light;
             document.body.classList.toggle("light-mode", light);
-            if (save) localStorage.setItem("theme", light ? "light" : "dark");
-        };
-        toggle.addEventListener("click", () => apply(!isLight));
-        mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
-
-        // ── Skip intro for returning users ──
-        if (sessionStorage.getItem("atlasVisited") === "1") {
-            document.querySelector(".accueil-skip").style.cssText = "font-size:0.85rem;color:var(--color-accent-a);opacity:0.85;text-decoration:none;letter-spacing:0.04em;transition:opacity 0.2s;margin-top:20px;";
+            if (save !== false) localStorage.setItem("theme", light ? "light" : "dark");
         }
+        toggle.addEventListener("click", function() { applyTheme(!isLight); });
+        mq.addEventListener("change", function(e) { if (!localStorage.getItem("theme")) applyTheme(e.matches, false); });
+
+        // ── Random hue offset for button ──
+        document.documentElement.style.setProperty("--btn-hue-offset", "-" + (Math.random() * 20).toFixed(1) + "s");
+
+        // ── Cycling background ──
+        var STATIONS = [
+            "capitole","esquirol","jean_jaures","st_cyprien","palais_de_justice",
+            "carmes","borderouge","reynerie","mermoz","jolimont","rangueil",
+            "arenes","compans_caffarelli","patte_d_oie","marengo_sncf"
+        ];
+        // Shuffle
+        for (var i = STATIONS.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = STATIONS[i]; STATIONS[i] = STATIONS[j]; STATIONS[j] = tmp;
+        }
+
+        var bgA = document.getElementById("bg-a");
+        var bgB = document.getElementById("bg-b");
+        var useA = true;
+        var idx = 0;
+
+        function setSlide(el, station) {
+            el.style.backgroundImage = "url('media/" + station + "/background_thumb.jpg')";
+        }
+
+        function nextBg() {
+            idx = (idx + 1) % STATIONS.length;
+            if (useA) {
+                setSlide(bgB, STATIONS[idx]);
+                bgB.classList.remove("bg-slide--hidden");
+                bgA.classList.add("bg-slide--hidden");
+            } else {
+                setSlide(bgA, STATIONS[idx]);
+                bgA.classList.remove("bg-slide--hidden");
+                bgB.classList.add("bg-slide--hidden");
+            }
+            useA = !useA;
+        }
+
+        // Set initial background immediately
+        setSlide(bgA, STATIONS[idx]);
+        setInterval(nextBg, 30000);
     </script>
 </body>
 </html>

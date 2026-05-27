@@ -172,7 +172,9 @@
     </style>
 </head>
 <body>
-    <div class="page-bg"></div>
+    <div class="bg-slide" id="bg-a"></div>
+    <div class="bg-slide bg-slide--hidden" id="bg-b"></div>
+    <div class="bg-overlay"></div>
 
     <div id="theme-toggle" class="theme-bubble" role="button" aria-label="Basculer le thème">
         <span class="tb-icon">
@@ -238,12 +240,12 @@
                 <p>La collection est toujours là. Les œuvres n'ont pas bougé. Mais l'outil pour les découvrir, lui, a disparu.</p>
             </div>
 
-            <div class="arteo-continue anim-in anim-in-delay-3">
-                <a href="./enter.html" class="btn-primary">Continuer →</a>
-            </div>
+            <div style="height:80px;"></div>
 
         </div>
     </div>
+
+    <a href="./enter.html" class="btn-primary btn-fixed-br">Continuer →</a>
 
     <script>
         // ── Theme init ──
@@ -259,6 +261,7 @@
         };
         toggle.addEventListener("click", () => apply(!isLight));
         mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
+        document.documentElement.style.setProperty("--btn-hue-offset", "-" + (Math.random() * 20).toFixed(1) + "s");
     </script>
 </body>
 </html>

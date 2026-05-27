@@ -11,301 +11,222 @@
     <link rel="stylesheet" href="./styles/intro.css">
     <style>
         .villes-hero {
-            max-width: 740px;
+            max-width: 700px;
             margin: 0 auto;
-            padding: 100px 24px 48px;
+            padding: 100px 24px 40px;
             text-align: center;
         }
 
         .villes-hero h2 {
-            margin: 0 0 20px;
-            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            margin: 0 0 18px;
+            font-size: clamp(1.6rem, 3.5vw, 2.2rem);
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            background: linear-gradient(135deg, #fff 30%, #97a0c5);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        body.light-mode .villes-hero h2 {
-            background: linear-gradient(135deg, #111 30%, #555);
-            -webkit-background-clip: text;
-            background-clip: text;
+            color: var(--color-text);
         }
 
         .villes-hero p {
-            margin: 0 0 10px;
+            margin: 0;
             color: var(--color-muted);
-            font-size: 1rem;
+            font-size: 0.97rem;
             line-height: 1.7;
         }
 
-        .villes-hero .instruction {
-            font-size: 0.88rem;
-            opacity: 0.7;
-            margin-top: 14px;
-        }
-
-        /* ── City grid ── */
-        .city-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 16px;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 24px 48px;
+        /* ── City cards strip ── */
+        .city-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            max-width: 1100px;
+            margin: 32px auto 0;
+            padding: 0 24px;
         }
 
         .city-card {
             position: relative;
-            border-radius: 16px;
+            width: 140px;
+            border-radius: 14px;
             overflow: hidden;
             cursor: pointer;
-            aspect-ratio: 4/3;
-            border: 1px solid var(--color-panel-border);
-            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            border: 2px solid transparent;
+            transition: border-color 0.25s ease, transform 0.2s ease;
+            flex-shrink: 0;
         }
 
-        .city-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-            border-color: rgba(255, 59, 106, 0.4);
+        .city-card:hover { transform: translateY(-3px); }
+
+        .city-card.is-active {
+            border-color: var(--color-accent-a);
+            filter: hue-rotate(var(--hue-rot, 0deg));
         }
 
         .city-card__thumb {
             width: 100%;
-            height: 100%;
+            aspect-ratio: 3/2;
             object-fit: cover;
             display: block;
-            transition: transform 0.4s ease;
         }
 
-        .city-card:hover .city-card__thumb {
-            transform: scale(1.06);
-        }
-
-        .city-card__overlay {
+        .city-card__label {
             position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(6, 7, 19, 0.88) 0%, rgba(6, 7, 19, 0.1) 55%);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 16px;
-        }
-
-        body.light-mode .city-card__overlay {
-            background: linear-gradient(to top, rgba(20, 20, 40, 0.85) 0%, rgba(20, 20, 40, 0.05) 55%);
-        }
-
-        .city-card__name {
-            margin: 0 0 2px;
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 0.04em;
-        }
-
-        .city-card__country {
-            margin: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px 8px 8px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
             font-size: 0.78rem;
-            color: rgba(255,255,255,0.65);
+            font-weight: 700;
             letter-spacing: 0.06em;
             text-transform: uppercase;
+            color: #fff;
+            text-align: center;
         }
 
-        /* ── Modal ── */
-        .city-modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.75);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(6px);
+        /* ── Inline viewer (grid expand trick) ── */
+        .viewer-wrap {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.45s ease;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
 
-        .city-modal-backdrop.is-open {
-            opacity: 1;
-            pointer-events: auto;
+        .viewer-wrap.is-open {
+            grid-template-rows: 1fr;
         }
 
-        .city-modal {
-            background: #0a0c1e;
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 22px;
-            width: min(820px, 100%);
-            max-height: 88vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 24px 80px rgba(0,0,0,0.7);
-            transform: translateY(20px) scale(0.97);
-            transition: transform 0.3s ease;
+        .city-viewer {
+            overflow: hidden;
         }
 
-        body.light-mode .city-modal {
-            background: #f0f0ec;
-            border-color: rgba(0,0,0,0.1);
+        .city-viewer__inner {
+            padding: 24px 0 8px;
         }
 
-        .city-modal-backdrop.is-open .city-modal {
-            transform: translateY(0) scale(1);
-        }
-
-        .city-modal__header {
-            position: relative;
-            padding: 24px 24px 0;
+        .city-viewer__header {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 16px;
+            margin-bottom: 16px;
         }
 
-        .city-modal__title {
+        .city-viewer__name {
             margin: 0 0 4px;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--color-text);
         }
 
-        .city-modal__country {
-            font-size: 0.82rem;
+        .city-viewer__country {
+            font-size: 0.8rem;
             color: var(--color-muted);
             text-transform: uppercase;
             letter-spacing: 0.08em;
         }
 
-        .city-modal__close {
-            flex-shrink: 0;
+        .viewer-close {
             background: none;
             border: 1px solid var(--color-panel-border);
             border-radius: 999px;
-            padding: 6px 14px;
+            padding: 5px 14px;
             color: var(--color-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: color 0.2s, border-color 0.2s;
+            flex-shrink: 0;
         }
 
-        .city-modal__close:hover {
-            color: var(--color-text);
-            border-color: var(--color-text);
-        }
+        .viewer-close:hover { color: var(--color-text); border-color: var(--color-text); }
 
-        /* Slideshow */
-        .city-slideshow {
+        /* Image display */
+        .viewer-image-wrap {
             position: relative;
-            margin: 20px 24px 0;
-            border-radius: 14px;
+            border-radius: 16px;
             overflow: hidden;
-            aspect-ratio: 16/9;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--color-panel-border);
         }
 
-        .city-slide {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .city-slide.is-active { opacity: 1; }
-
-        .city-slide img {
+        .viewer-img {
             width: 100%;
-            height: 100%;
+            max-height: 480px;
             object-fit: cover;
             display: block;
+            transition: opacity 0.35s ease;
         }
 
-        .slideshow-prev,
-        .slideshow-next {
+        .viewer-img.is-fading { opacity: 0; }
+
+        .viewer-arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            z-index: 10;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(8px);
             border: none;
             border-radius: 50%;
-            width: 38px;
-            height: 38px;
+            width: 44px;
+            height: 44px;
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: background 0.2s;
+            z-index: 10;
         }
 
-        .slideshow-prev { left: 10px; }
-        .slideshow-next { right: 10px; }
-        .slideshow-prev:hover, .slideshow-next:hover { background: rgba(0,0,0,0.8); }
+        .viewer-arrow:hover { background: rgba(0,0,0,0.85); }
+        .viewer-arrow--prev { left: 12px; }
+        .viewer-arrow--next { right: 12px; }
 
-        .slideshow-dots {
+        .viewer-dots {
             display: flex;
             justify-content: center;
-            gap: 6px;
-            margin-top: 10px;
+            gap: 7px;
+            margin: 14px 0;
         }
 
-        .slideshow-dot {
-            width: 6px;
-            height: 6px;
+        .viewer-dot {
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.2);
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
         }
 
-        .slideshow-dot.is-active {
-            background: var(--color-accent-a);
-            transform: scale(1.3);
-        }
+        .viewer-dot.is-active { background: var(--color-accent-a); transform: scale(1.35); filter: hue-rotate(var(--hue-rot, 0deg)); }
 
-        body.light-mode .slideshow-dot {
-            background: rgba(0,0,0,0.2);
-        }
+        body.light-mode .viewer-dot { background: rgba(0,0,0,0.18); }
 
-        .city-modal__desc {
-            padding: 16px 24px 24px;
+        .viewer-desc {
             color: var(--color-muted);
             font-size: 0.95rem;
             line-height: 1.7;
+            margin: 4px 0 0;
         }
 
-        /* Continue row */
-        .villes-continue {
-            display: flex;
-            justify-content: center;
-            padding: 20px 24px 60px;
-        }
+        .villes-spacer { height: 80px; }
 
         @media (max-width: 600px) {
-            .city-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .villes-hero { padding: 80px 16px 32px; }
+            .city-card { width: 120px; }
         }
     </style>
 </head>
 <body>
-    <div class="page-bg"></div>
+    <div class="bg-slide" id="bg-a"></div>
+    <div class="bg-slide bg-slide--hidden" id="bg-b"></div>
+    <div class="bg-overlay"></div>
 
     <div id="theme-toggle" class="theme-bubble" role="button" aria-label="Basculer le thème">
-        <span class="tb-icon">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </span>
+        <span class="tb-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
         <div class="tb-track"><div class="tb-knob"></div></div>
-        <span class="tb-icon">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>
-        </span>
+        <span class="tb-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg></span>
     </div>
 
     <nav class="intro-nav">
@@ -315,173 +236,279 @@
     <div class="page-content">
         <div class="villes-hero anim-in">
             <h2>L'art dans le métro</h2>
-            <p>Dans certaines villes, l'art dans le métro ne se cache pas. il s'impose. les voyageurs le voient, le photographient, en parlent. explore ces métros qui ont fait de leurs stations de véritables musées.</p>
-            <p class="instruction">Clique sur une ville pour découvrir ses œuvres.</p>
+            <p>Dans certaines villes, l'art dans le métro ne se cache pas. Il s'impose. Les voyageurs le voient, le photographient, en parlent. Découvrez ces métros qui ont fait de leurs stations de véritables musées.</p>
         </div>
 
-        <div class="city-grid" id="city-grid"></div>
+        <div class="city-strip" id="city-strip"></div>
 
-        <div class="villes-continue anim-in anim-in-delay-3">
-            <a href="./toulouse.html" class="btn-primary">Continuer →</a>
-        </div>
-    </div>
-
-    <!-- City modal -->
-    <div class="city-modal-backdrop" id="modal-backdrop" aria-modal="true" role="dialog">
-        <div class="city-modal" id="city-modal">
-            <div class="city-modal__header">
-                <div>
-                    <h3 class="city-modal__title" id="modal-title">Ville</h3>
-                    <span class="city-modal__country" id="modal-country"></span>
+        <div class="viewer-wrap" id="viewer-wrap">
+            <div class="city-viewer">
+                <div class="city-viewer__inner">
+                    <div class="city-viewer__header">
+                        <div>
+                            <h3 class="city-viewer__name" id="viewer-name"></h3>
+                            <span class="city-viewer__country" id="viewer-country"></span>
+                        </div>
+                        <button class="viewer-close" id="viewer-close">Fermer ✕</button>
+                    </div>
+                    <div class="viewer-image-wrap">
+                        <button class="viewer-arrow viewer-arrow--prev" id="viewer-prev">‹</button>
+                        <img class="viewer-img" id="viewer-img" src="" alt="">
+                        <button class="viewer-arrow viewer-arrow--next" id="viewer-next">›</button>
+                    </div>
+                    <div class="viewer-dots" id="viewer-dots"></div>
+                    <p class="viewer-desc" id="viewer-desc"></p>
                 </div>
-                <button class="city-modal__close" id="modal-close">Fermer ✕</button>
             </div>
-            <div class="city-slideshow" id="modal-slideshow">
-                <button class="slideshow-prev" id="slide-prev">‹</button>
-                <button class="slideshow-next" id="slide-next">›</button>
-            </div>
-            <div class="slideshow-dots" id="slideshow-dots"></div>
-            <p class="city-modal__desc" id="modal-desc"></p>
         </div>
+
+        <div class="villes-spacer"></div>
     </div>
+
+    <a href="./toulouse.html" class="btn-primary btn-fixed-br">Continuer →</a>
 
     <script>
-        // ── Theme init ──
-        const mq = window.matchMedia("(prefers-color-scheme: light)");
-        const saved = localStorage.getItem("theme");
-        let isLight = saved ? saved === "light" : mq.matches;
+        // ── Theme ──
+        var mq = window.matchMedia("(prefers-color-scheme: light)");
+        var saved = localStorage.getItem("theme");
+        var isLight = saved ? saved === "light" : mq.matches;
         if (isLight) document.body.classList.add("light-mode");
-        const toggle = document.getElementById("theme-toggle");
-        const apply = (light, save = true) => {
+        var toggle = document.getElementById("theme-toggle");
+        function applyTheme(light, save) {
             isLight = light;
             document.body.classList.toggle("light-mode", light);
-            if (save) localStorage.setItem("theme", light ? "light" : "dark");
-        };
-        toggle.addEventListener("click", () => apply(!isLight));
-        mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
+            if (save !== false) localStorage.setItem("theme", light ? "light" : "dark");
+        }
+        toggle.addEventListener("click", function() { applyTheme(!isLight); });
+        mq.addEventListener("change", function(e) { if (!localStorage.getItem("theme")) applyTheme(e.matches, false); });
+
+        // ── Random hue for button + active card border ──
+        var hueRot = Math.floor(Math.random() * 360);
+        document.documentElement.style.setProperty("--btn-hue-offset", "-" + (hueRot / 18).toFixed(1) + "s");
+        document.documentElement.style.setProperty("--hue-rot", hueRot + "deg");
 
         // ── City data ──
-        const CITIES = [
-            {
-                id: 'lisbon', name: 'Lisbonne', country: 'Portugal',
-                desc: 'Capitale du Portugal, connue pour ses tramways, ses azulejos et son architecture historique au bord de l\'Atlantique.',
-                images: ['01.webp','02.webp','03.webp','04.webp','05.webp']
-            },
-            {
-                id: 'montreal', name: 'Montréal', country: 'Canada',
-                desc: 'Grande ville du Québec au Canada, connue pour sa culture francophone, ses festivals et son architecture mêlant ancien et moderne.',
-                images: ['01.webp','02.webp','03.webp','04.webp','05.webp']
-            },
-            {
-                id: 'moscow', name: 'Moscou', country: 'Russie',
-                desc: 'Capitale de la Russie, connue pour le Kremlin, la Place Rouge et son architecture soviétique imposante.',
-                images: ['01.webp','02.webp','03.webp','04.webp','05.webp']
-            },
-            {
-                id: 'naples', name: 'Naples', country: 'Italie',
-                desc: 'Ville du sud de l\'Italie, connue pour la pizza, le Vésuve et son riche patrimoine gréco-romain.',
-                images: ['01.webp','02.webp','03.webp','04.webp','05.webp']
-            },
-            {
-                id: 'new york', name: 'New York', country: 'États-Unis',
-                desc: 'Plus grande ville des États-Unis, connue pour ses gratte-ciels, Broadway et son influence culturelle mondiale.',
-                images: ['01.webp','02.webp','03.webp','04.webp','05.webp']
-            },
-            {
-                id: 'shanghai', name: 'Shanghai', country: 'Chine',
-                desc: 'Plus grande ville de Chine, connue pour son skyline futuriste, son port et son mélange entre modernité et culture traditionnelle.',
-                images: ['01.webp','02.webp','03.webp','04.webp','05.webp']
-            },
-            {
-                id: 'stockholm', name: 'Stockholm', country: 'Suède',
-                desc: 'Capitale de la Suède, connue pour son design scandinave, ses îles et sa qualité de vie élevée.',
-                images: ['1.webp','2.webp','3.webp','4.webp','5.webp']
-            }
+        var CITIES = [
+            { id:'lisbon',    name:'Lisbonne',  country:'Portugal',    desc:'Capitale du Portugal, connue pour ses tramways, ses azulejos et son architecture historique au bord de l\'Atlantique.', images:['01','02','03','04','05'], ext:'webp' },
+            { id:'montreal',  name:'Montréal',  country:'Canada',      desc:'Grande ville du Québec, connue pour sa culture francophone, ses festivals et son architecture mêlant ancien et moderne.', images:['01','02','03','04','05'], ext:'webp' },
+            { id:'moscow',    name:'Moscou',    country:'Russie',      desc:'Capitale de la Russie, connue pour le Kremlin, la Place Rouge et son architecture soviétique imposante.', images:['01','02','03','04','05'], ext:'webp' },
+            { id:'naples',    name:'Naples',    country:'Italie',      desc:'Ville du sud de l\'Italie, connue pour la pizza, le Vésuve et son riche patrimoine gréco-romain.', images:['01','02','03','04','05'], ext:'webp' },
+            { id:'new york',  name:'New York',  country:'États-Unis',  desc:'Plus grande ville des États-Unis, connue pour ses gratte-ciels, Broadway et son influence culturelle mondiale.', images:['01','02','03','04','05'], ext:'webp' },
+            { id:'shanghai',  name:'Shanghai',  country:'Chine',       desc:'Plus grande ville de Chine, connue pour son skyline futuriste et son mélange entre modernité et culture traditionnelle.', images:['01','02','03','04','05'], ext:'webp' },
+            { id:'stockholm', name:'Stockholm', country:'Suède',       desc:'Capitale de la Suède, connue pour son design scandinave, ses îles et sa qualité de vie élevée.', images:['1','2','3','4','5'], ext:'webp' }
         ];
 
-        // ── Render city grid ──
-        const grid = document.getElementById("city-grid");
-        CITIES.forEach((city, i) => {
-            const card = document.createElement("div");
-            card.className = "city-card anim-in";
-            card.style.animationDelay = (0.05 * i + 0.1) + "s";
-            const firstImg = `./villes/${encodeURIComponent(city.id)}/${city.images[0]}`;
-            card.innerHTML = `
-                <img class="city-card__thumb" src="${firstImg}" alt="${city.name}" loading="lazy">
-                <div class="city-card__overlay">
-                    <p class="city-card__name">${city.name}</p>
-                    <p class="city-card__country">${city.country}</p>
-                </div>`;
-            card.addEventListener("click", () => openModal(city));
-            grid.appendChild(card);
-        });
+        // ── Perlin noise (compact) ──
+        var perlin = (function(){
+            var p=[];
+            for(var i=0;i<256;i++) p[i]=i;
+            for(var i=255;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),t=p[i];p[i]=p[j];p[j]=t; }
+            for(var i=0;i<256;i++) p[i+256]=p[i];
+            function fade(t){return t*t*t*(t*(t*6-15)+10);}
+            function lerp(a,b,t){return a+t*(b-a);}
+            function grad(h,x,y,z){h&=15;var u=h<8?x:y,v=h<4?y:(h==12||h==14?x:z);return((h&1)?-u:u)+((h&2)?-v:v);}
+            return {noise:function(x,y,z){
+                var X=Math.floor(x)&255,Y=Math.floor(y)&255,Z=Math.floor(z)&255;
+                x-=Math.floor(x);y-=Math.floor(y);z-=Math.floor(z);
+                var u=fade(x),v=fade(y),w=fade(z);
+                var A=p[X]+Y,AA=p[A]+Z,AB=p[A+1]+Z,B=p[X+1]+Y,BA=p[B]+Z,BB=p[B+1]+Z;
+                return lerp(lerp(lerp(grad(p[AA],x,y,z),grad(p[BA],x-1,y,z),u),lerp(grad(p[AB],x,y-1,z),grad(p[BB],x-1,y-1,z),u),v),lerp(lerp(grad(p[AA+1],x,y,z-1),grad(p[BA+1],x-1,y,z-1),u),lerp(grad(p[AB+1],x,y-1,z-1),grad(p[BB+1],x-1,y-1,z-1),u),v),w);
+            }};
+        })();
 
-        // ── Modal logic ──
-        const backdrop = document.getElementById("modal-backdrop");
-        const modalTitle = document.getElementById("modal-title");
-        const modalCountry = document.getElementById("modal-country");
-        const modalSlideshow = document.getElementById("modal-slideshow");
-        const modalDots = document.getElementById("slideshow-dots");
-        const modalDesc = document.getElementById("modal-desc");
-        let currentSlide = 0;
-        let totalSlides = 0;
+        // ── Noise canvas on a card element ──
+        var PIXEL_SIZE=12, OPACITY=0.28, SPEED=1.4, RANDOMNESS=0.35, TRANS_DUR=0.35, LEAVE_DUR=0.45;
 
-        function openModal(city) {
-            modalTitle.textContent = city.name;
-            modalCountry.textContent = city.country;
-            modalDesc.textContent = city.desc;
-            currentSlide = 0;
+        function attachNoise(card) {
+            var canvas = document.createElement("canvas");
+            canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;mix-blend-mode:luminosity;image-rendering:pixelated;";
+            ctx = canvas.getContext("2d");
+            ctx.imageSmoothingEnabled = false;
+            card.appendChild(canvas);
 
-            // Clear previous slides/dots
-            modalSlideshow.querySelectorAll(".city-slide").forEach(el => el.remove());
-            modalDots.innerHTML = "";
-            totalSlides = city.images.length;
+            var isHovered=false, hoverStart=null, leaveStart=null, frozenHoverAge=0, frozenReveal=0;
+            var iA=1, hA=0, hAge=0, reveal=0;
+            var rafId=null, startTime=Date.now();
 
-            city.images.forEach((img, i) => {
-                const slide = document.createElement("div");
-                slide.className = "city-slide" + (i === 0 ? " is-active" : "");
-                const image = document.createElement("img");
-                image.src = `./villes/${encodeURIComponent(city.id)}/${img}`;
-                image.alt = `${city.name} ${i+1}`;
-                image.loading = i === 0 ? "eager" : "lazy";
-                slide.appendChild(image);
-                modalSlideshow.insertBefore(slide, document.getElementById("slide-prev"));
+            function resize() {
+                var dpr=devicePixelRatio||1;
+                var r=card.getBoundingClientRect();
+                canvas.width=Math.ceil(r.width*dpr);
+                canvas.height=Math.ceil(r.height*dpr);
+            }
+            resize();
 
-                const dot = document.createElement("div");
-                dot.className = "slideshow-dot" + (i === 0 ? " is-active" : "");
-                dot.addEventListener("click", () => goToSlide(i));
-                modalDots.appendChild(dot);
+            card.addEventListener("mouseenter",function(){
+                isHovered=true; hoverStart=Date.now(); leaveStart=null;
+            });
+            card.addEventListener("mouseleave",function(){
+                isHovered=false; leaveStart=Date.now();
+                frozenHoverAge=hAge; frozenReveal=reveal;
             });
 
-            backdrop.classList.add("is-open");
-            document.body.style.overflow = "hidden";
+            function draw() {
+                var now=Date.now();
+                var t=(now-startTime)*0.001;
+                var dpr=devicePixelRatio||1;
+                var ps=PIXEL_SIZE*dpr;
+                var cols=Math.ceil(canvas.width/ps)+1;
+                var rows=Math.ceil(canvas.height/ps)+1;
+
+                if(isHovered) {
+                    var el=(now-hoverStart)*0.001;
+                    var pr=Math.min(el/TRANS_DUR,1);
+                    iA=1-pr; hA=pr; hAge=el;
+                    reveal=1-Math.pow(1-Math.min(0.5*el,1),3);
+                } else if(leaveStart!==null) {
+                    var lp=Math.min((now-leaveStart)*0.001/LEAVE_DUR,1);
+                    iA=lp; hA=1-lp; hAge=frozenHoverAge; reveal=frozenReveal;
+                    if(lp>=1) leaveStart=null;
+                } else {
+                    iA=1; hA=0;
+                }
+
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+
+                // Idle: wave-noisy
+                if(iA>0.01) {
+                    for(var e=0;e<cols;e++) {
+                        for(var a=0;a<rows;a++) {
+                            var phase=(e+a)/(cols+rows)*Math.PI*5-t*1.1;
+                            var base=(Math.sin(phase)+1)*0.5;
+                            var rnd=43758.5453*Math.sin(12.9898*e+78.233*a);
+                            rnd=rnd-Math.floor(rnd);
+                            var v=base*0.7+rnd*0.3; v=v*v;
+                            var j=Math.floor(255*(0.3+v*0.7));
+                            ctx.fillStyle="rgba("+j+","+j+","+j+","+(OPACITY*0.85*iA)+")";
+                            ctx.fillRect(e*ps,a*ps,ps,ps);
+                        }
+                    }
+                }
+
+                // Hover: Perlin reveal
+                if(hA>0.01) {
+                    for(var e=0;e<cols;e++) {
+                        for(var a=0;a<rows;a++) {
+                            var l=perlin.noise(0.2*e,0.2*a,0.5*hAge*SPEED);
+                            var s=43758.5453*Math.sin(12.9898*e+78.233*a);
+                            s=s-Math.floor(s);
+                            var d=(l+(s*2-1)*RANDOMNESS+1)*0.75;
+                            var bx=(e+.5)/cols,by=(a+.5)/rows;
+                            var ar=cols/rows;
+                            var fx=(bx-0.5)*ar,fy=by-0.5;
+                            var dist=Math.sqrt(fx*fx+fy*fy)/ar+(s-0.5)*RANDOMNESS*0.35;
+                            var pA=0;
+                            if(dist<=reveal) pA=OPACITY;
+                            else if(dist<=reveal+0.08) pA=OPACITY*(1-(dist-reveal)/0.08);
+                            if(pA<0.001) continue;
+                            var jj=Math.floor(255*d);
+                            ctx.fillStyle="rgba("+jj+","+jj+","+jj+","+(pA*hA)+")";
+                            ctx.fillRect(e*ps,a*ps,ps,ps);
+                        }
+                    }
+                }
+
+                rafId=requestAnimationFrame(draw);
+            }
+            draw();
         }
 
-        function closeModal() {
-            backdrop.classList.remove("is-open");
-            document.body.style.overflow = "";
-        }
-
-        function goToSlide(idx) {
-            const slides = modalSlideshow.querySelectorAll(".city-slide");
-            const dots = modalDots.querySelectorAll(".slideshow-dot");
-            slides[currentSlide].classList.remove("is-active");
-            dots[currentSlide].classList.remove("is-active");
-            currentSlide = (idx + totalSlides) % totalSlides;
-            slides[currentSlide].classList.add("is-active");
-            dots[currentSlide].classList.add("is-active");
-        }
-
-        document.getElementById("modal-close").addEventListener("click", closeModal);
-        document.getElementById("slide-prev").addEventListener("click", () => goToSlide(currentSlide - 1));
-        document.getElementById("slide-next").addEventListener("click", () => goToSlide(currentSlide + 1));
-        backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closeModal(); });
-        document.addEventListener("keydown", (e) => {
-            if (!backdrop.classList.contains("is-open")) return;
-            if (e.key === "Escape") closeModal();
-            if (e.key === "ArrowLeft") goToSlide(currentSlide - 1);
-            if (e.key === "ArrowRight") goToSlide(currentSlide + 1);
+        // ── Build city strip ──
+        var strip = document.getElementById("city-strip");
+        CITIES.forEach(function(city, i) {
+            var card = document.createElement("div");
+            card.className = "city-card anim-in";
+            card.style.animationDelay = (0.05*i+0.1)+"s";
+            var img = document.createElement("img");
+            img.className = "city-card__thumb";
+            img.src = "./villes/"+encodeURIComponent(city.id)+"/"+city.images[0]+"."+city.ext;
+            img.alt = city.name;
+            img.loading = "lazy";
+            var label = document.createElement("div");
+            label.className = "city-card__label";
+            label.textContent = city.name;
+            card.appendChild(img);
+            card.appendChild(label);
+            card.addEventListener("click", function() { openCity(city, card); });
+            strip.appendChild(card);
+            attachNoise(card);
         });
+
+        // ── Viewer logic ──
+        var viewerWrap = document.getElementById("viewer-wrap");
+        var viewerName = document.getElementById("viewer-name");
+        var viewerCountry = document.getElementById("viewer-country");
+        var viewerImg = document.getElementById("viewer-img");
+        var viewerDots = document.getElementById("viewer-dots");
+        var viewerDesc = document.getElementById("viewer-desc");
+        var activeCard = null;
+        var currentCity = null;
+        var currentImg = 0;
+
+        function openCity(city, card) {
+            if (activeCard === card) {
+                closeViewer(); return;
+            }
+            if (activeCard) activeCard.classList.remove("is-active");
+            activeCard = card;
+            card.classList.add("is-active");
+            currentCity = city;
+            currentImg = 0;
+
+            viewerName.textContent = city.name;
+            viewerCountry.textContent = city.country;
+            viewerDesc.textContent = city.desc;
+
+            buildDots(city.images.length);
+            setViewerImg(0);
+
+            viewerWrap.classList.add("is-open");
+            setTimeout(function() {
+                viewerWrap.scrollIntoView({ behavior:"smooth", block:"nearest" });
+            }, 50);
+        }
+
+        function closeViewer() {
+            viewerWrap.classList.remove("is-open");
+            if (activeCard) { activeCard.classList.remove("is-active"); activeCard = null; }
+        }
+
+        function buildDots(count) {
+            viewerDots.innerHTML = "";
+            for (var i = 0; i < count; i++) {
+                var dot = document.createElement("div");
+                dot.className = "viewer-dot" + (i===0?" is-active":"");
+                dot.dataset.i = i;
+                dot.addEventListener("click", function() { setViewerImg(+this.dataset.i); });
+                viewerDots.appendChild(dot);
+            }
+        }
+
+        function setViewerImg(idx) {
+            currentImg = (idx + currentCity.images.length) % currentCity.images.length;
+            var src = "./villes/"+encodeURIComponent(currentCity.id)+"/"+currentCity.images[currentImg]+"."+currentCity.ext;
+            viewerImg.classList.add("is-fading");
+            setTimeout(function() {
+                viewerImg.src = src;
+                viewerImg.alt = currentCity.name + " " + (currentImg+1);
+                viewerImg.classList.remove("is-fading");
+            }, 180);
+            viewerDots.querySelectorAll(".viewer-dot").forEach(function(d,i) {
+                d.classList.toggle("is-active", i===currentImg);
+            });
+        }
+
+        document.getElementById("viewer-close").addEventListener("click", closeViewer);
+        document.getElementById("viewer-prev").addEventListener("click", function() { setViewerImg(currentImg-1); });
+        document.getElementById("viewer-next").addEventListener("click", function() { setViewerImg(currentImg+1); });
+
+        document.addEventListener("keydown", function(e) {
+            if (!viewerWrap.classList.contains("is-open")) return;
+            if (e.key==="Escape") closeViewer();
+            if (e.key==="ArrowLeft") setViewerImg(currentImg-1);
+            if (e.key==="ArrowRight") setViewerImg(currentImg+1);
+        });
+        initBgCycle();
     </script>
 </body>
 </html>
