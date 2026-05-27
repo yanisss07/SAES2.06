@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interviews — Quai des Arts</title>
+    <title>Interviews · Quai des Arts</title>
     <link rel="icon" type="image/png" href="./assets/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -155,7 +155,7 @@
         }
         body.light-mode .slider-knob { transform: translateX(16px); }
 
-        /* ── Main content (intro only — constrained width) ── */
+        /* ── Main content (intro only · constrained width) ── */
         main {
             padding: calc(16px + 58px + 32px) 24px 32px;
             max-width: 1100px;
@@ -497,34 +497,34 @@
     <div class="iv-panel__inner" id="iv-panel-inner"></div>
 </div>
 
-<footer>Tisséo Collectivités — Parcours Culturel · Quai des Arts</footer>
+<footer>Tisséo Collectivités · Parcours Culturel · Quai des Arts</footer>
 
 <script>
 // ── txt format: first line = summary, then ---, then Q/A blocks separated by blank lines ──
 function parseTxt(text, firstName) {
     const [summaryPart, ...rest] = text.split(/^---$/m);
     const summary = summaryPart.trim();
-    const blocks = rest.join(‘---’).trim().split(/\n\n+/);
+    const blocks = rest.join('---').trim().split(/\n\n+/);
     const interview = blocks.map(block => {
-        const lines = block.trim().split(‘\n’);
-        return { q: lines[0].trim(), a: lines.slice(1).join(‘\n’).trim() };
+        const lines = block.trim().split('\n');
+        return { q: lines[0].trim(), a: lines.slice(1).join('\n').trim() };
     }).filter(p => p.q && p.a);
     return { summary, interview };
 }
 
 const INTERVIEWS = [
-    { id: "erik_p",    name: "Erik P.",    station_id: "jean_jaures",      station_name: "Jean Jaurès" },
-    { id: "samia_b",   name: "Samia B.",   station_id: "reynerie",         station_name: "Reynerie" },
-    { id: "michel_t",  name: "Michel T.",  station_id: "carmes",           station_name: "Carmes" },
-    { id: "lea_m",     name: "Léa M.",     station_id: "marengo_sncf",     station_name: "Marengo SNCF" },
-    { id: "thomas_r",  name: "Thomas R.",  station_id: "esquirol",         station_name: "Esquirol" },
-    { id: "sophie_d",  name: "Sophie D.",  station_id: "barriere_de_paris",station_name: "Barrière de Paris" },
-    { id: "antoine_l", name: "Antoine L.", station_id: "capitole",         station_name: "Capitole" },
-    { id: "karim_f",   name: "Karim F.",   station_id: "st_cyprien",       station_name: "St Cyprien République" },
-    { id: "claire_v",  name: "Claire V.",  station_id: "basso_cambo",      station_name: "Basso Cambo" },
-    { id: "julien_b",  name: "Julien B.",  station_id: "palais_de_justice",station_name: "Palais de Justice" },
-    { id: "emma_c",    name: "Emma C.",    station_id: "borderouge",       station_name: "Borderouge" },
-    { id: "raymond_p", name: "Raymond P.", station_id: "jeanne_d_arc",     station_name: "Jeanne d’Arc" },
+    { id: "erik_p",    name: "Erik P.",    line: "A", station_id: "jean_jaures",      station_name: "Jean Jaurès" },
+    { id: "samia_b",   name: "Samia B.",   line: "A", station_id: "reynerie",         station_name: "Reynerie" },
+    { id: "michel_t",  name: "Michel T.",  line: "A", station_id: "carmes",           station_name: "Carmes" },
+    { id: "lea_m",     name: "Léa M.",     line: "A", station_id: "marengo_sncf",     station_name: "Marengo SNCF" },
+    { id: "thomas_r",  name: "Thomas R.",  line: "A", station_id: "esquirol",         station_name: "Esquirol" },
+    { id: "sophie_d",  name: "Sophie D.",  line: "B", station_id: "barriere_de_paris",station_name: "Barrière de Paris" },
+    { id: "antoine_l", name: "Antoine L.", line: "A", station_id: "capitole",         station_name: "Capitole" },
+    { id: "karim_f",   name: "Karim F.",   line: "A", station_id: "st_cyprien",       station_name: "St Cyprien République" },
+    { id: "claire_v",  name: "Claire V.",  line: "A", station_id: "basso_cambo",      station_name: "Basso Cambo" },
+    { id: "julien_b",  name: "Julien B.",  line: "A", station_id: "palais_de_justice",station_name: "Palais de Justice" },
+    { id: "emma_c",    name: "Emma C.",    line: "B", station_id: "borderouge",       station_name: "Borderouge" },
+    { id: "raymond_p", name: "Raymond P.", line: "B", station_id: "jeanne_d_arc",     station_name: "Jeanne d'Arc" },
 ];
 
 // Fetch all txt files up front so cards can show summaries
@@ -532,7 +532,7 @@ const cache = {};
 Promise.all(INTERVIEWS.map(iv =>
     fetch(`interview/${iv.id}.txt`)
         .then(r => r.ok ? r.text() : null)
-        .then(text => { if (text) { const parsed = parseTxt(text, iv.name.split(‘ ‘)[0]); iv.summary = parsed.summary; iv.interview = parsed.interview; } })
+        .then(text => { if (text) { const parsed = parseTxt(text, iv.name.split(' ')[0]); iv.summary = parsed.summary; iv.interview = parsed.interview; } })
         .catch(() => {})
 )).then(buildCarousel);
 
@@ -645,7 +645,7 @@ function openPanel(iv, card) {
     card.classList.add('is-active');
 
     const stationBtn = iv.station_id
-        ? `<button class="iv-panel__station-btn" onclick="goToStation('${iv.station_id}')">Voir la station · ${iv.station_name}</button>`
+        ? `<button class="iv-panel__station-btn" onclick="goToStation('${iv.station_id}','${iv.line}')">Voir la station · ${iv.station_name}</button>`
         : '';
 
     const qaHtml = iv.interview.map(({ q, a }) => `
@@ -678,8 +678,8 @@ function closePanel() {
     paused = false;
 }
 
-function goToStation(stationId) {
-    window.location.href = `carte.html?station=${stationId}`;
+function goToStation(stationId, line) {
+    window.location.href = `/ligne_${line}/${stationId}`;
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
