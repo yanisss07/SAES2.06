@@ -14,21 +14,21 @@
       ]
     },
     {
-      "source": "/vendor/(.*)",
+      "source": "/media/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/media/(.*\\.(?:jpg|png|webp|svg))",
+      "source": "/villes/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=2592000" }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/villes/(.*\\.png)",
+      "source": "/(.*\\.html)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=2592000" }
+        { "key": "Cache-Control", "value": "no-cache" }
       ]
     }
   ]
