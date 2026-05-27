@@ -47,7 +47,12 @@ async function bootstrap() {
     const guideName    = document.getElementById("guide-name");
     if (guideEl) {
         map.onStationHovered((station) => {
-            if (!station) return;
+            if (!station) {
+                guideEl.classList.remove("is-transfer");
+                guideEl.style.setProperty("--guide-tint",  "rgba(255, 255, 255, 0.04)");
+                guideEl.style.setProperty("--guide-border", "rgba(255, 255, 255, 0.15)");
+                return;
+            }
             const title = station.art?.title;
             const artist = station.art?.artist || "Artiste inconnu";
             guideArt.textContent = (!title || title === "Sans titre")
@@ -55,9 +60,11 @@ async function bootstrap() {
                 : `${title} par ${artist} :`;
             guideName.textContent = station.name;
 
+            const isTransfer = station.id === "jean_jaures";
             const isA = station.line === "A";
-            guideEl.style.setProperty("--guide-tint",  isA ? "rgba(210, 35, 42, 0.07)"  : "rgba(255, 180, 0, 0.07)");
-            guideEl.style.setProperty("--guide-border", isA ? "rgba(210, 35, 42, 0.35)"  : "rgba(255, 180, 0, 0.35)");
+            guideEl.classList.toggle("is-transfer", isTransfer);
+            guideEl.style.setProperty("--guide-tint",  isTransfer ? "transparent" : isA ? "rgba(210, 35, 42, 0.07)"  : "rgba(255, 180, 0, 0.07)");
+            guideEl.style.setProperty("--guide-border", isTransfer ? "rgba(255, 130, 80, 0.5)" : isA ? "rgba(210, 35, 42, 0.35)"  : "rgba(255, 180, 0, 0.35)");
 
             guideImg.classList.add("is-loading");
             guideImgWrap.classList.add("is-loading");

@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────
 #  Quai des Arts — Build script
-#  Run once after adding/changing any source image or font.
-#  Requires: ffmpeg, python3, curl
+#  Usage:
+#    ./build.sh          # everything
+#    ./build.sh js       # JS bundle only
+#    ./build.sh fonts    # fonts only
+#    ./build.sh images   # station + villes images only
+#  Requires: ffmpeg, python3, bun
 # ─────────────────────────────────────────────────────────────
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
@@ -11,13 +15,16 @@ ok()   { echo "  ✓ $*"; }
 skip() { echo "  · $* (skip)"; }
 hdr()  { echo ""; echo "[ $* ]"; }
 
+TARGET="${1:-all}"
+
 # ─────────────────────────────────────────────────────────────
-# 1. FONTS  — self-host Roboto, no Google CDN dependency
+# FONTS
 # ─────────────────────────────────────────────────────────────
-hdr "Fonts"
-mkdir -p "$ROOT/assets/fonts"
-python3 - <<'PYEOF'
-import urllib.request, re, os, hashlib
+build_fonts() {
+    hdr "Fonts"
+    mkdir -p "$ROOT/assets/fonts"
+    python3 - <<'PYEOF'
+import urllib.request, re, os
 
 ROOT = os.environ.get("ROOT") or os.path.dirname(os.path.abspath(__file__))
 FONT_DIR = os.path.join(ROOT, "assets", "fonts")
@@ -28,7 +35,6 @@ URL = "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&
 req = urllib.request.Request(URL, headers={"User-Agent": UA, "Accept": "text/css"})
 css = urllib.request.urlopen(req).read().decode()
 
-# Extract all unique woff2 URLs
 urls = sorted(set(re.findall(r'https://fonts\.gstatic\.com[^\)\'"\s]+\.woff2', css)))
 url_to_local = {}
 
@@ -42,12 +48,10 @@ for url in urls:
         print(f"  · {fname} (cached)")
     url_to_local[url] = f"/assets/fonts/{fname}"
 
-# Rewrite CSS with local paths
 local_css = css
 for url, local in url_to_local.items():
     local_css = local_css.replace(url, local)
 
-# Add font-display: swap to every @font-face
 local_css = re.sub(r'(@font-face\s*\{)', r'\1\n  font-display: swap;', local_css)
 
 out = os.path.join(ROOT, "assets", "fonts.css")
@@ -55,85 +59,84 @@ with open(out, "w") as f:
     f.write(local_css)
 print("  ✓ assets/fonts.css written")
 PYEOF
+}
 
 # ─────────────────────────────────────────────────────────────
-# 2. STATION IMAGES  — media/*/
-#    source: background.png + main.jpg + 1.jpg 2.jpg …
-#    output: background.webp (q82) + main.webp (q85) + N.webp
-#            background_thumb.jpg (20px) + main_thumb.jpg (20px)
+# IMAGES
 # ─────────────────────────────────────────────────────────────
-hdr "Station images"
-shopt -s nullglob
+build_images() {
+    hdr "Station images"
+    shopt -s nullglob
 
-for dir in "$ROOT/media"/*/; do
-    station=$(basename "$dir")
+    for dir in "$ROOT/media"/*/; do
+        station=$(basename "$dir")
 
-    # Background: PNG → WebP
-    if [ -f "$dir/background.png" ]; then
-        ffmpeg -i "$dir/background.png" -quality 82 "$dir/background.webp" -y 2>/dev/null
-        ok "$station/background.webp"
-    fi
+        if [ -f "$dir/background.png" ]; then
+            ffmpeg -i "$dir/background.png" -quality 82 "$dir/background.webp" -y 2>/dev/null
+            ok "$station/background.webp"
+        fi
 
-    # Background thumbnail (tiny, ~20px wide)
-    src_bg=""
-    [ -f "$dir/background.png" ]  && src_bg="$dir/background.png"
-    [ -f "$dir/background.webp" ] && src_bg="$dir/background.webp"
-    if [ -n "$src_bg" ] && [ ! -f "$dir/background_thumb.jpg" ]; then
-        ffmpeg -i "$src_bg" -vf "scale=20:-1" -q:v 10 "$dir/background_thumb.jpg" -y 2>/dev/null
-        ok "$station/background_thumb.jpg"
-    fi
+        src_bg=""
+        [ -f "$dir/background.png" ]  && src_bg="$dir/background.png"
+        [ -f "$dir/background.webp" ] && src_bg="$dir/background.webp"
+        if [ -n "$src_bg" ] && [ ! -f "$dir/background_thumb.jpg" ]; then
+            ffmpeg -i "$src_bg" -vf "scale=20:-1" -q:v 10 "$dir/background_thumb.jpg" -y 2>/dev/null
+            ok "$station/background_thumb.jpg"
+        fi
 
-    # Main artwork: JPG → WebP
-    if [ -f "$dir/main.jpg" ]; then
-        ffmpeg -i "$dir/main.jpg" -quality 85 "$dir/main.webp" -y 2>/dev/null
-        ok "$station/main.webp"
-    fi
+        if [ -f "$dir/main.jpg" ]; then
+            ffmpeg -i "$dir/main.jpg" -quality 85 "$dir/main.webp" -y 2>/dev/null
+            ok "$station/main.webp"
+        fi
 
-    # Main thumbnail
-    if [ -f "$dir/main.jpg" ] && [ ! -f "$dir/main_thumb.jpg" ]; then
-        ffmpeg -i "$dir/main.jpg" -vf "scale=20:-1" -q:v 10 "$dir/main_thumb.jpg" -y 2>/dev/null
-        ok "$station/main_thumb.jpg"
-    fi
+        if [ -f "$dir/main.jpg" ] && [ ! -f "$dir/main_thumb.jpg" ]; then
+            ffmpeg -i "$dir/main.jpg" -vf "scale=20:-1" -q:v 10 "$dir/main_thumb.jpg" -y 2>/dev/null
+            ok "$station/main_thumb.jpg"
+        fi
 
-    # Detail images: 1.jpg 2.jpg … → WebP
-    for img in "$dir"[0-9].jpg; do
-        name=$(basename "$img" .jpg)
-        ffmpeg -i "$img" -quality 85 "${img%.jpg}.webp" -y 2>/dev/null
-        ok "$station/${name}.webp"
+        for img in "$dir"[0-9].jpg; do
+            name=$(basename "$img" .jpg)
+            ffmpeg -i "$img" -quality 85 "${img%.jpg}.webp" -y 2>/dev/null
+            ok "$station/${name}.webp"
+        done
     done
-done
 
-# ─────────────────────────────────────────────────────────────
-# 3. VILLES IMAGES  — villes/*/
-#    source: *.png
-#    output: *.webp (q85) + *_thumb.webp (40px wide, q60)
-# ─────────────────────────────────────────────────────────────
-hdr "Villes images"
+    hdr "Villes images"
 
-for dir in "$ROOT/villes"/*/; do
-    city=$(basename "$dir")
-    for img in "$dir"*.png; do
-        [ -f "$img" ] || continue
-        name=$(basename "$img" .png)
-        base="${img%.png}"
-
-        # Full WebP
-        ffmpeg -i "$img" -quality 85 "${base}.webp" -y 2>/dev/null
-        ok "$city/${name}.webp"
-
-        # Thumbnail WebP (40px wide)
-        ffmpeg -i "$img" -vf "scale=40:-1" -quality 60 "${base}_thumb.webp" -y 2>/dev/null
-        ok "$city/${name}_thumb.webp"
+    for dir in "$ROOT/villes"/*/; do
+        city=$(basename "$dir")
+        for img in "$dir"*.png; do
+            [ -f "$img" ] || continue
+            name=$(basename "$img" .png)
+            base="${img%.png}"
+            ffmpeg -i "$img" -quality 85 "${base}.webp" -y 2>/dev/null
+            ok "$city/${name}.webp"
+            ffmpeg -i "$img" -vf "scale=40:-1" -quality 60 "${base}_thumb.webp" -y 2>/dev/null
+            ok "$city/${name}_thumb.webp"
+        done
     done
-done
+}
 
 # ─────────────────────────────────────────────────────────────
-# 4. JS BUNDLE
+# JS BUNDLE
 # ─────────────────────────────────────────────────────────────
-hdr "JS bundle"
-cd "$ROOT"
-bun build ./src/main.js --outfile ./assets/bundle.js --minify
-ok "assets/bundle.js"
+build_js() {
+    hdr "JS bundle"
+    cd "$ROOT"
+    bun build ./src/main.js --outfile ./assets/bundle.js --minify
+    ok "assets/bundle.js"
+}
+
+# ─────────────────────────────────────────────────────────────
+# DISPATCH
+# ─────────────────────────────────────────────────────────────
+case "$TARGET" in
+    js)     build_js ;;
+    fonts)  build_fonts ;;
+    images) build_images ;;
+    all)    build_fonts; build_images; build_js ;;
+    *)      echo "Usage: $0 [js|fonts|images|all]"; exit 1 ;;
+esac
 
 echo ""
-echo "Build complete."
+echo "Done."

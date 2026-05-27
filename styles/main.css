@@ -172,16 +172,17 @@ body.light-mode .leaflet-container {
     box-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
     outline: 1px solid rgba(17, 19, 34, 0.85);
     cursor: pointer;
-    transition: box-shadow 0.15s ease;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .station-icon:hover {
     box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.25), 0 0 3px rgba(255, 255, 255, 0.7);
+    transform: scale(1.8);
 }
 
 
 .station-icon--transfer {
-    background: linear-gradient(to right, #ff3b6a 50%, #ffd056 50%);
+    background: linear-gradient(135deg, #ff3b6a, #ffd056);
     box-shadow: 0 0 5px rgba(255, 59, 106, 0.6), 0 0 5px rgba(255, 208, 86, 0.6), 0 0 12px rgba(255, 130, 100, 0.4);
     outline: 1px solid rgba(255, 255, 255, 0.4);
 }
@@ -467,9 +468,22 @@ body.light-mode .leaflet-container {
     inset: 0;
     border-radius: 14px;
     background: var(--guide-tint, transparent);
-    transition: background 0.5s ease;
+    transition: background 0.5s ease, opacity 0.5s ease;
     pointer-events: none;
     z-index: -1;
+}
+
+@keyframes transfer-shimmer {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.map-guide.is-transfer::before {
+    background: linear-gradient(135deg, rgba(255, 59, 106, 0.18), rgba(255, 160, 60, 0.12), rgba(255, 208, 86, 0.18));
+    background-size: 300% 300%;
+    animation: transfer-shimmer 3s ease infinite;
+    transition: none;
 }
 
 /* Expandable hover section using grid trick */
