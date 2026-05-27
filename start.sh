@@ -1,2 +1,2 @@
-#/usr/bin/env bash
-python -m http.server 8000
+#!/usr/bin/env bash
+bun run build && bun server.js

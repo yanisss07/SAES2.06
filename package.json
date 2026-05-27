@@ -1,0 +1,8 @@
+{
+  "name": "quai-des-arts",
+  "private": true,
+  "scripts": {
+    "build": "bun build ./src/main.js --outfile ./assets/bundle.js --minify",
+    "dev": "bun --watch ./src/main.js"
+  }
+}

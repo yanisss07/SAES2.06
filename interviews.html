@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interviews — Quai des Arts</title>
     <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -775,20 +777,20 @@ function loadBackground(stationId) {
         bgLayer.style.backgroundImage = `url('media/${stationId}/background_thumb.jpg')`;
         const full = new Image();
         full.onload = () => {
-            bgLayer.style.backgroundImage = `url('media/${stationId}/background.png')`;
+            bgLayer.style.backgroundImage = `url('media/${stationId}/background.webp')`;
             bgLayer.classList.remove('bg-loading');
         };
         full.onerror = () => bgLayer.classList.remove('bg-loading');
-        full.src = `media/${stationId}/background.png`;
+        full.src = `media/${stationId}/background.webp`;
     };
     thumb.onerror = () => {
         const full = new Image();
         full.onload = () => {
-            bgLayer.style.backgroundImage = `url('media/${stationId}/background.png')`;
+            bgLayer.style.backgroundImage = `url('media/${stationId}/background.webp')`;
             bgLayer.classList.remove('bg-loading');
         };
         full.onerror = () => bgLayer.classList.remove('bg-loading');
-        full.src = `media/${stationId}/background.png`;
+        full.src = `media/${stationId}/background.webp`;
     };
     thumb.src = `media/${stationId}/background_thumb.jpg`;
 }
