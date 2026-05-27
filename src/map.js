@@ -186,8 +186,8 @@ export class MapExperience {
     }
 
     getStationTarget(station, line) {
-        const base = line.id === "A" ? "details_ligne_A.html" : "details_ligne_B.html";
-        return `${base}?station=${station.id}`;
+        const base = line.id === "A" ? "ligne_A" : "ligne_B";
+        return `${base}/${station.id}`;
     }
 
     solveCatmullRom(points) {

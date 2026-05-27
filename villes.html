@@ -27,12 +27,15 @@
             color: var(--color-text);
         }
 
-        .villes-hero p {
-            margin: 0;
+        .villes-hero p,
+        #villes-intro p {
+            margin: 0 0 12px;
             color: var(--color-muted);
             font-size: 0.97rem;
             line-height: 1.7;
         }
+
+        #villes-intro p:last-child { margin-bottom: 0; }
 
         /* ── City cards strip ── */
         .city-strip {
@@ -249,7 +252,7 @@
     <div class="page-content">
         <div class="villes-hero anim-in">
             <h2>L'art dans le métro</h2>
-            <p>Dans certaines villes, l'art dans le métro ne se cache pas. Il s'impose. Les voyageurs le voient, le photographient, en parlent. Découvrez ces métros qui ont fait de leurs stations de véritables musées.</p>
+            <div id="villes-intro"></div>
         </div>
 
         <div class="city-strip" id="city-strip"></div>
@@ -306,15 +309,30 @@
         document.documentElement.style.setProperty("--btn-hue-offset", "-" + (hueRot / 18).toFixed(1) + "s");
         document.documentElement.style.setProperty("--hue-rot", hueRot + "deg");
 
+        // ── Fetch text helper ──
+        async function fetchText(path) {
+            try { var r = await fetch(path); return r.ok ? (await r.text()).trim() : null; }
+            catch(e) { return null; }
+        }
+
+        // ── Load intro from description.txt ──
+        var introEl = document.getElementById("villes-intro");
+        fetchText("./villes/description.txt").then(function(text) {
+            if (!text) { introEl.innerHTML = '<p>Découvrez ces métros qui ont fait de leurs stations de véritables musées.</p>'; return; }
+            introEl.innerHTML = text.split(/\n\n+/).map(function(p) {
+                return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
+            }).join('');
+        });
+
         // ── City data ──
         var CITIES = [
-            { id:'lisbon',    name:'Lisbonne',  country:'Portugal',    desc:'Capitale du Portugal, connue pour ses tramways, ses azulejos et son architecture historique au bord de l\'Atlantique.', images:['01','02','03','04','05'], ext:'webp' },
-            { id:'montreal',  name:'Montréal',  country:'Canada',      desc:'Grande ville du Québec, connue pour sa culture francophone, ses festivals et son architecture mêlant ancien et moderne.', images:['01','02','03','04','05'], ext:'webp' },
-            { id:'moscow',    name:'Moscou',    country:'Russie',      desc:'Capitale de la Russie, connue pour le Kremlin, la Place Rouge et son architecture soviétique imposante.', images:['01','02','03','04','05'], ext:'webp' },
-            { id:'naples',    name:'Naples',    country:'Italie',      desc:'Ville du sud de l\'Italie, connue pour la pizza, le Vésuve et son riche patrimoine gréco-romain.', images:['01','02','03','04','05'], ext:'webp' },
-            { id:'new york',  name:'New York',  country:'États-Unis',  desc:'Plus grande ville des États-Unis, connue pour ses gratte-ciels, Broadway et son influence culturelle mondiale.', images:['01','02','03','04','05'], ext:'webp' },
-            { id:'shanghai',  name:'Shanghai',  country:'Chine',       desc:'Plus grande ville de Chine, connue pour son skyline futuriste et son mélange entre modernité et culture traditionnelle.', images:['01','02','03','04','05'], ext:'webp' },
-            { id:'stockholm', name:'Stockholm', country:'Suède',       desc:'Capitale de la Suède, connue pour son design scandinave, ses îles et sa qualité de vie élevée.', images:['1','2','3','4','5'], ext:'webp' }
+            { id:'lisbon',    name:'Lisbonne',  country:'Portugal',   images:['01','02','03','04','05'], ext:'webp' },
+            { id:'montreal',  name:'Montréal',  country:'Canada',     images:['01','02','03','04','05'], ext:'webp' },
+            { id:'moscow',    name:'Moscou',    country:'Russie',     images:['01','02','03','04','05'], ext:'webp' },
+            { id:'naples',    name:'Naples',    country:'Italie',     images:['01','02','03','04','05'], ext:'webp' },
+            { id:'new york',  name:'New York',  country:'États-Unis', images:['01','02','03','04','05'], ext:'webp' },
+            { id:'shanghai',  name:'Shanghai',  country:'Chine',      images:['01','02','03','04','05'], ext:'webp' },
+            { id:'stockholm', name:'Stockholm', country:'Suède',      images:['1','2','3','4','5'],      ext:'webp' }
         ];
 
         // ── Build city strip ──
@@ -360,7 +378,10 @@
 
             viewerName.textContent = city.name;
             viewerCountry.textContent = city.country;
-            viewerDesc.textContent = city.desc;
+            viewerDesc.textContent = '';
+            fetchText('./villes/' + encodeURIComponent(city.id) + '/description.txt').then(function(text) {
+                viewerDesc.textContent = text || '';
+            });
 
             buildDots(city.images.length);
             setViewerImg(0);

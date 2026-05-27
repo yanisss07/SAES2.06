@@ -33,8 +33,14 @@ Bun.serve({
         let resolved = pathname;
         if (resolved === "/" || resolved === "") {
             resolved = "/index.html";
-        } else if (!extname(resolved)) {
-            resolved = resolved + ".html";
+        } else {
+            // /ligne_A/:station  or  /ligne_B/:station  → serve ligne_A.html / ligne_B.html
+            const stationMatch = pathname.match(/^\/(ligne_[AB])\/[^/]+$/);
+            if (stationMatch) {
+                resolved = `/${stationMatch[1]}.html`;
+            } else if (!extname(resolved)) {
+                resolved = resolved + ".html";
+            }
         }
 
         const filePath = join(ROOT, resolved);
