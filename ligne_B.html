@@ -2,10 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/assets/fonts.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détail de l'Œuvre - Ligne B</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <style>
+    <title>Détail de l'Œuvre - Ligne B</title><style>
         * { box-sizing: border-box; }
 
         body {
@@ -507,7 +506,7 @@ async function loadStation(key) {
 
     // Background
     const bgLayer = document.getElementById('bg-layer');
-    progressiveBg(bgLayer, `/media/${key}/background_thumb.jpg`, `/media/${key}/background.png`);
+    progressiveBg(bgLayer, `/media/${key}/background_thumb.jpg`, `/media/${key}/background.webp`);
 
     // Header color
     const header = document.querySelector('header');
@@ -530,14 +529,14 @@ async function loadStation(key) {
     mainImg.classList.add('img-loading');
     mainImg.onload = function onThumb() {
         mainImg.onload = null; mainImg.onerror = null;
-        mainImg.src = `/media/${key}/main.jpg`;
+        mainImg.src = `/media/${key}/main.webp`;
         mainImg.onload = () => { mainImg.classList.remove('img-loading'); mainFrame.classList.remove('frame-loading'); };
         mainImg.onerror = () => { mainImg.classList.remove('img-loading'); mainFrame.classList.remove('frame-loading'); mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>'; };
     };
     mainImg.onerror = function onThumbFail() {
         mainImg.onload = null; mainImg.onerror = null;
         mainImg.classList.remove('img-loading');
-        mainImg.src = `/media/${key}/main.jpg`;
+        mainImg.src = `/media/${key}/main.webp`;
         mainImg.onload = () => mainFrame.classList.remove('frame-loading');
         mainImg.onerror = () => { mainFrame.classList.remove('frame-loading'); mainImg.parentElement.innerHTML = '<div class="placeholder">PHOTO</div>'; };
     };

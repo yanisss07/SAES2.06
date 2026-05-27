@@ -13,6 +13,19 @@ const MIME = {
     ".ico":  "image/x-icon",
     ".pdf":  "application/pdf",
     ".txt":  "text/plain; charset=utf-8",
+    ".woff2":"font/woff2",
+    ".woff": "font/woff",
+};
+
+const COMPRESSIBLE = new Set([".html", ".css", ".js", ".json", ".svg", ".txt"]);
+
+// Long cache for assets, no cache for HTML/txt (content may change)
+const CACHE = (ext) => {
+    if ([".webp", ".jpg", ".jpeg", ".png", ".woff2", ".woff", ".ico"].includes(ext))
+        return "public, max-age=604800, stale-while-revalidate=86400";
+    if ([".css", ".js"].includes(ext))
+        return "public, max-age=3600";
+    return "no-cache";
 };
 
 const ROOT = import.meta.dir;
@@ -34,7 +47,6 @@ Bun.serve({
         if (resolved === "/" || resolved === "") {
             resolved = "/index.html";
         } else {
-            // /ligne_A/:station  or  /ligne_B/:station  → serve ligne_A.html / ligne_B.html
             const stationMatch = pathname.match(/^\/(ligne_[AB])\/[^/]+$/);
             if (stationMatch) {
                 resolved = `/${stationMatch[1]}.html`;
@@ -52,8 +64,22 @@ Bun.serve({
 
         const ext = extname(resolved).toLowerCase();
         const type = MIME[ext] ?? "application/octet-stream";
+        const headers = {
+            "Content-Type": type,
+            "Cache-Control": CACHE(ext),
+        };
 
-        return new Response(file, { headers: { "Content-Type": type } });
+        // Gzip compressible text files
+        const acceptsGzip = req.headers.get("accept-encoding")?.includes("gzip");
+        if (acceptsGzip && COMPRESSIBLE.has(ext)) {
+            const bytes = await file.bytes();
+            const compressed = Bun.gzipSync(bytes);
+            headers["Content-Encoding"] = "gzip";
+            headers["Vary"] = "Accept-Encoding";
+            return new Response(compressed, { headers });
+        }
+
+        return new Response(file, { headers });
     },
 });
 
