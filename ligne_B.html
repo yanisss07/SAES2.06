@@ -546,7 +546,8 @@ async function loadStation(key) {
 
     const oeuvreFile = key === 'jean_jaures' ? `/media/${key}/oeuvre_b.txt` : `/media/${key}/oeuvre.txt`;
     const oeuvre = parseTextFile(await fetchText(oeuvreFile));
-    document.getElementById('titreOeuvre').textContent = oeuvre ? oeuvre.heading : data.title;
+    const rawTitle = oeuvre ? oeuvre.heading : data.title;
+    document.getElementById('titreOeuvre').textContent = rawTitle === 'Sans titre' ? '' : rawTitle;
     document.getElementById('descOeuvre').innerHTML    = oeuvre ? `<p>${oeuvre.body.replace(/\n/g, '<br>')}</p>` : data.desc;
 
     // Card 2

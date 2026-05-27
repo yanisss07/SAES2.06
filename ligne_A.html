@@ -533,7 +533,8 @@ async function loadStation(key) {
     document.getElementById('positionBadge').textContent = data.badge;
 
     const oeuvre = parseTextFile(await fetchText(`/media/${key}/oeuvre.txt`));
-    document.getElementById('titreOeuvre').textContent = oeuvre ? oeuvre.heading : data.title;
+    const rawTitle = oeuvre ? oeuvre.heading : data.title;
+    document.getElementById('titreOeuvre').textContent = rawTitle === 'Sans titre' ? '' : rawTitle;
     document.getElementById('descOeuvre').innerHTML    = oeuvre ? `<p>${oeuvre.body.replace(/\n/g, '<br>')}</p>` : data.desc;
 
     // Card 2
