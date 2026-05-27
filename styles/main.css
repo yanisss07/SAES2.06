@@ -539,6 +539,18 @@ body.light-mode .leaflet-container {
 
 .map-guide__img.is-loading { filter: blur(8px); transform: scale(1.04); }
 
+.map-guide__station-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.map-guide__logo {
+    height: 28px;
+    width: auto;
+    flex-shrink: 0;
+}
+
 .map-guide__name {
     margin: 0;
     font-size: 0.9rem;

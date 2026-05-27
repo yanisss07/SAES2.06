@@ -74,6 +74,7 @@ async function bootstrap() {
     const guideArt     = document.getElementById("guide-art");
     const guideImgWrap = document.getElementById("guide-img-wrap");
     const guideImg     = document.getElementById("guide-img");
+    const guideLogo    = document.getElementById("guide-logo");
     const guideName    = document.getElementById("guide-name");
     if (guideEl) {
         map.onStationHovered((station) => {
@@ -84,6 +85,10 @@ async function bootstrap() {
                 ? `Œuvre par ${artist} :`
                 : `${title} par ${artist} :`;
             guideName.textContent = station.name;
+            guideLogo.src = `media/${station.id}/logo.svg`;
+            guideLogo.alt = station.name;
+            guideLogo.style.display = "";
+            guideLogo.onerror = () => { guideLogo.style.display = "none"; };
 
             // Line tint
             const isA = station.line === "A";
