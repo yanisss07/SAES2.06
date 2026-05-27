@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villes · Quai des Arts</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="./styles/intro.css">
+    <style>
+        .villes-hero {
+            max-width: 740px;
+            margin: 0 auto;
+            padding: 100px 24px 48px;
+            text-align: center;
+        }
+
+        .villes-hero h2 {
+            margin: 0 0 20px;
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fff 30%, #97a0c5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.light-mode .villes-hero h2 {
+            background: linear-gradient(135deg, #111 30%, #555);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .villes-hero p {
+            margin: 0 0 10px;
+            color: var(--color-muted);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .villes-hero .instruction {
+            font-size: 0.88rem;
+            opacity: 0.7;
+            margin-top: 14px;
+        }
+
+        /* ── City grid ── */
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px 48px;
+        }
+
+        .city-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            aspect-ratio: 4/3;
+            border: 1px solid var(--color-panel-border);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .city-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            border-color: rgba(255, 59, 106, 0.4);
+        }
+
+        .city-card__thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .city-card:hover .city-card__thumb {
+            transform: scale(1.06);
+        }
+
+        .city-card__overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(6, 7, 19, 0.88) 0%, rgba(6, 7, 19, 0.1) 55%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 16px;
+        }
+
+        body.light-mode .city-card__overlay {
+            background: linear-gradient(to top, rgba(20, 20, 40, 0.85) 0%, rgba(20, 20, 40, 0.05) 55%);
+        }
+
+        .city-card__name {
+            margin: 0 0 2px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.04em;
+        }
+
+        .city-card__country {
+            margin: 0;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.65);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* ── Modal ── */
+        .city-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(6px);
+        }
+
+        .city-modal-backdrop.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .city-modal {
+            background: #0a0c1e;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 22px;
+            width: min(820px, 100%);
+            max-height: 88vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.3s ease;
+        }
+
+        body.light-mode .city-modal {
+            background: #f0f0ec;
+            border-color: rgba(0,0,0,0.1);
+        }
+
+        .city-modal-backdrop.is-open .city-modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .city-modal__header {
+            position: relative;
+            padding: 24px 24px 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .city-modal__title {
+            margin: 0 0 4px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .city-modal__country {
+            font-size: 0.82rem;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .city-modal__close {
+            flex-shrink: 0;
+            background: none;
+            border: 1px solid var(--color-panel-border);
+            border-radius: 999px;
+            padding: 6px 14px;
+            color: var(--color-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .city-modal__close:hover {
+            color: var(--color-text);
+            border-color: var(--color-text);
+        }
+
+        /* Slideshow */
+        .city-slideshow {
+            position: relative;
+            margin: 20px 24px 0;
+            border-radius: 14px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .city-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .city-slide.is-active { opacity: 1; }
+
+        .city-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .slideshow-prev,
+        .slideshow-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .slideshow-prev { left: 10px; }
+        .slideshow-next { right: 10px; }
+        .slideshow-prev:hover, .slideshow-next:hover { background: rgba(0,0,0,0.8); }
+
+        .slideshow-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .slideshow-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .slideshow-dot.is-active {
+            background: var(--color-accent-a);
+            transform: scale(1.3);
+        }
+
+        body.light-mode .slideshow-dot {
+            background: rgba(0,0,0,0.2);
+        }
+
+        .city-modal__desc {
+            padding: 16px 24px 24px;
+            color: var(--color-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Continue row */
+        .villes-continue {
+            display: flex;
+            justify-content: center;
+            padding: 20px 24px 60px;
+        }
+
+        @media (max-width: 600px) {
+            .city-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .villes-hero { padding: 80px 16px 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-bg"></div>
+
+    <div id="theme-toggle" class="theme-bubble" role="button" aria-label="Basculer le thème">
+        <span class="tb-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </span>
+        <div class="tb-track"><div class="tb-knob"></div></div>
+        <span class="tb-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>
+        </span>
+    </div>
+
+    <nav class="intro-nav">
+        <a href="./index.html" class="btn-back">← Retour</a>
+    </nav>
+
+    <div class="page-content">
+        <div class="villes-hero anim-in">
+            <h2>L'art dans le métro</h2>
+            <p>Dans certaines villes, l'art dans le métro ne se cache pas. il s'impose. les voyageurs le voient, le photographient, en parlent. explore ces métros qui ont fait de leurs stations de véritables musées.</p>
+            <p class="instruction">Clique sur une ville pour découvrir ses œuvres.</p>
+        </div>
+
+        <div class="city-grid" id="city-grid"></div>
+
+        <div class="villes-continue anim-in anim-in-delay-3">
+            <a href="./toulouse.html" class="btn-primary">Continuer →</a>
+        </div>
+    </div>
+
+    <!-- City modal -->
+    <div class="city-modal-backdrop" id="modal-backdrop" aria-modal="true" role="dialog">
+        <div class="city-modal" id="city-modal">
+            <div class="city-modal__header">
+                <div>
+                    <h3 class="city-modal__title" id="modal-title">Ville</h3>
+                    <span class="city-modal__country" id="modal-country"></span>
+                </div>
+                <button class="city-modal__close" id="modal-close">Fermer ✕</button>
+            </div>
+            <div class="city-slideshow" id="modal-slideshow">
+                <button class="slideshow-prev" id="slide-prev">‹</button>
+                <button class="slideshow-next" id="slide-next">›</button>
+            </div>
+            <div class="slideshow-dots" id="slideshow-dots"></div>
+            <p class="city-modal__desc" id="modal-desc"></p>
+        </div>
+    </div>
+
+    <script>
+        // ── Theme init ──
+        const mq = window.matchMedia("(prefers-color-scheme: light)");
+        const saved = localStorage.getItem("theme");
+        let isLight = saved ? saved === "light" : mq.matches;
+        if (isLight) document.body.classList.add("light-mode");
+        const toggle = document.getElementById("theme-toggle");
+        const apply = (light, save = true) => {
+            isLight = light;
+            document.body.classList.toggle("light-mode", light);
+            if (save) localStorage.setItem("theme", light ? "light" : "dark");
+        };
+        toggle.addEventListener("click", () => apply(!isLight));
+        mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
+
+        // ── City data ──
+        const CITIES = [
+            {
+                id: 'lisbon', name: 'Lisbonne', country: 'Portugal',
+                desc: 'Capitale du Portugal, connue pour ses tramways, ses azulejos et son architecture historique au bord de l\'Atlantique.',
+                images: ['01.png','02.png','03.png','04.png','05.png']
+            },
+            {
+                id: 'montreal', name: 'Montréal', country: 'Canada',
+                desc: 'Grande ville du Québec au Canada, connue pour sa culture francophone, ses festivals et son architecture mêlant ancien et moderne.',
+                images: ['01.png','02.png','03.png','04.png','05.png']
+            },
+            {
+                id: 'moscow', name: 'Moscou', country: 'Russie',
+                desc: 'Capitale de la Russie, connue pour le Kremlin, la Place Rouge et son architecture soviétique imposante.',
+                images: ['01.png','02.png','03.png','04.png','05.png']
+            },
+            {
+                id: 'naples', name: 'Naples', country: 'Italie',
+                desc: 'Ville du sud de l\'Italie, connue pour la pizza, le Vésuve et son riche patrimoine gréco-romain.',
+                images: ['01.png','02.png','03.png','04.png','05.png']
+            },
+            {
+                id: 'new york', name: 'New York', country: 'États-Unis',
+                desc: 'Plus grande ville des États-Unis, connue pour ses gratte-ciels, Broadway et son influence culturelle mondiale.',
+                images: ['01.png','02.png','03.png','04.png','05.png']
+            },
+            {
+                id: 'shanghai', name: 'Shanghai', country: 'Chine',
+                desc: 'Plus grande ville de Chine, connue pour son skyline futuriste, son port et son mélange entre modernité et culture traditionnelle.',
+                images: ['01.png','02.png','03.png','04.png','05.png']
+            },
+            {
+                id: 'stockholm', name: 'Stockholm', country: 'Suède',
+                desc: 'Capitale de la Suède, connue pour son design scandinave, ses îles et sa qualité de vie élevée.',
+                images: ['1.png','2.png','3.png','4.png','5.png']
+            }
+        ];
+
+        // ── Render city grid ──
+        const grid = document.getElementById("city-grid");
+        CITIES.forEach((city, i) => {
+            const card = document.createElement("div");
+            card.className = "city-card anim-in";
+            card.style.animationDelay = (0.05 * i + 0.1) + "s";
+            const firstImg = `./villes/${encodeURIComponent(city.id)}/${city.images[0]}`;
+            card.innerHTML = `
+                <img class="city-card__thumb" src="${firstImg}" alt="${city.name}" loading="lazy">
+                <div class="city-card__overlay">
+                    <p class="city-card__name">${city.name}</p>
+                    <p class="city-card__country">${city.country}</p>
+                </div>`;
+            card.addEventListener("click", () => openModal(city));
+            grid.appendChild(card);
+        });
+
+        // ── Modal logic ──
+        const backdrop = document.getElementById("modal-backdrop");
+        const modalTitle = document.getElementById("modal-title");
+        const modalCountry = document.getElementById("modal-country");
+        const modalSlideshow = document.getElementById("modal-slideshow");
+        const modalDots = document.getElementById("slideshow-dots");
+        const modalDesc = document.getElementById("modal-desc");
+        let currentSlide = 0;
+        let totalSlides = 0;
+
+        function openModal(city) {
+            modalTitle.textContent = city.name;
+            modalCountry.textContent = city.country;
+            modalDesc.textContent = city.desc;
+            currentSlide = 0;
+
+            // Clear previous slides/dots
+            modalSlideshow.querySelectorAll(".city-slide").forEach(el => el.remove());
+            modalDots.innerHTML = "";
+            totalSlides = city.images.length;
+
+            city.images.forEach((img, i) => {
+                const slide = document.createElement("div");
+                slide.className = "city-slide" + (i === 0 ? " is-active" : "");
+                const image = document.createElement("img");
+                image.src = `./villes/${encodeURIComponent(city.id)}/${img}`;
+                image.alt = `${city.name} ${i+1}`;
+                image.loading = i === 0 ? "eager" : "lazy";
+                slide.appendChild(image);
+                modalSlideshow.insertBefore(slide, document.getElementById("slide-prev"));
+
+                const dot = document.createElement("div");
+                dot.className = "slideshow-dot" + (i === 0 ? " is-active" : "");
+                dot.addEventListener("click", () => goToSlide(i));
+                modalDots.appendChild(dot);
+            });
+
+            backdrop.classList.add("is-open");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            backdrop.classList.remove("is-open");
+            document.body.style.overflow = "";
+        }
+
+        function goToSlide(idx) {
+            const slides = modalSlideshow.querySelectorAll(".city-slide");
+            const dots = modalDots.querySelectorAll(".slideshow-dot");
+            slides[currentSlide].classList.remove("is-active");
+            dots[currentSlide].classList.remove("is-active");
+            currentSlide = (idx + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add("is-active");
+            dots[currentSlide].classList.add("is-active");
+        }
+
+        document.getElementById("modal-close").addEventListener("click", closeModal);
+        document.getElementById("slide-prev").addEventListener("click", () => goToSlide(currentSlide - 1));
+        document.getElementById("slide-next").addEventListener("click", () => goToSlide(currentSlide + 1));
+        backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closeModal(); });
+        document.addEventListener("keydown", (e) => {
+            if (!backdrop.classList.contains("is-open")) return;
+            if (e.key === "Escape") closeModal();
+            if (e.key === "ArrowLeft") goToSlide(currentSlide - 1);
+            if (e.key === "ArrowRight") goToSlide(currentSlide + 1);
+        });
+    </script>
+</body>
+</html>

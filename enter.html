@@ -3,74 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quai des Arts</title>
+    <title>Explorer · Quai des Arts</title>
     <link rel="icon" type="image/png" href="./assets/favicon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
     <link rel="stylesheet" href="./styles/intro.css">
     <style>
         html, body { height: 100%; overflow: hidden; }
 
-        .accueil-stage {
-            position: relative;
+        .enter-stage {
             width: 100%;
             height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0;
+            gap: 40px;
             text-align: center;
             padding: 24px;
         }
 
-        .accueil-logo {
-            width: 96px;
-            height: 96px;
-            object-fit: contain;
-            margin-bottom: 32px;
-            opacity: 0.9;
-            filter: drop-shadow(0 0 24px rgba(255, 59, 106, 0.4));
-        }
-
-        .accueil-title {
-            margin: 0 0 12px;
-            font-size: clamp(2.4rem, 6vw, 4rem);
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #fff 30%, #97a0c5);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.1;
-        }
-
-        body.light-mode .accueil-title {
-            background: linear-gradient(135deg, #111 30%, #555);
-            -webkit-background-clip: text;
-            background-clip: text;
-        }
-
-        .accueil-subtitle {
-            margin: 0 0 48px;
-            font-size: 1.05rem;
-            color: var(--color-muted);
+        .enter-line {
+            font-size: clamp(1.1rem, 2.8vw, 1.6rem);
             font-weight: 300;
-            letter-spacing: 0.04em;
-            max-width: 380px;
-        }
-
-        .accueil-skip {
-            margin-top: 20px;
-            font-size: 0.8rem;
             color: var(--color-muted);
-            opacity: 0.6;
-            text-decoration: none;
-            letter-spacing: 0.04em;
-            transition: opacity 0.2s;
+            letter-spacing: 0.06em;
+            max-width: 560px;
+            line-height: 1.5;
+            margin: 0;
         }
 
-        .accueil-skip:hover { opacity: 1; }
+        .enter-line em {
+            font-style: normal;
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .btn-enter {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 44px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--color-accent-a), var(--color-accent-b));
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 6px 36px rgba(255, 59, 106, 0.4);
+            transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-enter:hover {
+            opacity: 0.92;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 48px rgba(255, 59, 106, 0.55);
+        }
+
+        .enter-hint {
+            font-size: 0.78rem;
+            color: var(--color-muted);
+            opacity: 0.45;
+            letter-spacing: 0.06em;
+        }
     </style>
 </head>
 <body>
@@ -86,12 +84,15 @@
         </span>
     </div>
 
-    <div class="accueil-stage">
-        <img src="./assets/logo-project.svg" alt="Logo Quai des Arts" class="accueil-logo anim-in">
-        <h1 class="accueil-title anim-in anim-in-delay-1">Quai des Arts</h1>
-        <p class="accueil-subtitle anim-in anim-in-delay-2">Un voyage à travers l'art caché du métro toulousain.</p>
-        <a href="./villes.html" class="btn-primary anim-in anim-in-delay-3">Commencer</a>
-        <a href="./carte.html" class="accueil-skip anim-in anim-in-delay-4">Accéder directement à la carte →</a>
+    <div class="enter-stage">
+        <p class="enter-line anim-in">
+            La carte que <em>Tisséo</em> n'a pas su garder.
+        </p>
+        <a href="./carte.html" class="btn-enter anim-in anim-in-delay-2">
+            Explorer les œuvres
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <span class="enter-hint anim-in anim-in-delay-3">38 artistes · 2 lignes · 28 km</span>
     </div>
 
     <script>
@@ -100,7 +101,6 @@
         const saved = localStorage.getItem("theme");
         let isLight = saved ? saved === "light" : mq.matches;
         if (isLight) document.body.classList.add("light-mode");
-
         const toggle = document.getElementById("theme-toggle");
         const apply = (light, save = true) => {
             isLight = light;
@@ -109,11 +109,6 @@
         };
         toggle.addEventListener("click", () => apply(!isLight));
         mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
-
-        // ── Skip intro for returning users ──
-        if (sessionStorage.getItem("atlasVisited") === "1") {
-            document.querySelector(".accueil-skip").style.cssText = "font-size:0.85rem;color:var(--color-accent-a);opacity:0.85;text-decoration:none;letter-spacing:0.04em;transition:opacity 0.2s;margin-top:20px;";
-        }
     </script>
 </body>
 </html>

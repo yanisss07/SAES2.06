@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toulouse · Quai des Arts</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="./styles/intro.css">
+    <style>
+        .toulouse-stage {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Question section ── */
+        .question-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 60px;
+            gap: 40px;
+        }
+
+        .question-text {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            line-height: 1.2;
+            max-width: 680px;
+            margin: 0;
+            background: linear-gradient(135deg, #fff 30%, #97a0c5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.light-mode .question-text {
+            background: linear-gradient(135deg, #111 30%, #555);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .question-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .question-buttons.is-hidden {
+            opacity: 0;
+            transform: translateY(-12px);
+            pointer-events: none;
+        }
+
+        .btn-choice {
+            padding: 14px 36px;
+            border-radius: 999px;
+            border: 1px solid var(--color-panel-border);
+            background: var(--color-panel);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: var(--color-text);
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-choice:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        body.light-mode .btn-choice:hover {
+            background: rgba(0,0,0,0.06);
+            border-color: rgba(0,0,0,0.2);
+        }
+
+        /* ── Response section ── */
+        .response-section {
+            opacity: 0;
+            transform: translateY(16px);
+            pointer-events: none;
+            transition: opacity 0.55s ease, transform 0.55s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            padding: 0 24px;
+        }
+
+        .response-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .response-text {
+            max-width: 680px;
+            width: 100%;
+            padding: 28px 32px;
+            border-radius: 20px;
+            background: var(--color-panel);
+            border: 1px solid var(--color-panel-border);
+            box-shadow: var(--color-panel-shadow);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--color-muted);
+            margin: 0 0 40px;
+        }
+
+        body.light-mode .response-text {
+            color: var(--color-muted);
+        }
+
+        /* ── Artwork slideshow ── */
+        .artwork-slideshow {
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+            aspect-ratio: 16/7;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--color-panel-border);
+            box-shadow: 0 16px 56px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.2);
+            margin-bottom: 12px;
+        }
+
+        .artwork-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.7s ease;
+        }
+
+        .artwork-slide.is-active { opacity: 1; }
+
+        .artwork-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .artwork-slide__caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+            color: rgba(255,255,255,0.8);
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+        }
+
+        .artwork-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 48px;
+        }
+
+        .artwork-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .artwork-dot.is-active {
+            background: var(--color-accent-a);
+            transform: scale(1.35);
+        }
+
+        body.light-mode .artwork-dot {
+            background: rgba(0,0,0,0.2);
+        }
+
+        .toulouse-continue {
+            display: flex;
+            justify-content: center;
+            padding-bottom: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-bg"></div>
+
+    <div id="theme-toggle" class="theme-bubble" role="button" aria-label="Basculer le thème">
+        <span class="tb-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </span>
+        <div class="tb-track"><div class="tb-knob"></div></div>
+        <span class="tb-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>
+        </span>
+    </div>
+
+    <nav class="intro-nav">
+        <a href="./villes.html" class="btn-back">← Retour</a>
+    </nav>
+
+    <div class="toulouse-stage page-content">
+        <!-- Question -->
+        <div class="question-section">
+            <h2 class="question-text anim-in">Avez-vous déjà pris le métro toulousain&nbsp;?</h2>
+            <div class="question-buttons anim-in anim-in-delay-2" id="question-buttons">
+                <button class="btn-choice" id="btn-oui">Oui</button>
+                <button class="btn-choice" id="btn-non">Non, jamais</button>
+            </div>
+        </div>
+
+        <!-- Response -->
+        <div class="response-section" id="response-section">
+            <p class="response-text" id="response-text"></p>
+
+            <div class="artwork-slideshow" id="artwork-slideshow"></div>
+            <div class="artwork-dots" id="artwork-dots"></div>
+
+            <div class="toulouse-continue">
+                <a href="./arteo.html" class="btn-primary">Continuer →</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── Theme init ──
+        const mq = window.matchMedia("(prefers-color-scheme: light)");
+        const saved = localStorage.getItem("theme");
+        let isLight = saved ? saved === "light" : mq.matches;
+        if (isLight) document.body.classList.add("light-mode");
+        const toggle = document.getElementById("theme-toggle");
+        const apply = (light, save = true) => {
+            isLight = light;
+            document.body.classList.toggle("light-mode", light);
+            if (save) localStorage.setItem("theme", light ? "light" : "dark");
+        };
+        toggle.addEventListener("click", () => apply(!isLight));
+        mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
+
+        // ── Content ──
+        const TEXT_OUI = "Vous ne le savez peut-être pas, mais vous l'avez croisé des centaines de fois. Les mêmes stations, les mêmes couloirs, la même attente sur le quai. Et pourtant, depuis 1993, 38 artistes de renommée internationale ont transformé chaque station en œuvre d'art. Une collection d'art contemporain unique au monde, sous vos yeux, chaque jour — que beaucoup ne remarquent même pas.";
+
+        const TEXT_NON = "Quand Toulouse a construit son métro, elle a décidé que chaque station serait aussi une œuvre. Des plasticiens de renommée internationale ont été invités à transformer ces espaces souterrains. Le résultat : une galerie d'art contemporain de 28 kilomètres, que des millions de voyageurs traversent chaque année sans forcément s'en rendre compte.";
+
+        const ARTWORKS = [
+            { src: "./media/capitole/main.jpg",          caption: "Capitole" },
+            { src: "./media/esquirol/main.jpg",          caption: "Esquirol" },
+            { src: "./media/st_cyprien/main.jpg",        caption: "St Cyprien République" },
+            { src: "./media/palais_de_justice/main.jpg", caption: "Palais de Justice" },
+            { src: "./media/carmes/main.jpg",            caption: "Carmes" },
+            { src: "./media/jean_jaures/main.jpg",       caption: "Jean Jaurès" },
+            { src: "./media/borderouge/main.jpg",        caption: "Borderouge" },
+            { src: "./media/reynerie/main.jpg",          caption: "Reynerie" }
+        ];
+
+        // ── Build artwork slideshow ──
+        let artSlide = 0;
+        let artTimer = null;
+        const slideshow = document.getElementById("artwork-slideshow");
+        const dotsEl = document.getElementById("artwork-dots");
+
+        ARTWORKS.forEach((art, i) => {
+            const slide = document.createElement("div");
+            slide.className = "artwork-slide" + (i === 0 ? " is-active" : "");
+            const img = document.createElement("img");
+            img.src = art.src;
+            img.alt = art.caption;
+            img.loading = i === 0 ? "eager" : "lazy";
+            const cap = document.createElement("div");
+            cap.className = "artwork-slide__caption";
+            cap.textContent = art.caption;
+            slide.appendChild(img);
+            slide.appendChild(cap);
+            slideshow.appendChild(slide);
+
+            const dot = document.createElement("div");
+            dot.className = "artwork-dot" + (i === 0 ? " is-active" : "");
+            dot.addEventListener("click", () => goArt(i));
+            dotsEl.appendChild(dot);
+        });
+
+        function goArt(idx) {
+            const slides = slideshow.querySelectorAll(".artwork-slide");
+            const dots = dotsEl.querySelectorAll(".artwork-dot");
+            slides[artSlide].classList.remove("is-active");
+            dots[artSlide].classList.remove("is-active");
+            artSlide = (idx + ARTWORKS.length) % ARTWORKS.length;
+            slides[artSlide].classList.add("is-active");
+            dots[artSlide].classList.add("is-active");
+        }
+
+        function startAutoSlide() {
+            artTimer = setInterval(() => goArt(artSlide + 1), 3500);
+        }
+
+        // ── Choice handling ──
+        const buttons = document.getElementById("question-buttons");
+        const responseSection = document.getElementById("response-section");
+        const responseText = document.getElementById("response-text");
+
+        function showResponse(text) {
+            buttons.classList.add("is-hidden");
+            responseText.textContent = text;
+            setTimeout(() => {
+                responseSection.classList.add("is-visible");
+                startAutoSlide();
+            }, 420);
+        }
+
+        document.getElementById("btn-oui").addEventListener("click", () => showResponse(TEXT_OUI));
+        document.getElementById("btn-non").addEventListener("click", () => showResponse(TEXT_NON));
+    </script>
+</body>
+</html>

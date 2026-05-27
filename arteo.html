@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTéo · Quai des Arts</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="./styles/intro.css">
+    <style>
+        .arteo-content {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 120px 24px 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 56px;
+        }
+
+        /* ── Intro text ── */
+        .arteo-intro {
+            padding: 32px 36px;
+            border-radius: 20px;
+            background: var(--color-panel);
+            border: 1px solid var(--color-panel-border);
+            box-shadow: var(--color-panel-shadow);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .arteo-intro h2 {
+            margin: 0 0 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-accent-a);
+        }
+
+        .arteo-intro p {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--color-muted);
+        }
+
+        .arteo-intro .app-name {
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        /* ── Timeline ── */
+        .timeline {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 72px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--color-accent-a), var(--color-accent-b), rgba(255,255,255,0.1));
+        }
+
+        .timeline-item {
+            position: relative;
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .timeline-item + .timeline-item {
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        body.light-mode .timeline-item + .timeline-item {
+            border-top-color: rgba(0,0,0,0.06);
+        }
+
+        .timeline-year {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--color-accent-a);
+            letter-spacing: 0.04em;
+            padding-top: 2px;
+            text-align: right;
+            padding-right: 16px;
+        }
+
+        .timeline-item:last-child .timeline-year {
+            color: var(--color-muted);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 66px;
+            top: 24px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--color-accent-a);
+            border: 2px solid var(--color-bg);
+            box-shadow: 0 0 10px rgba(255, 59, 106, 0.5);
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(2) .timeline-dot { background: #e37400; box-shadow: 0 0 10px rgba(227,116,0,0.5); }
+        .timeline-item:nth-child(3) .timeline-dot { background: var(--color-accent-b); box-shadow: 0 0 10px rgba(255,208,86,0.5); }
+        .timeline-item:nth-child(4) .timeline-dot { background: #97a0c5; box-shadow: 0 0 8px rgba(151,160,197,0.4); }
+        .timeline-item:nth-child(5) .timeline-dot { background: rgba(255,255,255,0.2); box-shadow: none; border-color: rgba(255,255,255,0.2); }
+
+        .timeline-body {
+            padding-left: 12px;
+        }
+
+        .timeline-body p {
+            margin: 0;
+            font-size: 0.97rem;
+            line-height: 1.65;
+            color: var(--color-muted);
+        }
+
+        .timeline-body strong {
+            color: var(--color-text);
+        }
+
+        .timeline-item:last-child .timeline-body p {
+            color: rgba(151, 160, 197, 0.65);
+            font-style: italic;
+        }
+
+        /* ── Conclusion ── */
+        .arteo-conclusion {
+            padding: 28px 32px;
+            border-radius: 16px;
+            border-left: 3px solid var(--color-accent-a);
+            background: rgba(255, 59, 106, 0.06);
+        }
+
+        body.light-mode .arteo-conclusion {
+            background: rgba(255, 59, 106, 0.04);
+        }
+
+        .arteo-conclusion p {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--color-muted);
+        }
+
+        .arteo-continue {
+            display: flex;
+            justify-content: center;
+            padding-bottom: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .arteo-content { padding: 80px 16px 60px; }
+            .arteo-intro { padding: 22px 20px; }
+            .timeline::before { left: 52px; }
+            .timeline-dot { left: 46px; }
+            .timeline-item { grid-template-columns: 60px 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-bg"></div>
+
+    <div id="theme-toggle" class="theme-bubble" role="button" aria-label="Basculer le thème">
+        <span class="tb-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </span>
+        <div class="tb-track"><div class="tb-knob"></div></div>
+        <span class="tb-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>
+        </span>
+    </div>
+
+    <nav class="intro-nav">
+        <a href="./toulouse.html" class="btn-back">← Retour</a>
+    </nav>
+
+    <div class="page-content">
+        <div class="arteo-content">
+
+            <div class="arteo-intro anim-in">
+                <h2>ARTéo</h2>
+                <p>Tisséo le savait. Des millions de voyageurs passaient chaque jour devant ces œuvres sans les voir. Alors en 2018, ils ont agi&nbsp;: <span class="app-name">ARTéo</span>, une application dédiée, avec une carte interactive, des fiches artistes, et des visites guidées par GPS. L'idée était là. L'outil existait. Tout ce qu'il fallait pour rendre ces œuvres visibles.</p>
+            </div>
+
+            <div class="timeline anim-in anim-in-delay-1">
+                <div class="timeline-item">
+                    <span class="timeline-year">1993</span>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-body">
+                        <p><strong>Ouverture de la ligne A.</strong> Les œuvres sont là dès le premier jour — 18 stations, 18 artistes, une collection d'emblée.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2007</span>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-body">
+                        <p><strong>Ouverture de la ligne B.</strong> 20 nouvelles œuvres rejoignent la collection. La galerie s'étend à 28 kilomètres.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2018</span>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-body">
+                        <p><strong>Tisséo lance ARTéo.</strong> Carte interactive, fiches artistes, visites guidées par GPS. L'art du métro enfin accessible à tous.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">202?</span>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-body">
+                        <p><strong>ARTéo disparaît des stores.</strong> Sans annonce, sans remplacement, sans archivage public.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">Aujourd'hui</span>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-body">
+                        <p>Aucun outil officiel n'existe plus pour découvrir la collection.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arteo-conclusion anim-in anim-in-delay-2">
+                <p>La collection est toujours là. Les œuvres n'ont pas bougé. Mais l'outil pour les découvrir, lui, a disparu.</p>
+            </div>
+
+            <div class="arteo-continue anim-in anim-in-delay-3">
+                <a href="./enter.html" class="btn-primary">Continuer →</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ── Theme init ──
+        const mq = window.matchMedia("(prefers-color-scheme: light)");
+        const saved = localStorage.getItem("theme");
+        let isLight = saved ? saved === "light" : mq.matches;
+        if (isLight) document.body.classList.add("light-mode");
+        const toggle = document.getElementById("theme-toggle");
+        const apply = (light, save = true) => {
+            isLight = light;
+            document.body.classList.toggle("light-mode", light);
+            if (save) localStorage.setItem("theme", light ? "light" : "dark");
+        };
+        toggle.addEventListener("click", () => apply(!isLight));
+        mq.addEventListener("change", (e) => { if (!localStorage.getItem("theme")) apply(e.matches, false); });
+    </script>
+</body>
+</html>
