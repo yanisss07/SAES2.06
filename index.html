@@ -121,7 +121,7 @@
     </div>
 
     <div class="accueil-stage">
-        <img src="./logo.png" alt="Logo Quai des Arts" class="accueil-logo anim-in">
+        <img src="./logo_dark.png" alt="Logo Quai des Arts" class="accueil-logo anim-in" id="accueil-logo">
         <h1 class="accueil-title anim-in anim-in-delay-1">Quai des Arts</h1>
         <p class="accueil-subtitle anim-in anim-in-delay-2">Un voyage à travers l'art caché du métro toulousain.</p>
         <div class="anim-in anim-in-delay-3">
@@ -141,11 +141,14 @@
         var isLight = saved ? saved === "light" : mq.matches;
         if (isLight) document.body.classList.add("light-mode");
         var toggle = document.getElementById("theme-toggle");
+        var logo = document.getElementById("accueil-logo");
         function applyTheme(light, save) {
             isLight = light;
             document.body.classList.toggle("light-mode", light);
+            logo.src = light ? "./logo_light.png" : "./logo_dark.png";
             if (save !== false) localStorage.setItem("theme", light ? "light" : "dark");
         }
+        logo.src = isLight ? "./logo_light.png" : "./logo_dark.png";
         toggle.addEventListener("click", function() { applyTheme(!isLight); });
         mq.addEventListener("change", function(e) { if (!localStorage.getItem("theme")) applyTheme(e.matches, false); });
 
