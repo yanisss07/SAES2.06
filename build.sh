@@ -30,25 +30,30 @@ ROOT = os.environ.get("ROOT") or os.path.dirname(os.path.abspath(__file__))
 FONT_DIR = os.path.join(ROOT, "assets", "fonts")
 
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-URL = "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
+FONTS = [
+    "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap",
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&display=swap",
+]
 
-req = urllib.request.Request(URL, headers={"User-Agent": UA, "Accept": "text/css"})
-css = urllib.request.urlopen(req).read().decode()
-
-urls = sorted(set(re.findall(r'https://fonts\.gstatic\.com[^\)\'"\s]+\.woff2', css)))
+all_css = ""
 url_to_local = {}
 
-for url in urls:
-    fname = url.split("/")[-1]
-    dest = os.path.join(FONT_DIR, fname)
-    if not os.path.exists(dest):
-        urllib.request.urlretrieve(url, dest)
-        print(f"  ✓ {fname}")
-    else:
-        print(f"  · {fname} (cached)")
-    url_to_local[url] = f"/assets/fonts/{fname}"
+for URL in FONTS:
+    req = urllib.request.Request(URL, headers={"User-Agent": UA, "Accept": "text/css"})
+    css = urllib.request.urlopen(req).read().decode()
+    urls = sorted(set(re.findall(r'https://fonts\.gstatic\.com[^\)\'"\s]+\.woff2', css)))
+    for url in urls:
+        fname = url.split("/")[-1]
+        dest = os.path.join(FONT_DIR, fname)
+        if not os.path.exists(dest):
+            urllib.request.urlretrieve(url, dest)
+            print(f"  ✓ {fname}")
+        else:
+            print(f"  · {fname} (cached)")
+        url_to_local[url] = f"/assets/fonts/{fname}"
+    all_css += css + "\n"
 
-local_css = css
+local_css = all_css
 for url, local in url_to_local.items():
     local_css = local_css.replace(url, local)
 

@@ -49,7 +49,8 @@
             position: relative;
             width: 140px;
             border-radius: 14px;
-            overflow: hidden;
+            overflow: visible;
+            isolation: isolate;
             cursor: pointer;
             border: 2px solid transparent;
             transition: border-color 0.25s ease, transform 0.2s ease;
@@ -59,8 +60,24 @@
         .city-card:hover { transform: translateY(-3px); }
 
         .city-card.is-active {
-            border-color: var(--color-accent-a);
-            filter: hue-rotate(var(--hue-rot, 0deg));
+            border-color: transparent;
+        }
+
+        .city-card.is-active::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 17px;
+            background: linear-gradient(135deg, #ff3b6a, #ffd056, #ff3b6a);
+            background-size: 200% 200%;
+            animation: hue-spin 4s linear infinite;
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0.85;
+        }
+
+        .city-card.is-active img {
+            filter: saturate(1.4) brightness(1.1);
         }
 
         .city-card__thumb-old-rule { display: none; } /* replaced by thumb-wrap */
@@ -72,6 +89,7 @@
             right: 0;
             padding: 10px 8px 8px;
             background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            border-radius: 0 0 12px 12px;
             font-size: 0.78rem;
             font-weight: 700;
             letter-spacing: 0.06em;
@@ -194,6 +212,7 @@
             width: 100%;
             aspect-ratio: 3/2;
             overflow: hidden;
+            border-radius: 12px;
             background: rgba(255,255,255,0.06);
         }
 
@@ -270,7 +289,7 @@
             transition: background 0.2s, transform 0.2s;
         }
 
-        .viewer-dot.is-active { background: var(--color-accent-a); transform: scale(1.35); filter: hue-rotate(var(--hue-rot, 0deg)); }
+        .viewer-dot.is-active { background: var(--color-accent-a); transform: scale(1.35); }
 
         body.light-mode .viewer-dot { background: rgba(0,0,0,0.18); }
 
@@ -366,10 +385,7 @@
         toggle.addEventListener("click", function() { applyTheme(!isLight); });
         mq.addEventListener("change", function(e) { if (!localStorage.getItem("theme")) applyTheme(e.matches, false); });
 
-        // ── Random hue for button + active card border ──
-        var hueRot = Math.floor(Math.random() * 360);
-        document.documentElement.style.setProperty("--btn-hue-offset", "-" + (hueRot / 18).toFixed(1) + "s");
-        document.documentElement.style.setProperty("--hue-rot", hueRot + "deg");
+        document.documentElement.style.setProperty("--btn-hue-offset", "-" + (Math.random() * 20).toFixed(1) + "s");
 
         // ── Fetch text helper ──
         async function fetchText(path) {
